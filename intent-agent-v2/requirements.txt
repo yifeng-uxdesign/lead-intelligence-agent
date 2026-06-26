@@ -1,0 +1,31 @@
+# Lead agent — Python dependencies
+#
+# Core architecture (orchestrator, behavior layers, state machines) uses
+# only the Python standard library. No external packages required for
+# unit tests, behavior tests, or persona tests.
+#
+# Testing
+pytest>=8.0.0
+pytest-cov>=5.0.0          # coverage reporting: pytest --cov=src
+
+# --- Future dependencies (not needed yet — add when you reach these stages) ---
+#
+# Stage: LLM-backed signal extraction (replaces rule-based extractor)
+# anthropic>=0.25.0         # Claude API for signal extraction + response generation
+#
+# Stage: OpenAI alternative
+# openai>=1.0.0
+#
+# Stage: API server (if you expose the agent via HTTP)
+# fastapi>=0.110.0
+# uvicorn>=0.29.0
+#
+# Stage: Persistent memory store (replaces in-memory MemoryStore)
+# redis>=5.0.0              # session state across restarts
+#
+# Stage: Vector store for RAG product knowledge (Option B from product knowledge discussion)
+# pinecone-client>=3.0.0
+# sentence-transformers>=2.7.0
+#
+# Stage: Structured logging and monitoring
+# structlog>=24.0.0
