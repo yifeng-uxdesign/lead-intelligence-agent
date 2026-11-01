@@ -1,0 +1,220 @@
+# message_schema.yaml
+# ══════════════════════════════════════════════════════════════════════
+# Single source of truth for customer-facing message shapes.
+#
+# Mirrors the pattern already used in domain/trigger_catalog.py:
+# one file, imported by multiple consumers, so no drift between them.
+#
+# Consumers:
+#   1. Prompt layer      — tells the LLM/behavior_engine which message
+#                          type + chips are valid for the current
+#                          trust_state / mode combination.
+#   2. Website widget     — renders chips as buttons, cards as rich UI.
+#   3. Slack/Teams adapter — renders chips as Block Kit buttons, cards
+#                          as simplified block sections.
+#   4. Plain-text fallback — (SMS, email) flattens chips to a numbered
+#                          list, cards to plain summary text.
+#
+# Rule: adding a new message type or trust_state entry here should be
+# the ONLY change needed to make it available across all three
+# surfaces — no surface-specific code should hardcode chip text.
+# ══════════════════════════════════════════════════════════════════════
+
+# ── Global rules (soul.md-derived — see src/core/soul.md) ─────────────
+global_rules:
+  - id: chips_are_non_binding
+    rule: >
+      Chips are suggested next turns, never the only option. Free-text
+      input must remain available in every render target, every state.
+    source: "soul.md value 3 — preserve dignity and agency"
+  - id: max_chips_per_turn
+    rule: "Never render more than 3 chips in a single turn (cognitive load)."
+  - id: no_pressure_language
+    rule: >
+      No chip or card copy may contain urgency/scarcity language
+      ("limited time", "act now", "spots filling up").
+    source: "soul.md value 1 — trust before conversion"
+  - id: rep_notes_never_customer_facing
+    rule: >
+      Fields sourced from KEY_REP_INTERNAL_NOTES must never appear in
+      any customer-facing message type, on any surface.
+    source: "domain/session_state.py — KEY_REP_INTERNAL_NOTES"
+  - id: identity_disclosure_overrides_chips
+    rule: >
+      If the customer sincerely asks whether they're talking to a
+      human, the agent_message identity-disclosure response takes
+      priority over any chip set queued for that trust_state.
+    source: "soul.md value 6 — honesty about what it is"
+
+# ── Message types (the rendered "shapes") ──────────────────────────────
+message_types:
+
+  agent_message:
+    description: Free-text agent turn. Always present, every turn.
+    fields: [text, trust_state, mode]
+    render:
+      website_widget: chat bubble
+      slack_teams: block "section" with markdown text
+      plain_text: raw text
+
+  quick_reply_chips:
+    description: >
+      Optional suggested customer replies for the current trust_state.
+      Never the only path — see global_rules.chips_are_non_binding.
+    fields:
+      - chips: list of { label: str, intent_hint: str }
+      - trust_state: TrustState enum value the set applies to
+    render:
+      website_widget: tappable pill buttons below agent_message
+      slack_teams: Block Kit button elements in an "actions" block
+      plain_text: numbered list appended to agent_message text
+
+  handoff_card:
+    description: >
+      Terminal-adjacent card offering to connect with a human rep.
+      Triggered by HandoffManager (see domain/trigger_catalog.py) —
+      this schema only defines what renders, not when it fires.
+    fields:
+      - trigger_type: HandoffTriggerType value (drives copy variant)
+      - sla_display: from trigger_catalog.format_sla_display()
+      - conversation_summary: must be unmodified — see soul.md value 7
+      - cta_label: e.g. "Connect me with someone"
+    render:
+      website_widget: rich card with CTA button
+      slack_teams: block section + button, posts to rep's channel too
+      plain_text: plain paragraph + reply-to-continue instruction
+
+  demo_scheduler_prompt:
+    description: >
+      Terminal-adjacent card offering to book a walkthrough. Distinct
+      from handoff_card because it doesn't require rep availability —
+      can fire in AUTONOMOUS mode without a mode transition.
+    fields:
+      - trust_state_at_offer: TrustState value (for analytics)
+      - fit_confirmed: bool — gate, same rule as _decision_ready_bridge
+      - calendar_link_or_form: str
+    render:
+      website_widget: embedded calendar widget or card + link
+      slack_teams: block section + "Schedule" button linking out
+      plain_text: link + one-line instruction
+
+  continue_relationship_prompt:
+    description: >
+      Non-terminal "not ready yet" path. Offers async follow-up
+      (e.g. email opt-in, resource send) without forcing a decision.
+      This is the soul.md-safe alternative to re-engagement pressure.
+    fields:
+      - trust_state_at_offer: TrustState value
+      - offer_type: enum [email_followup, resource_send, revisit_later]
+    render:
+      website_widget: soft-touch card, dismissable
+      slack_teams: block section, no urgency styling
+      plain_text: single offer sentence
+
+  exit_confirmation:
+    description: >
+      Respectful close when customer disengages or says no. Must not
+      contain re-engagement pressure or "are you sure" friction.
+    fields:
+      - reason_hint: enum [not_a_fit, not_now, explicit_decline, silence_timeout]
+      - reopen_path: str  # how customer can return later, if ever
+    render:
+      website_widget: simple closing message, widget minimizes
+      slack_teams: block section, thread closes
+      plain_text: closing text only
+
+  escalation_banner:
+    description: >
+      Rep-visible only — signals ALERT mode is active. Not customer-facing.
+      Included here because it shares the same trust_state/mode context
+      object as the customer-facing types above.
+    fields: [trigger_type, sla_display, mode]
+    render:
+      rep_console: banner at top of live conversation view
+      slack_teams: posted to rep's internal channel, not customer thread
+
+# ── Per-trust-state chip sets ──────────────────────────────────────────
+# Entries marked (given) are from your reference list, unchanged.
+# Entries marked (proposed) are new — flag for your review.
+trust_state_chips:
+
+  AWARENESS:  # given
+    - label: "Tell me what you're hoping to solve"
+      intent_hint: explore
+    - label: "I'm just browsing for now"
+      intent_hint: low_urgency
+
+  CURIOSITY:  # given
+    - label: "What's the biggest bottleneck right now?"
+      intent_hint: qualify
+    - label: "How does pricing work?"
+      intent_hint: evaluation_signal
+
+  HESITATION:  # given
+    - label: "I need more time to think"
+      intent_hint: low_urgency
+    - label: "Can we go through this in smaller steps?"
+      intent_hint: reduce_pace
+
+  OBJECTION:  # given
+    - label: "Here's my specific concern..."
+      intent_hint: objection
+    - label: "I've had a bad experience before"
+      intent_hint: objection_trust
+
+  EVALUATION:  # given
+    - label: "How is this different from [competitor]?"
+      intent_hint: comparison
+    - label: "What would a pilot look like?"
+      intent_hint: evaluation_deepen
+
+  TRUST_BUILDING:  # proposed — review against soul.md value 2
+    - label: "Can you show me how this works for a case like mine?"
+      intent_hint: deepen_trust
+    - label: "What should I know before moving forward?"
+      intent_hint: surface_unknowns
+
+  DECISION_READY:  # proposed
+    - label: "I'd like to talk to someone"
+      intent_hint: human_request       # → handoff_card
+    - label: "Can we set up a walkthrough?"
+      intent_hint: demo_request        # → demo_scheduler_prompt
+    - label: "I want to keep exploring on my own for now"
+      intent_hint: self_serve_continue # → continue_relationship_prompt
+
+  COMMITMENT:  # proposed
+    - label: "Let's move forward"
+      intent_hint: strong_buying_signal  # → handoff_card (rep confirms)
+    - label: "What are the next steps?"
+      intent_hint: process_question
+
+# ── Terminal / exit path map ────────────────────────────────────────────
+# Every conversation eventually resolves into exactly one of these.
+# This is the piece your reference list didn't cover yet — the "all
+# situations from enter to exit" requirement.
+terminal_paths:
+  HUMAN_HANDOFF:
+    message_type: handoff_card
+    entry_states: [DECISION_READY, COMMITMENT, any-with-HandoffTriggerType]
+    backing_logic: HandoffManager.should_trigger() + trigger_catalog.py
+
+  DEMO_SCHEDULED:
+    message_type: demo_scheduler_prompt
+    entry_states: [EVALUATION, TRUST_BUILDING, DECISION_READY]
+    gate: fit_confirmed == true   # same gate as _decision_ready_bridge
+
+  CONTINUE_RELATIONSHIP:
+    message_type: continue_relationship_prompt
+    entry_states: [HESITATION, OBJECTION, DECISION_READY]
+    note: >
+      Not a failure state — soul.md treats a respected "not yet" as a
+      correct outcome, not a lost conversion.
+
+  EXIT:
+    message_type: exit_confirmation
+    entry_states: [any]
+    note: >
+      Must be reachable from every trust_state. No trust_state's chip
+      set may omit an implicit exit path (customer can always just
+      stop replying or type "no thanks" — extractor must map this to
+      reason_hint: explicit_decline, not treat silence as an error).

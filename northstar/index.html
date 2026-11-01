@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Northstar — Lead Intelligence Agent</title>
+  <meta name="description" content="Northstar's Lead Intelligence Agent turns inbound interest into qualified opportunities by understanding needs, building trust, and qualifying responsibly. A fictional portfolio prototype.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231c1e22'/%3E%3Cpath d='M12 4l1.9 6.1L20 12l-6.1 1.9L12 20l-1.9-6.1L4 12l6.1-1.9z' fill='%23e0703f'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="brand" href="#top" aria-label="Northstar home">
+        <svg class="brand__mark" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="7" fill="currentColor"/>
+          <path d="M12 4.5l1.8 5.7L19.5 12l-5.7 1.8L12 19.5l-1.8-5.7L4.5 12l5.7-1.8z" fill="var(--accent-bright)"/>
+        </svg>
+        <span class="brand__name">Northstar</span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle__label">Menu</span>
+        <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" data-nav aria-label="Primary">
+        <a class="site-nav__link" href="#product">Product</a>
+        <a class="site-nav__link" href="#how-it-works">How It Works</a>
+        <a class="site-nav__link" href="#for-sales-teams">For Sales Teams</a>
+        <a class="btn btn--primary btn--small" href="#experience" data-open-widget>Experience the Agent</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Lead Intelligence Agent</p>
+          <h1>Turn inbound interest into qualified opportunities.</h1>
+          <p class="lede">
+            Northstar’s agent talks with prospects the way a thoughtful sales development rep would. It listens for what they
+            need, is plain about being an AI, gathers qualification evidence one question at a time, and brings in a person
+            when a decision needs one.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#experience" data-open-widget>Experience the Agent</a>
+            <a class="btn btn--ghost" href="#how-it-works">Explore How It Works</a>
+          </div>
+          <p class="hero__note">A scripted prototype. Nothing you type leaves your browser.</p>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <svg viewBox="0 0 480 400" role="presentation" focusable="false">
+            <g class="hv-lines" fill="none" stroke="currentColor" stroke-width="1.25">
+              <path d="M40 70 C 150 90, 200 160, 300 200"/>
+              <path d="M30 170 C 130 175, 210 190, 300 200"/>
+              <path d="M60 280 C 150 260, 220 225, 300 200"/>
+              <path d="M110 355 C 180 310, 245 245, 300 200"/>
+              <path d="M150 28 C 200 80, 255 140, 300 200"/>
+            </g>
+            <g class="hv-dots" fill="currentColor">
+              <circle cx="40" cy="70" r="5"/><circle cx="30" cy="170" r="5"/><circle cx="60" cy="280" r="5"/>
+              <circle cx="110" cy="355" r="5"/><circle cx="150" cy="28" r="5"/>
+            </g>
+            <path class="hv-path" d="M300 200 H 420" stroke="currentColor" stroke-width="1.25" stroke-dasharray="3 6"/>
+            <circle cx="300" cy="200" r="30" fill="var(--bg)" stroke="currentColor" stroke-width="1.25"/>
+            <path class="hv-star" d="M300 176l5.6 18.4L324 200l-18.4 5.6L300 224l-5.6-18.4L276 200l18.4-5.6z" fill="var(--accent)"/>
+            <rect x="420" y="182" width="48" height="36" rx="10" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.25"/>
+            <path d="M432 200l6 6 12-12" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="hero__caption">Scattered signals in. One clear, evidenced conversation out.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section" id="how-it-works" aria-labelledby="how-title">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="eyebrow">How It Works</p>
+          <h2 id="how-title">Three habits of a good first conversation.</h2>
+        </header>
+
+        <ol class="cards">
+          <li class="card">
+            <div class="card__visual" aria-hidden="true">
+              <svg viewBox="0 0 220 96" focusable="false">
+                <rect x="8" y="8" width="132" height="26" rx="13" fill="var(--blue-soft)"/>
+                <rect x="22" y="18" width="70" height="6" rx="3" fill="var(--blue)" opacity=".55"/>
+                <rect x="80" y="44" width="132" height="26" rx="13" fill="var(--ink)"/>
+                <rect x="96" y="54" width="84" height="6" rx="3" fill="#fff" opacity=".8"/>
+                <circle cx="22" cy="84" r="3" fill="var(--accent)"/><circle cx="34" cy="84" r="3" fill="var(--accent)" opacity=".6"/><circle cx="46" cy="84" r="3" fill="var(--accent)" opacity=".3"/>
+              </svg>
+            </div>
+            <p class="card__index">01</p>
+            <h3>Understand Intent</h3>
+            <p>The agent starts with the visitor’s situation, not a form. It asks what brought them here and why it matters, so every follow-up is relevant instead of generic.</p>
+          </li>
+
+          <li class="card">
+            <div class="card__visual" aria-hidden="true">
+              <svg viewBox="0 0 220 96" focusable="false">
+                <path d="M110 10l40 14v26c0 22-17 36-40 44-23-8-40-22-40-44V24z" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.5"/>
+                <path d="M94 52l12 12 22-24" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="34" cy="48" r="4" fill="var(--accent)"/><path d="M42 48h14" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="2 4"/>
+              </svg>
+            </div>
+            <p class="card__index">02</p>
+            <h3>Build Trust</h3>
+            <p>It says plainly that it is an AI, explains why it is asking each question, and doesn’t press for contact details before there is a reason to share them.</p>
+          </li>
+
+          <li class="card">
+            <div class="card__visual" aria-hidden="true">
+              <svg viewBox="0 0 220 96" focusable="false">
+                <rect x="14" y="62" width="40" height="22" rx="5" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.25"/>
+                <rect x="62" y="42" width="40" height="42" rx="5" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.25"/>
+                <rect x="110" y="22" width="40" height="62" rx="5" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.25"/>
+                <path d="M158 53h22" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <circle cx="196" cy="53" r="12" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="196" cy="49" r="3" fill="var(--accent)"/><path d="M190 60c1.5-4 10.5-4 12 0" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="card__index">03</p>
+            <h3>Qualify Responsibly</h3>
+            <p>It gathers evidence about process, volume and goals. When something needs verification or a person’s authority, it says so and hands off rather than guessing.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Product experience -->
+    <section class="section section--band" id="product" aria-labelledby="product-title">
+      <div class="wrap">
+        <header class="section__head section__head--wide">
+          <p class="eyebrow">Product Experience</p>
+          <h2 id="product-title">Move beyond the form submission.</h2>
+          <p class="lede">
+            A form captures fields. It can’t ask a follow-up, notice hesitation, or tell a sales team what it still needs to
+            confirm. The agent turns the same inbound interest into a conversation that leaves behind something a rep can
+            actually use.
+          </p>
+        </header>
+
+        <div class="compare">
+          <div class="compare__col">
+            <h3>A form submission</h3>
+            <ul>
+              <li>Fixed fields, answered or skipped</li>
+              <li>Intent inferred from a few dropdowns</li>
+              <li>No way to ask “what did you mean?”</li>
+              <li>Fragmented signals across tools</li>
+            </ul>
+          </div>
+          <div class="compare__col compare__col--agent">
+            <h3>A qualification conversation</h3>
+            <ul>
+              <li>One relevant question at a time</li>
+              <li>Needs described in the visitor’s own words</li>
+              <li>Reasons for each question explained</li>
+              <li>Clear next step, or a clear handoff</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="teams" id="for-sales-teams" aria-labelledby="teams-title">
+          <h3 id="teams-title">For sales teams</h3>
+          <div class="teams__grid">
+            <div>
+              <h4>Evidence over assumptions</h4>
+              <p>What the visitor said about their process and goals stays attached to the lead, so the first human conversation starts further along.</p>
+            </div>
+            <div>
+              <h4>Honest boundaries</h4>
+              <p>The agent doesn’t invent guarantees, pricing, or technical commitments. Anything it can’t establish, it names as unverified.</p>
+            </div>
+            <div>
+              <h4>Handoffs that make sense</h4>
+              <p>Legal, security, and authorization questions go to a person, with an explanation to the visitor of why.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section cta" id="experience" aria-labelledby="cta-title">
+      <div class="wrap cta__inner">
+        <h2 id="cta-title">See how it handles a real conversation.</h2>
+        <p class="lede">
+          Open the chat and start with any of the suggestions. Or try something harder: ask for a guarantee, or ask to
+          speak with a person.
+        </p>
+        <a class="btn btn--primary btn--large" href="#experience" data-open-widget>Experience the Agent</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <p>© Northstar. A fictional product created for a portfolio prototype.</p>
+      <p>Chat replies are scripted for demonstration. No live model, no data collection.</p>
+    </div>
+  </footer>
+
+  <div id="ns-widget-root"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
