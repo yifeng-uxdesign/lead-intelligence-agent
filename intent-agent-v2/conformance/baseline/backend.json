@@ -838,7 +838,7 @@
     {
      "u": "We get around 300 inbound leads a month but only 20% become opportunities, and our CRM is Salesforce but there's no consistent process.",
      "dims": {
-      "escalation": "fail",
+      "escalation": "pass",
       "must_include_any": "fail",
       "not_fallback": "pass"
      },
@@ -846,7 +846,7 @@
      "obs": {
       "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -1046,7 +1046,7 @@
    "id": "C5-vs-gong",
    "group": "issue3_nuance",
    "layer": "understanding",
-   "status": "fail",
+   "status": "pass",
    "repetition": [],
    "claims": [],
    "n_turns": 2,
@@ -1071,14 +1071,14 @@
      "u": "How is this different from what Gong does?",
      "dims": {
       "route": "pass",
-      "escalation": "fail",
+      "escalation": "pass",
       "not_fallback": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
       "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -1131,7 +1131,7 @@
      "obs": {
       "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On price, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
       "route": "pricing",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -1153,7 +1153,7 @@
    "id": "C7-vp-approves",
    "group": "issue3_nuance",
    "layer": "understanding",
-   "status": "fail",
+   "status": "pass",
    "repetition": [],
    "claims": [],
    "n_turns": 2,
@@ -1178,14 +1178,14 @@
      "u": "My VP has to approve anything like this before we move.",
      "dims": {
       "route": "pass",
-      "escalation": "fail",
+      "escalation": "pass",
       "not_fallback": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
       "reply": "I'd love to understand what matters most to you about getting the right people involved. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "stakeholder",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -1231,14 +1231,14 @@
      "u": "We use Salesforce and our legal team reviews every vendor we bring in.",
      "dims": {
       "route": "fail",
-      "escalation": "fail",
+      "escalation": "pass",
       "not_fallback": "pass"
      },
      "status": "fail",
      "obs": {
       "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -1767,14 +1767,14 @@
     {
      "u": "Our CRM is Salesforce.",
      "dims": {
-      "escalation": "fail",
+      "escalation": "pass",
       "must_not": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
       "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -2047,7 +2047,7 @@
     {
      "u": "We get about 3,000 inbound leads a month, mostly small-business inquiries, and we're on HubSpot.",
      "dims": {
-      "escalation": "fail",
+      "escalation": "pass",
       "must_include_any": "fail",
       "not_fallback": "pass"
      },
@@ -2055,7 +2055,7 @@
      "obs": {
       "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -2080,15 +2080,15 @@
      "u": "I'm ready to move forward \u2014 can we get this set up this week?",
      "dims": {
       "route": "pass",
-      "escalation": "fail",
+      "escalation": "pass",
       "rep_notified": "pass",
       "must_not": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
       "reply": "I'd love to understand what matters most to you about the next steps. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "buying",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -2116,15 +2116,15 @@
      "u": "We have budget approved and our CTO is on board. What do we need to sign?",
      "dims": {
       "route": "pass",
-      "escalation": "fail",
+      "escalation": "pass",
       "rep_notified": "pass",
       "must_not": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
       "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
       "route": "buying",
-      "escalation": "human_path",
+      "escalation": "none",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
@@ -2784,9 +2784,9 @@
  ],
  "metrics": {
   "cases_scored": 40,
-  "overall_pass_rate": 0.3,
+  "overall_pass_rate": 0.35,
   "route_accuracy": 0.447,
-  "false_escalation_rate": 0.196,
+  "false_escalation_rate": 0.039,
   "missed_intervention_rate": 0.0,
   "fallback_rate": 0.391,
   "repeat_rate": 0.111,

@@ -14,7 +14,7 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 - Decision trace (`src/domain/decision_trace.py`): one per turn on `OrchestrationResult.decision_trace`, last 50 persisted in metadata, rep-only via `GET /context` (`decision_trace`). Records signals, every trigger hit (class + evidence), intervention action, rep-notified reason, mode reason, delivery reason, response source, outcome.
 - Trigger taxonomy (`TriggerClass` / `TRIGGER_CLASS` / `TRIGGER_PRECEDENCE` in `trigger_catalog.py`): intervention = human_request, frustration (agent/unspecified), commitment_demand, pricing_negotiation, contract_legal_ask → open intervention + hold; attention = strong_buying_signal, pricing_discussion (interest) → rep notified, agent answers; context = competitor, stakeholder → rep notified once per lead (`rep_notices`), agent answers. New intervention detectors are narrow lexical rules in `signal_adapters.py` (replace in step 7).
 - Tests: `python3 -m pytest -q` → 300 passed, 3 xfailed (the xfails are the roadmap step-3 gaps: autonomy profiles).
-- Conformance observer quirk: `run_backend.py` maps *any* queued rep notice to escalation `human_path`, so context/attention notices count as false escalations (e.g. P2 buying turns expect `none` + `rep_notified`). Not changed yet — owner to decide.
+- Conformance observer: `human_path` = the customer is offered a person (taxonomy.json), not "rep was notified". The backend observer used to conflate them; fixed in its own commit with baselines recorded before/after (backend false_escalation 0.189→0.038 is measurement only; on a consistent measure, steps 1–2 took it 0.170→0.038).
 
 ## Workflow for every roadmap step
 1. Make the change.

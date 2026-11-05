@@ -93,7 +93,13 @@ def observe_case(case: dict) -> list[dict]:
         reply = res.customer_message or ""
         queued = bool(res.handoff_queued)
         status = res.delivery_status
-        esc = "hold" if status == DeliveryStatus.HOLDING.value else ("human_path" if queued else "none")
+        # human_path means the *customer* is offered a person (taxonomy.json), not
+        # that the rep was notified: context/attention notices reach the rep
+        # silently while the agent keeps answering. Only an intervention opened
+        # this turn without a hold would offer a person.
+        tr = res.decision_trace
+        offers_person = tr is not None and tr.intervention_action == "opened"
+        esc = "hold" if status == DeliveryStatus.HOLDING.value else ("human_path" if offers_person else "none")
         rows.append({
             "reply": reply, "route": derive_route(res, res.lead_signals), "escalation": esc,
             "rep_notified": queued, "customer_facing": _FACING.get(status),
