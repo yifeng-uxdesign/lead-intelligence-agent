@@ -1,0 +1,6 @@
+{
+  "_doc": "Policy cases the current backend is KNOWN to fail, each tied to the roadmap step that fixes it. pytest runs them as strict xfail: when a step lands and a case starts passing, the test goes red until its entry is deleted here. Step numbers follow the roadmap in CLAUDE.md (step 3 = autonomy profiles, D2/D3). The trigger-taxonomy gaps (CLAUDE.md step 2) are closed.",
+  "POL-20-restricted-after-human-request": {"step": 3, "decision": "D2", "reason": "After a human request the agent only repeats a holding message; no restricted-autonomy profile exists."},
+  "POL-21-approval-gate-offline-not-unrestricted": {"step": 3, "decision": "D3", "reason": "With the approval gate on and the rep offline the mode machine returns AUTONOMOUS and the agent answers unrestricted."},
+  "POL-26-hold-followups-not-verbatim-repeat": {"step": 3, "decision": "D2", "reason": "Follow-ups during an open intervention repeat the same holding text verbatim."}
+}

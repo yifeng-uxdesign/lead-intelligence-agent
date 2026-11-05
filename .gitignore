@@ -37,3 +37,4 @@ logs.json
 # Legacy (archived; not part of active development)
 _legacy/
 _legacymv/
+intent-agent-v2/conformance/results/

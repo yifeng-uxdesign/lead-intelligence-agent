@@ -1,0 +1,11 @@
+{
+  "_doc": "Frozen vocabulary shared by cases, both engine observers, and (later) the LLM interpreter's label set.",
+  "routes": {"labels": ["frustration_agent","frustration_other","human","identity","unsupported-timeline","unsupported","buying","compare","pricing","morework","accountability","commitment_request","incentive","nosell","reviews","burned","skeptical","privacy","setup","urgency","enthusiasm","return","pilot","pause","stakeholder","product","empathy","none"]},
+  "escalation": {"values": {"none":"Agent keeps conversing; no human path offered or imposed.","human_path":"Agent keeps conversing but offers/explains a person for this matter.","hold":"Agent stops answering on its own; a person will take over."}},
+  "customer_facing": {"values": {"answer":"Normal agent response.","restricted_answer":"TARGET (D2/D3, not built): product facts only; no prices, commitments, timelines or new qualification questions.","holding":"Approved holding copy only.","draft_for_rep":"Nothing to customer; draft awaits approval (RELAY).","rep_suggestion":"Nothing to customer; suggestion shown to rep (SHADOW)."}},
+  "trigger_classes_target": {
+    "context": {"effect":"Recorded and shown to the rep; agent continues.","examples":["competitor_mention","stakeholder_involvement"]},
+    "attention": {"effect":"Rep notified as hot lead; agent continues with the fit check.","examples":["strong_buying_signal","pricing_interest"]},
+    "intervention": {"effect":"Opens an intervention; autonomy restricted.","examples":["human_request","agent_directed_frustration","commitment_or_accountability_demand","pricing_negotiation","contract_or_legal_ask"]}
+  }
+}

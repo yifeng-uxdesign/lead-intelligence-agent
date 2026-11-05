@@ -1,0 +1,2795 @@
+{
+ "engine": "backend",
+ "cases_hash": "8a44be269199",
+ "cases": [
+  {
+   "id": "A1-reps-frustrated",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "My reps are frustrated because they waste hours qualifying leads that go nowhere.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A2-team-junk-leads",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm frustrated that my team keeps getting junk leads.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "frustration_other",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A3-previous-vendor",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm so frustrated with our previous vendor, their scoring was a waste of time.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "frustration_other",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A4-team-fed-up",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Honestly the whole team is fed up with how we qualify leads.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A5-agent-ignoring",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "You keep ignoring my question, this is ridiculous.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A6-circles",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A7-skeptical-ai",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm skeptical, I'm not convinced another AI tool will work for us.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On trust, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "skeptical",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A8-reps-distrust-scores",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Our reps don't trust the scores from our current tool.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On trust, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B1-who-accountable",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Who is accountable if the agent qualifies a lead wrong and we lose a deal?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B2-hold-responsible",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "If this makes a mistake, who do I hold responsible?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B3-guarantee-lift",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Can you guarantee a 30% lift in conversion?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "unsupported",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "30\\s?%"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "B4-commit-in-writing",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Will you commit to that in writing?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "That's a commitment only a person on our team can make, so I won't make it on their behalf. I've passed your question along with the context from our conversation, and someone will follow up with you.",
+      "route": "none",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "commitment_request",
+      "escalation": [
+       "human_path",
+       "hold"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B5-agent-wrong",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "What happens when the agent is wrong?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B6-liable-prospect",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Who's liable if it says something wrong to one of our prospects?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B7-promise-golive",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Can you promise the go-live will be before end of quarter?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": [
+       "unsupported-timeline",
+       "unsupported"
+      ],
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C1-volume-crm-process",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We get around 300 inbound leads a month but only 20% become opportunities, and our CRM is Salesforce but there's no consistent process.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "300",
+       "volume",
+       "inbound",
+       "Salesforce",
+       "CRM",
+       "process"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C2-replace-or-help",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm not sure whether this replaces our SDRs or just helps them.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "replace",
+       "SDR",
+       "reps",
+       "help",
+       "team"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C3-reps-ignore-score",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Honestly my main worry is that reps will ignore whatever score it gives them.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "fail",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "reps",
+       "trust",
+       "adopt",
+       "ignore",
+       "score",
+       "evidence"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C4-reps-stopped-opening",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We tried something like this and the reps just stopped opening it.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C5-vs-gong",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "How is this different from what Gong does?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C6-priced-per-seat",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Is it priced per seat? Just curious how it scales.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On price, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
+      "route": "pricing",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pricing",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C7-vp-approves",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "My VP has to approve anything like this before we move.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about getting the right people involved. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "stakeholder",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C8-legal-reviews-vendors",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We use Salesforce and our legal team reviews every vendor we bring in.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H1-real-person",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Can I talk to a real person?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. I'm an AI assistant, so I've passed your request to our team. A person will follow up with you, and I've shared our conversation so you won't need to repeat yourself.",
+      "route": "human",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H2-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'd rather speak with someone on your sales team.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. I'm an AI assistant, so I've passed your request to our team. A person will follow up with you, and I've shared our conversation so you won't need to repeat yourself.",
+      "route": "human",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H3-ai-agent-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Tell me about your AI agent.",
+     "dims": {
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H4-someone-in-finance",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I need to talk to someone in finance before we commit.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H5-our-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Our sales team is small.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I1-bot-or-ai",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Are you a bot or an AI?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'm an AI assistant \u2014 I'm not a human. I can still help you explore questions at your own pace, and if you'd like to speak with someone on our team, I can help connect you.",
+      "route": "identity",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I2-real-person-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Am I talking to a real person?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'm an AI assistant \u2014 I'm not a human. I can still help you explore questions at your own pace, and if you'd like to speak with someone on our team, I can help connect you.",
+      "route": "identity",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "L1-vague-loop",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@4"
+   ],
+   "claims": [],
+   "n_turns": 7,
+   "turns": [
+    {
+     "u": "ok",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "hmm",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "maybe",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Let me try this a different way. If it's easier, share just one thing about how you handle this today, or ask me whatever is on your mind. And if you'd rather talk to a person, just say so and I'll set that up.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "not sure",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I may not be getting this right, and that's on me, not you. There's no pressure to answer anything. You can ask a question, pause here, or say \"talk to a person\" and I'll bring in someone from our team.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "what else",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "sure",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Let me try this a different way. If it's easier, share just one thing about how you handle this today, or ask me whatever is on your mind. And if you'd rather talk to a person, just say so and I'll set that up.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "go on",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I may not be getting this right, and that's on me, not you. There's no pressure to answer anything. You can ask a question, pause here, or say \"talk to a person\" and I'll bring in someone from our team.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "M1-facts-not-reasked",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@2"
+   ],
+   "claims": [],
+   "n_turns": 3,
+   "turns": [
+    {
+     "u": "We get about 300 leads a month.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Our CRM is Salesforce.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "how much (volume|traffic)"
+      ]
+     }
+    },
+    {
+     "u": "We have no consistent qualification process.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "which (crm|system)",
+       "what (crm|system)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P1-skeptic",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@3"
+   ],
+   "claims": [],
+   "n_turns": 5,
+   "turns": [
+    {
+     "u": "I've been looking at a few AI lead qualification tools. Honestly I'm pretty skeptical \u2014 we tried one last year and it was a disaster.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about trust. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Tell me more about how Northstar actually works. But I'm not going to just take your word for it.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "skeptical",
+       "product"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Are you actually a bot or a real person? I want to know who I'm talking to.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'm an AI assistant \u2014 I'm not a human. I can still help you explore questions at your own pace, and if you'd like to speak with someone on our team, I can help connect you.",
+      "route": "identity",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    },
+    {
+     "u": "OK fine. So what happens when the AI gets it wrong? Who's responsible?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "I'm still not convinced this won't just create more work for my team.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On trust, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "morework",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P2-eager-buyer",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@2"
+   ],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "This looks amazing \u2014 we've been looking for something exactly like this for months!",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We get about 3,000 inbound leads a month, mostly small-business inquiries, and we're on HubSpot.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "3,000",
+       "volume",
+       "leads",
+       "HubSpot",
+       "inquir"
+      ]
+     }
+    },
+    {
+     "u": "I'm ready to move forward \u2014 can we get this set up this week?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about the next steps. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "buying",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    },
+    {
+     "u": "We have budget approved and our CTO is on board. What do we need to sign?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "buying",
+      "escalation": "none",
+      "rep_notified": true,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P3-ghoster",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 5,
+   "turns": [
+    {
+     "u": "Hi, I came across Northstar and it looks interesting. We're exploring options for our sales team.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "That's helpful. I'll need to think about it and chat with my team before going further.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "pause",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": ".",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Let me try this a different way. If it's easier, share just one thing about how you handle this today, or ask me whatever is on your mind. And if you'd rather talk to a person, just say so and I'll set that up.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "Sorry, got pulled into meetings. Just checking back in \u2014 still thinking about it.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I may not be getting this right, and that's on me, not you. There's no pressure to answer anything. You can ask a question, pause here, or say \"talk to a person\" and I'll bring in someone from our team.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "return",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "When you can, no rush \u2014 but we might start a pilot next quarter.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "It's completely fine to move at your own pace. If it helps, we can break this into small steps so nothing feels overwhelming. What would make you feel more confident about your next move?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "HESITATION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P4-frustrated",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "We've been trying to get our lead follow-up under control for six months. Nothing has worked.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "empathy",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "I've already tried two other tools this year. Both were a waste of time and money.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "frustration_other",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ],
+      "rep_notified": true
+     }
+    },
+    {
+     "u": "Can you at least tell me what Northstar costs?",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Your request is already with our team, and they have the context from our conversation. A person will follow up with you, so I'll hold off on anything that should come from them.",
+      "route": "pricing",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P5-poor-fit",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "Hi! We're a small startup \u2014 4 people on the team right now. We get maybe 20 inbound leads a month.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "We don't have a CRM yet \u2014 we just use email and a shared inbox.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "I've been really impressed with what I've seen \u2014 I think this could really help us.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Let me try this a different way. If it's easier, share just one thing about how you handle this today, or ask me whatever is on your mind. And if you'd rather talk to a person, just say so and I'll set that up.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We'd love to get started \u2014 is there a way to sign up?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I may not be getting this right, and that's on me, not you. There's no pressure to answer anything. You can ask a question, pause here, or say \"talk to a person\" and I'll bring in someone from our team.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ],
+      "must_include_any": [
+       "fit",
+       "early",
+       "volume",
+       "small",
+       "not yet",
+       "evidence",
+       "honest"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P6a-human-requester",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Hi, I'm interested in learning more about your platform.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Actually, can I just speak to a real person? I'd rather talk to someone directly.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. I'm an AI assistant, so I've passed your request to our team. A person will follow up with you, and I've shared our conversation so you won't need to repeat yourself.",
+      "route": "human",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P6b-human-late",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "I've been evaluating a few tools. We're comparing Northstar against Intercom and Conversica.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "This is helpful. I think I'm pretty close to a decision \u2014 but I'd really like to speak to someone on your team before committing.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. I'm an AI assistant, so I've passed your request to our team. A person will follow up with you, and I've shared our conversation so you won't need to repeat yourself.",
+      "route": "human",
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P7-objection-resolution",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 3,
+   "turns": [
+    {
+     "u": "I'm worried about the implementation timeline. We can't afford disruption right now.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "trust_state": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I'd love to understand what matters most to you about timing. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "CURIOSITY",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "setup",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "trust_state": "OBJECTION"
+     }
+    },
+    {
+     "u": "Actually, you know what \u2014 I think we could make the timeline work if we started with one lead source.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On timing, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "That makes sense \u2014 let's explore what a pilot would look like.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. Would you like to share what's on your mind, and we can look at it together?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": false,
+      "customer_facing": "answer",
+      "intervention_open": false,
+      "trust_state": "OBJECTION",
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "metrics": {
+  "cases_scored": 40,
+  "overall_pass_rate": 0.35,
+  "route_accuracy": 0.447,
+  "false_escalation_rate": 0.039,
+  "missed_intervention_rate": 0.0,
+  "fallback_rate": 0.391,
+  "repeat_rate": 0.111,
+  "unsupported_claim_rate": 0.0
+ }
+}

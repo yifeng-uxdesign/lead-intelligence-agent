@@ -1,0 +1,2798 @@
+{
+ "engine": "widget",
+ "cases_hash": "8a44be269199",
+ "cases": [
+  {
+   "id": "A1-reps-frustrated",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "My reps are frustrated because they waste hours qualifying leads that go nowhere.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A2-team-junk-leads",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm frustrated that my team keeps getting junk leads.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A3-previous-vendor",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm so frustrated with our previous vendor, their scoring was a waste of time.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A4-team-fed-up",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Honestly the whole team is fed up with how we qualify leads.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A5-agent-ignoring",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "You keep ignoring my question, this is ridiculous.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A6-circles",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A7-skeptical-ai",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm skeptical, I'm not convinced another AI tool will work for us.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a reasonable stance, and I wouldn\u2019t ask you to take my word for anything. The most honest way to judge me is to test me.\nWhat would you most want to check?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "skeptical",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A8-reps-distrust-scores",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Our reps don't trust the scores from our current tool.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a reasonable stance, and I wouldn\u2019t ask you to take my word for anything. The most honest way to judge me is to test me.\nWhat would you most want to check?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B1-who-accountable",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Who is accountable if the agent qualifies a lead wrong and we lose a deal?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a fair thing to ask before anything is signed.\nI can\u2019t make accountability or refund promises. That would be a commitment, and commitments belong in an agreement a person can stand behind \u2014 not in a chat with an AI.\nWhat I can say is how it\u2019s designed: it flags what it doesn\u2019t know, and decisions with real stakes go to a person with the context. If accountability is the deciding question, a person should answer it directly.",
+      "route": "accountability",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B2-hold-responsible",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "If this makes a mistake, who do I hold responsible?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B3-guarantee-lift",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Can you guarantee a 30% lift in conversion?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I can\u2019t agree to that. I don\u2019t have evidence for guarantees, conversion promises, or technical commitments that haven\u2019t been verified for your environment.\nIf I invented a number or an SLA here, that would be a claim \u2014 not qualification.\nWhat I can do is explain how the agent is supposed to behave, and connect you with a person when a commitment needs to be real. What would be most useful?",
+      "route": "unsupported",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "unsupported",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "30\\s?%"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "B4-commit-in-writing",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Will you commit to that in writing?",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "commitment_request",
+      "escalation": [
+       "human_path",
+       "hold"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B5-agent-wrong",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "What happens when the agent is wrong?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B6-liable-prospect",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Who's liable if it says something wrong to one of our prospects?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a fair thing to ask before anything is signed.\nI can\u2019t make accountability or refund promises. That would be a commitment, and commitments belong in an agreement a person can stand behind \u2014 not in a chat with an AI.\nWhat I can say is how it\u2019s designed: it flags what it doesn\u2019t know, and decisions with real stakes go to a person with the context. If accountability is the deciding question, a person should answer it directly.",
+      "route": "accountability",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B7-promise-golive",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Can you promise the go-live will be before end of quarter?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I can\u2019t agree to that. I don\u2019t have evidence for guarantees, conversion promises, or technical commitments that haven\u2019t been verified for your environment.\nIf I invented a number or an SLA here, that would be a claim \u2014 not qualification.\nWhat I can do is explain how the agent is supposed to behave, and connect you with a person when a commitment needs to be real. What would be most useful?",
+      "route": "unsupported",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "unsupported-timeline",
+       "unsupported"
+      ],
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C1-volume-crm-process",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We get around 300 inbound leads a month but only 20% become opportunities, and our CRM is Salesforce but there's no consistent process.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted a high volume of inbound inquiries and tools already in place for tracking them.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "300",
+       "volume",
+       "inbound",
+       "Salesforce",
+       "CRM",
+       "process"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C2-replace-or-help",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'm not sure whether this replaces our SDRs or just helps them.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "fail",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "replace",
+       "SDR",
+       "reps",
+       "help",
+       "team"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C3-reps-ignore-score",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Honestly my main worry is that reps will ignore whatever score it gives them.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "fail",
+      "not_fallback": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "reps",
+       "trust",
+       "adopt",
+       "ignore",
+       "score",
+       "evidence"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C4-reps-stopped-opening",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We tried something like this and the reps just stopped opening it.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That sounds costly, and it makes sense to raise it up front. I won\u2019t tell you this is different \u2014 you\u2019d have no reason to believe me yet.\nWhat went wrong with the last one, as far as you could tell?",
+      "route": "burned",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C5-vs-gong",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "How is this different from what Gong does?",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "In practice it works like this. The agent starts by listening: what the person is trying to do and why now. Along the way it gathers the evidence a sales team cares about \u2014 the size of the problem, the tools and process around it, who else is involved, and timing.\nIt keeps what it knows separate from what it\u2019s guessing. Anything it can\u2019t verify, or that needs a person\u2019s judgment \u2014 pricing, contracts, commitments \u2014 goes to a human.\nI\u2019m explaining this before asking you anything, so you know what the questions are for.\nIf you like, I can ask about your sales process the way the agent would with a prospect.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C6-priced-per-seat",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Is it priced per seat? Just curious how it scales.",
+     "dims": {
+      "route": "fail",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "In practice it works like this. The agent starts by listening: what the person is trying to do and why now. Along the way it gathers the evidence a sales team cares about \u2014 the size of the problem, the tools and process around it, who else is involved, and timing.\nIt keeps what it knows separate from what it\u2019s guessing. Anything it can\u2019t verify, or that needs a person\u2019s judgment \u2014 pricing, contracts, commitments \u2014 goes to a human.\nI\u2019m explaining this before asking you anything, so you know what the questions are for.\nIf you like, I can ask about your sales process the way the agent would with a prospect.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pricing",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C7-vp-approves",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "My VP has to approve anything like this before we move.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a normal part of deciding. Whose approval matters most, and what would they want to be sure of?",
+      "route": "stakeholder",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C8-legal-reviews-vendors",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "We use Salesforce and our legal team reviews every vendor we bring in.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "not_fallback": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H1-real-person",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Can I talk to a real person?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H2-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I'd rather speak with someone on your sales team.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H3-ai-agent-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Tell me about your AI agent.",
+     "dims": {
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Good place to start. In one line: Northstar\u2019s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in.\nI\u2019ll ask about you first so what I say is relevant, not generic.\nWhat kind of company are you evaluating this for?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H4-someone-in-finance",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "I need to talk to someone in finance before we commit.",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H5-our-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "dims": {},
+     "status": "unscored",
+     "obs": {
+      "reply": "Short version: Northstar\u2019s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it\u2019s an AI, and brings in a person when a decision, commitment, or sensitive question comes up.\nIt isn\u2019t built to pressure anyone or to promise results it can\u2019t back up. What would you most like to understand?",
+      "route": "product",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {}
+    },
+    {
+     "u": "Our sales team is small.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Say what you\u2019d like to look at first and I\u2019ll start there.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I1-bot-or-ai",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Are you a bot or an AI?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m an AI. There is no person typing these replies. I\u2019m the Northstar AI assistant, and in this prototype I follow a scripted flow.\nI\u2019m telling you directly because you should always know who you\u2019re talking to.\nIf you\u2019d rather deal with a person, I can set that up. Otherwise I\u2019m glad to keep going.",
+      "route": "identity",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I2-real-person-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 1,
+   "turns": [
+    {
+     "u": "Am I talking to a real person?",
+     "dims": {
+      "route": "fail",
+      "escalation": "fail",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "fail",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "L1-vague-loop",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "identical_reply@2",
+    "identical_reply@3",
+    "identical_reply@4",
+    "identical_reply@5",
+    "identical_reply@6"
+   ],
+   "claims": [],
+   "n_turns": 7,
+   "turns": [
+    {
+     "u": "ok",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "No rush at all. I\u2019m here whenever you want to pick this up, and it\u2019s completely fine not to.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "hmm",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "maybe",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "not sure",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "what else",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "sure",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "go on",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Still here, no pressure.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "M1-facts-not-reasked",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 3,
+   "turns": [
+    {
+     "u": "We get about 300 leads a month.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted a high volume of inbound inquiries.\nI\u2019ll ask one useful question at a time so this stays a conversation, not a form.\nWhen a new inbound inquiry comes in, what happens first on your team?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Our CRM is Salesforce.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted tools already in place for tracking them.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "how much (volume|traffic)"
+      ]
+     }
+    },
+    {
+     "u": "We have no consistent qualification process.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019ll treat that as a qualification-quality problem unless you say otherwise.\nLast question from me on this thread: what would a better outcome look like \u2014 more time for reps on fit conversations, fewer wasted follow-ups, or a clearer picture of who is actually ready?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": true
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "which (crm|system)",
+       "what (crm|system)"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P1-skeptic",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 5,
+   "turns": [
+    {
+     "u": "I've been looking at a few AI lead qualification tools. Honestly I'm pretty skeptical \u2014 we tried one last year and it was a disaster.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That sounds costly, and it makes sense to raise it up front. I won\u2019t tell you this is different \u2014 you\u2019d have no reason to believe me yet.\nWhat went wrong with the last one, as far as you could tell?",
+      "route": "burned",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Tell me more about how Northstar actually works. But I'm not going to just take your word for it.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a reasonable stance, and I wouldn\u2019t ask you to take my word for anything. The most honest way to judge me is to test me.\nWhat would you most want to check?",
+      "route": "skeptical",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "skeptical",
+       "product"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Are you actually a bot or a real person? I want to know who I'm talking to.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m an AI. There is no person typing these replies. I\u2019m the Northstar AI assistant, and in this prototype I follow a scripted flow.\nI\u2019m telling you directly because you should always know who you\u2019re talking to.\nIf you\u2019d rather deal with a person, I can set that up. Otherwise I\u2019m glad to keep going.",
+      "route": "identity",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    },
+    {
+     "u": "OK fine. So what happens when the AI gets it wrong? Who's responsible?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a fair thing to ask before anything is signed.\nI can\u2019t make accountability or refund promises. That would be a commitment, and commitments belong in an agreement a person can stand behind \u2014 not in a chat with an AI.\nWhat I can say is how it\u2019s designed: it flags what it doesn\u2019t know, and decisions with real stakes go to a person with the context. If accountability is the deciding question, a person should answer it directly.",
+      "route": "accountability",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "I'm still not convinced this won't just create more work for my team.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s one of the most common ways tools like this disappoint, so it\u2019s the right thing to press on. I don\u2019t have deployment evidence to point to, and I won\u2019t claim less work without it.\nWhat would need to be true for this to reduce work for your team rather than add to it?",
+      "route": "morework",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": [
+       "morework",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P2-eager-buyer",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@2",
+    "question_reasked@3"
+   ],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "This looks amazing \u2014 we've been looking for something exactly like this for months!",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you. I\u2019d rather understand your situation than assume it, so I\u2019ll ask a few questions before we talk about anything else.\nAsking first protects you from committing to something that doesn\u2019t fit.\nVolume tells me whether a conversation like this is worth your time, so I\u2019m asking early.\nRoughly how many inbound inquiries do you get in a typical month?",
+      "route": "enthusiasm",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We get about 3,000 inbound leads a month, mostly small-business inquiries, and we're on HubSpot.",
+     "dims": {
+      "escalation": "pass",
+      "must_include_any": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted a high volume of inbound inquiries and tools already in place for tracking them.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "3,000",
+       "volume",
+       "leads",
+       "HubSpot",
+       "inquir"
+      ]
+     }
+    },
+    {
+     "u": "I'm ready to move forward \u2014 can we get this set up this week?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "na",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m not slowing you down for its own sake. I only suggest a next step once there\u2019s evidence it fits.\nI don\u2019t have enough yet to say Northstar fits your situation, so I\u2019d rather ask than assume.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "buying",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    },
+    {
+     "u": "We have budget approved and our CTO is on board. What do we need to sign?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "na",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I hear that you\u2019re ready. I still don\u2019t have enough to say this fits, and a next step built on enthusiasm instead of evidence wouldn\u2019t serve you. One more question.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "buying",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P3-ghoster",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 5,
+   "turns": [
+    {
+     "u": "Hi, I came across Northstar and it looks interesting. We're exploring options for our sales team.",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Good place to start. In one line: Northstar\u2019s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in.\nI\u2019ll ask about you first so what I say is relevant, not generic.\nWhat kind of company are you evaluating this for?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "That's helpful. I'll need to think about it and chat with my team before going further.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Taking time to think, and bringing your team in, is a sensible way to make this kind of decision. There\u2019s no clock on my side.\nIf it helps, I can put the essentials in a few lines you can share with them.",
+      "route": "pause",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pause",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": ".",
+     "dims": {
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "No rush at all. I\u2019m here whenever you want to pick this up, and it\u2019s completely fine not to.",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "Sorry, got pulled into meetings. Just checking back in \u2014 still thinking about it.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "No problem at all. Things come up. We can pick this up wherever suits you, or leave it as it is.",
+      "route": "return",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "return",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "When you can, no rush \u2014 but we might start a pilot next quarter.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Having your own timeline is a good way to do this. It leaves room to look at it properly. There\u2019s nothing for you to decide today, and I won\u2019t try to bring your date forward.\nWhen you do get to it, what would you want it to show first?",
+      "route": "pilot",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P4-frustrated",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "We've been trying to get our lead follow-up under control for six months. Nothing has worked.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That sounds exhausting, and I\u2019m not going to jump to a solution.\nWhere has it been hardest \u2014 getting inquiries that are worth your time, or dealing with the ones that come in?",
+      "route": "empathy",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "empathy",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "I've already tried two other tools this year. Both were a waste of time and money.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That sounds costly, and it makes sense to raise it up front. I won\u2019t tell you this is different \u2014 you\u2019d have no reason to believe me yet.\nWhat went wrong with the last one, as far as you could tell?",
+      "route": "burned",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "na"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m sorry. Going in circles isn\u2019t acceptable, and you shouldn\u2019t have to keep repeating yourself.\nI\u2019m stepping back because a person can do something I can\u2019t: take responsibility for solving this with you.\nI\u2019m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated \u2014 no one has actually been contacted.",
+      "route": "frustration_agent",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ],
+      "rep_notified": true
+     }
+    },
+    {
+     "u": "Can you at least tell me what Northstar costs?",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019m holding here so a person can take this over. I won\u2019t keep answering on my own, because that isn\u2019t what would help.",
+      "route": "none",
+      "escalation": "hold",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P5-poor-fit",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "fail",
+   "repetition": [
+    "question_reasked@2"
+   ],
+   "claims": [],
+   "n_turns": 4,
+   "turns": [
+    {
+     "u": "Hi! We're a small startup \u2014 4 people on the team right now. We get maybe 20 inbound leads a month.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted a small number of inbound inquiries.\nI\u2019ll ask one useful question at a time so this stays a conversation, not a form.\nWhen a new inbound inquiry comes in, what happens first on your team?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "We don't have a CRM yet \u2014 we just use email and a shared inbox.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you, that helps. I\u2019ve noted no CRM or tracking tools in place yet.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "I've been really impressed with what I've seen \u2014 I think this could really help us.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Thank you. I\u2019d rather understand your situation than assume it, so I\u2019ll ask a few questions before we talk about anything else.\nAsking first protects you from committing to something that doesn\u2019t fit.\nWhat\u2019s the harder problem today: too many unqualified inquiries, too few that are ready, or inconsistency in how they\u2019re judged?",
+      "route": "enthusiasm",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We'd love to get started \u2014 is there a way to sign up?",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "must_not": "pass",
+      "must_include_any": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "I\u2019d rather say this now than after you\u2019ve put time into it.\nFrom what you\u2019ve told me \u2014 a small number of inbound inquiries and no CRM or tracking tools in place yet \u2014 Northstar probably isn\u2019t the right fit yet. At that scale a person answering each inquiry is likely better than software, and I don\u2019t want you paying for something you wouldn\u2019t use. That isn\u2019t a judgment of your company; it\u2019s about timing.\nI can\u2019t give you a verified volume where it starts to make sense. A person on the team could. If your inbound grows, it\u2019s worth revisiting.",
+      "route": "buying",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ],
+      "must_include_any": [
+       "fit",
+       "early",
+       "volume",
+       "small",
+       "not yet",
+       "evidence",
+       "honest"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P6a-human-requester",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "Hi, I'm interested in learning more about your platform.",
+     "dims": {
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Good place to start. In one line: Northstar\u2019s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in.\nI\u2019ll ask about you first so what I say is relevant, not generic.\nWhat kind of company are you evaluating this for?",
+      "route": "none",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Actually, can I just speak to a real person? I'd rather talk to someone directly.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "na"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P6b-human-late",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 2,
+   "turns": [
+    {
+     "u": "I've been evaluating a few tools. We're comparing Northstar against Intercom and Conversica.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Comparing options is the right way to decide. I can only speak to what Northstar is designed to do, not how other products behave \u2014 I haven\u2019t verified their claims and I won\u2019t guess. What would you compare on?",
+      "route": "compare",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "This is helpful. I think I'm pretty close to a decision \u2014 but I'd really like to speak to someone on your team before committing.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "rep_notified": "na"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat.\nI\u2019m flagging that so you aren\u2019t left talking to an assistant about something that needs a human.\nI can describe a handoff path. In this prototype, that path is simulated \u2014 I will not contact a real sales representative.",
+      "route": "human",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P7-objection-resolution",
+   "group": "persona",
+   "layer": "understanding",
+   "status": "pass",
+   "repetition": [],
+   "claims": [],
+   "n_turns": 3,
+   "turns": [
+    {
+     "u": "I'm worried about the implementation timeline. We can't afford disruption right now.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass",
+      "trust_state": "na",
+      "not_fallback": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "It makes sense to worry about disruption. I don\u2019t have verified details about setup effort or timelines, and I won\u2019t guess. That\u2019s a question for a person who can look at your tools and process with you.",
+      "route": "setup",
+      "escalation": "human_path",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "setup",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "trust_state": "OBJECTION"
+     }
+    },
+    {
+     "u": "Actually, you know what \u2014 I think we could make the timeline work if we started with one lead source.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "Having your own timeline is a good way to do this. It leaves room to look at it properly. There\u2019s nothing for you to decide today, and I won\u2019t try to bring your date forward.\nWhen you do get to it, what would you want it to show first?",
+      "route": "pilot",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "That makes sense \u2014 let's explore what a pilot would look like.",
+     "dims": {
+      "route": "pass",
+      "escalation": "pass"
+     },
+     "status": "pass",
+     "obs": {
+      "reply": "That\u2019s a clear way to frame it. A person on the team can help define what a pilot would involve and what \u201cworking\u201d would look like. I can\u2019t scope or schedule it myself, and this prototype won\u2019t book anything.",
+      "route": "pilot",
+      "escalation": "none",
+      "rep_notified": null,
+      "customer_facing": null,
+      "intervention_open": null,
+      "trust_state": null,
+      "fallback_used": false
+     },
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "metrics": {
+  "cases_scored": 40,
+  "overall_pass_rate": 0.575,
+  "route_accuracy": 0.745,
+  "false_escalation_rate": 0.137,
+  "missed_intervention_rate": 0.111,
+  "fallback_rate": 0.188,
+  "repeat_rate": 0.083,
+  "unsupported_claim_rate": 0.0
+ }
+}

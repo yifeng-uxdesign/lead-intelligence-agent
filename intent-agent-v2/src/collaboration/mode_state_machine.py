@@ -27,6 +27,8 @@ class ModeStateMachine:
 
     def __init__(self) -> None:
         self.current_mode: CollaborationMode = CollaborationMode.AUTONOMOUS
+        # Why the last transition landed where it did (for the decision trace).
+        self.last_reason: str = ""
 
     def get_mode(self) -> CollaborationMode:
         """Return the current collaboration mode."""
@@ -50,13 +52,20 @@ class ModeStateMachine:
 
         **Edge case:** If both ``handoff_triggered`` and ``awaiting_approval`` are
         true, **ALERT** wins (escalation before approval gating). If the rep is
-        **offline**, mode is **AUTONOMOUS** regardless of other flags—queue
-        handoffs asynchronously rather than blocking the customer thread.
+        **offline**, mode is **AUTONOMOUS** regardless of other flags.
+
+        **AUTONOMOUS-when-offline describes who can respond, not whether a human
+        is required.** This machine only models rep availability. Whether a
+        handoff is open, and what the customer may be sent while it is, is owned
+        by the orchestrator (``domain.session_state`` pending interventions) and
+        ``collaboration.delivery_policy``. Callers must queue the handoff and
+        apply the delivery policy independently of the mode returned here.
         """
         # Rep unavailable: keep system autonomous to maintain lead continuity.
         if not rep_online:
             prior_mode = self.current_mode
             self.current_mode = CollaborationMode.AUTONOMOUS
+            self.last_reason = "rep offline: agent keeps the lead covered"
             if context is not None and prior_mode in (
                 CollaborationMode.ALERT,
                 CollaborationMode.RELAY,
@@ -73,18 +82,22 @@ class ModeStateMachine:
         # Explicit handoff signal indicates urgent context shift needing attention.
         if handoff_triggered:
             self.current_mode = CollaborationMode.ALERT
+            self.last_reason = "rep online and an intervention is open"
             return self.current_mode
 
         # Approval gate means rep must relay/approve before customer delivery.
         if awaiting_approval:
             self.current_mode = CollaborationMode.RELAY
+            self.last_reason = "approval gate on"
             return self.current_mode
 
         # Rep in an active live touchpoint: assistant should support in shadow mode.
         if rep_online and live_session:
             self.current_mode = CollaborationMode.SHADOW
+            self.last_reason = "rep in a live session"
             return self.current_mode
 
         # Rep online but not in a live session defaults to autonomous handling.
         self.current_mode = CollaborationMode.AUTONOMOUS
+        self.last_reason = "rep online, no intervention, gate or live session"
         return self.current_mode
