@@ -110,3 +110,19 @@ def test_na_when_dimension_unobservable():
     r = score_turn({"rep_notified": True, "route": "human"}, {"reply": "x", "route": "human", "rep_notified": None}, "understanding")
     assert r == {"route": "pass", "rep_notified": "na"}
     assert norm("It’s  OK!") == "it's ok"
+
+
+def test_heldout_set_is_well_formed_and_separate():
+    """Validity only. Held-out *results* are report-only (conformance/run_heldout.py)."""
+    ho = load_cases(CONF / "heldout.json")
+    labels, esc = set(TAX["routes"]["labels"]), set(TAX["escalation"]["values"])
+    assert not {c["id"] for c in ho["cases"]} & {c["id"] for c in DOC["cases"]}
+    main_texts = {norm(t["u"]) for c in DOC["cases"] for t in c["turns"]}
+    for c in ho["cases"]:
+        assert c["layer"] == "understanding"
+        probe = c["turns"][-1]
+        assert norm(probe["u"]) not in main_texts, c["id"]
+        for x in probe["expect"].get("escalation", []):
+            assert x in esc, (c["id"], x)
+        for r in ([probe["expect"]["route"]] if isinstance(probe["expect"].get("route"), str) else probe["expect"].get("route", [])):
+            assert r in labels, (c["id"], r)

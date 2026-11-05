@@ -13,8 +13,10 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 - Conformance suite (`conformance/`, `tests/test_conformance.py`): 66 cases, two layers. Policy layer (hand-labeled signals) must reach 100%; understanding layer (raw text) has a recorded baseline the LLM must beat.
 - Decision trace (`src/domain/decision_trace.py`): one per turn on `OrchestrationResult.decision_trace`, last 50 persisted in metadata, rep-only via `GET /context` (`decision_trace`). Records signals, every trigger hit (class + evidence), intervention action, rep-notified reason, mode reason, delivery reason, response source, outcome.
 - Trigger taxonomy (`TriggerClass` / `TRIGGER_CLASS` / `TRIGGER_PRECEDENCE` in `trigger_catalog.py`): intervention = human_request, frustration (agent/unspecified), commitment_demand, pricing_negotiation, contract_legal_ask → open intervention + hold; attention = strong_buying_signal, pricing_discussion (interest) → rep notified, agent answers; context = competitor, stakeholder → rep notified once per lead (`rep_notices`), agent answers. New intervention detectors are narrow lexical rules in `signal_adapters.py` (replace in step 7).
-- Tests: `python3 -m pytest -q` → 300 passed, 3 xfailed (the xfails are the roadmap step-3 gaps: autonomy profiles).
+- Tests: `python3 -m pytest -q` → 304 passed, 3 xfailed (the xfails are the roadmap step-3 gaps: autonomy profiles).
 - Conformance observer: `human_path` = the customer is offered a person (taxonomy.json), not "rep was notified". The backend observer used to conflate them; fixed in its own commit with baselines recorded before/after (backend false_escalation 0.189→0.038 is measurement only; on a consistent measure, steps 1–2 took it 0.170→0.038).
+
+- Held-out set (`conformance/heldout.json`, `python3 conformance/run_heldout.py`): 22 paraphrases of the intervention boundary, report-only, never tune rules to it. Lexical rules today: **1/14 interventions caught (0/12 negotiation/commitment/contract), 8/8 non-interventions correct** — the step-2 detectors are overfit to `cases.json` phrasings. Drafted by the same agent as the rules (not blind); owner should add phrasings. The LLM interpreter (step 7) is judged on this set.
 
 ## Workflow for every roadmap step
 1. Make the change.
@@ -31,7 +33,7 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 6. Phase 1-lite qualification separation: generic fit engine, Sierra criteria frozen by golden tests, per-client signal mapping (`_prospect_signals_from_lead` still maps Sierra keys), four-outcome result, Northstar default in API with empty criteria.
 7. LLM interpretation (frozen label set from `conformance/taxonomy.json`), then LLM response generation. Re-measure after each.
 
-**LLM gate**: policy cases 100%, understanding baseline recorded, trace covers decisions, validator passes adversarial tests, label set frozen.
+**LLM gate**: policy cases 100%, understanding baseline recorded, held-out set scored, trace covers decisions, validator passes adversarial tests, label set frozen.
 
 ## Decisions assumed (owner has not explicitly confirmed — ask before changing)
 - D1 buying/pricing interest before fit → alert rep, keep fit check, don't hold.

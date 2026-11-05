@@ -1,0 +1,460 @@
+{
+ "_doc": "Held-out paraphrases for the intervention / non-intervention boundary (D4). NOT used to tune any rule: report-only, never gate CI on it and never edit rules to pass it. Caveat: drafted by the same agent that wrote the lexical rules, so it is not blind; the owner should add or replace phrasings before the LLM step (CLAUDE.md roadmap step 7), which is judged on this set.",
+ "version": 1,
+ "cases": [
+  {
+   "id": "HO-N1",
+   "group": "heldout_negotiation",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "If we commit to two years, can you knock something off the price?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-N2",
+   "group": "heldout_negotiation",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Your competitor quoted us less, can you beat that?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-N3",
+   "group": "heldout_negotiation",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Is there any flexibility on the number you'd charge us?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-N4",
+   "group": "heldout_negotiation",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We'd sign today if the price came down a bit.",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-C1",
+   "group": "heldout_commitment",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Can you put that lift number in our agreement?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-C2",
+   "group": "heldout_commitment",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I need a guarantee on paper before we go any further.",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-C3",
+   "group": "heldout_commitment",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "If it doesn't hit the targets, do we get our money returned?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-C4",
+   "group": "heldout_commitment",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Will your company formally stand behind those results?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-L1",
+   "group": "heldout_contract_legal",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Our lawyers will want to mark up your agreement.",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-L2",
+   "group": "heldout_contract_legal",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Can you send your standard terms so procurement can review them?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-L3",
+   "group": "heldout_contract_legal",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Do you sign our paper or do we have to use yours?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-L4",
+   "group": "heldout_contract_legal",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We'll need a security addendum and a data processing addendum.",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-H1",
+   "group": "heldout_human",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Could someone from your team give me a call?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-H2",
+   "group": "heldout_human",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'd prefer to chat with a human about this.",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X1",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Who's on the hook if the scoring is wrong?",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X2",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "How confident are you that it will improve our conversion?",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X3",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Our procurement team has to sign off on new tools.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X4",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Roughly what price range should I expect?",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X5",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We're comparing you with two other vendors.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X6",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Our legal department is pretty slow, just so you know.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X7",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Is there a free trial?",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "HO-X8",
+   "group": "heldout_not_intervention",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "What happens to our data if we stop using it?",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
