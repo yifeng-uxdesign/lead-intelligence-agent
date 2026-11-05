@@ -17,7 +17,8 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from types import MappingProxyType
+from typing import Dict, Final, List, Mapping, Optional, Tuple
 
 from src.application.signal_adapters import (
     handoff_signal_dict_from_lead,
@@ -228,16 +229,19 @@ def run_customer_trust_path(
     return new_state
 
 
+# STOPGAP — replace when the response contract lands (CLAUDE.md roadmap step 4).
 # Customer-safe phrasing of a context / attention trigger, used as the reply
-# topic when the prospect raised no objection: the agent continues *and*
-# acknowledges what was raised, instead of repeating its previous template.
-# Never interpolate trigger labels themselves into customer text.
-_NOTICE_TOPIC: Dict[str, str] = {
+# topic when the prospect raised no objection, so the agent acknowledges what
+# was raised instead of repeating its previous template. These are fixed,
+# reviewed strings: never build them from message text or trigger labels. Every
+# reply they can produce is run through the conformance claims scorer in
+# tests/test_trigger_taxonomy_and_trace.py.
+NOTICE_TOPIC_PHRASES: Final[Mapping[str, str]] = MappingProxyType({
     HandoffTriggerType.COMPETITOR_MENTION.value: "how this compares with what you use today",
     HandoffTriggerType.STAKEHOLDER_APPROVAL_NEEDED.value: "getting the right people involved",
     HandoffTriggerType.PRICING_DISCUSSION.value: "pricing",
     HandoffTriggerType.STRONG_BUYING_SIGNAL.value: "the next steps",
-}
+})
 
 
 def run_customer_response_path(
@@ -268,7 +272,7 @@ def run_customer_response_path(
     if lead_signals.objection_type != "none":
         topic = lead_signals.objection_type.replace("_", " ")
     elif notice_trigger:
-        topic = _NOTICE_TOPIC.get(notice_trigger, "")
+        topic = NOTICE_TOPIC_PHRASES.get(notice_trigger, "")
 
     # Evaluate product fit against client criteria.
     # soul.md conflict hierarchy priority 2: do not harm the prospect's interest.

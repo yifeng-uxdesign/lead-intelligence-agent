@@ -179,3 +179,43 @@ def test_trace_is_persisted_and_capped(deps):
     traces = decision_traces(deps[0]["store"].get("L1").metadata)
     assert len(traces) == 50 and traces[-1]["turn"] == 55
     assert traces[-1]["explanation"][-1].startswith("outcome:")
+
+
+# --- stopgap topic phrases (replace with the response contract, roadmap step 4) ---
+
+def _every_topic_reply():
+    from src.core.lead_context import LeadContext
+    from src.customer_layer.behavior_engine import CustomerBehaviorEngine
+    from src.customer_layer.trust_state_machine import TrustState
+    from src.orchestrator import NOTICE_TOPIC_PHRASES
+    engine = CustomerBehaviorEngine()
+    for trigger, phrase in NOTICE_TOPIC_PHRASES.items():
+        for state in TrustState:
+            for fit in (False, True):
+                text = engine.generate_response(
+                    LeadContext(lead_id="x"),
+                    {"trust_state": state, "topic": phrase, "fit_confirmed": fit},
+                )
+                yield trigger, phrase, state, text
+
+
+def test_topic_phrases_are_fixed_strings():
+    from types import MappingProxyType
+    from src.orchestrator import NOTICE_TOPIC_PHRASES
+    assert isinstance(NOTICE_TOPIC_PHRASES, MappingProxyType)
+    assert set(NOTICE_TOPIC_PHRASES) <= {t for t, c in TRIGGER_CLASS.items() if c is not TriggerClass.INTERVENTION}
+    assert all(isinstance(p, str) and p and "_" not in p for p in NOTICE_TOPIC_PHRASES.values())
+
+
+def test_every_topic_reply_passes_the_claims_scorer_and_leaks_no_labels():
+    from conformance.scoring import unsupported_claims
+    labels = set(TRIGGER_CLASS)  # identifiers; class names are ordinary words ("context")
+    for trigger, phrase, state, text in _every_topic_reply():
+        assert unsupported_claims(text) == [], (trigger, state, text)
+        assert not any(l in text for l in labels), (trigger, state, text)
+
+
+def test_every_holding_response_passes_the_claims_scorer():
+    from conformance.scoring import unsupported_claims
+    for text in APPROVED_HOLDING_RESPONSES:
+        assert unsupported_claims(text) == [], text
