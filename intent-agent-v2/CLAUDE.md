@@ -13,7 +13,7 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 - Conformance suite (`conformance/`, `tests/test_conformance.py`): 66 cases, two layers. Policy layer (hand-labeled signals) must reach 100%; understanding layer (raw text) has a recorded baseline the LLM must beat.
 - Decision trace (`src/domain/decision_trace.py`): one per turn on `OrchestrationResult.decision_trace`, last 50 persisted in metadata, rep-only via `GET /context` (`decision_trace`). Records signals, every trigger hit (class + evidence), intervention action, rep-notified reason, mode reason, delivery reason, response source, outcome.
 - Trigger taxonomy (`TriggerClass` / `TRIGGER_CLASS` / `TRIGGER_PRECEDENCE` in `trigger_catalog.py`): intervention = human_request, frustration (agent/unspecified), commitment_demand, pricing_negotiation, contract_legal_ask → open intervention + hold; attention = strong_buying_signal, pricing_discussion (interest) → rep notified, agent answers; context = competitor, stakeholder → rep notified once per lead (`rep_notices`), agent answers. New intervention detectors are narrow lexical rules in `signal_adapters.py` (replace in step 7).
-- Tests: `python3 -m pytest -q` → 300 passed, 3 xfailed (the xfails are the step-4 gaps).
+- Tests: `python3 -m pytest -q` → 300 passed, 3 xfailed (the xfails are the roadmap step-3 gaps: autonomy profiles).
 - Conformance observer quirk: `run_backend.py` maps *any* queued rep notice to escalation `human_path`, so context/attention notices count as false escalations (e.g. P2 buying turns expect `none` + `rep_notified`). Not changed yet — owner to decide.
 
 ## Workflow for every roadmap step
@@ -24,8 +24,8 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 
 ## Roadmap (in order)
 1. ~~Decision trace (why each turn was held/answered/notified).~~ done
-2. ~~Trigger taxonomy~~ done: context / attention / intervention. Closes known gaps tagged step 3 (POL-07, 08, 09, 11, 12, 13, 14). Fixes my Phase 0 regression: holding copy announces a handoff on buying signals before fit is confirmed.
-3. Autonomy profiles incl. `restricted` (gaps tagged step 4: POL-20, 21, 26).
+2. ~~Trigger taxonomy~~ done: context / attention / intervention. Closed gaps POL-07, 08, 09, 11, 12, 13, 14. Fixes my Phase 0 regression: holding copy announces a handoff on buying signals before fit is confirmed.
+3. Autonomy profiles incl. `restricted` (open gaps POL-20, 21, 26 in `known_gaps.json`, tagged step 3).
 4. Response contract + deterministic validator; reuse widget copy as the approved-response library.
 5. Conversation memory (facts known, questions asked) — stops re-asking.
 6. Phase 1-lite qualification separation: generic fit engine, Sierra criteria frozen by golden tests, per-client signal mapping (`_prospect_signals_from_lead` still maps Sierra keys), four-outcome result, Northstar default in API with empty criteria.

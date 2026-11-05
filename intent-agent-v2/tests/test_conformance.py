@@ -39,7 +39,8 @@ def test_known_gaps_registry_is_valid():
     ids = {c["id"] for c in POLICY}
     assert set(GAPS) <= ids
     for k, v in GAPS.items():
-        assert v["step"] in (3, 4) and v["reason"], k
+        # Roadmap step numbers as in CLAUDE.md (1-7).
+        assert v["step"] in range(1, 8) and v["reason"], k
 
 
 def test_baseline_is_not_stale():
