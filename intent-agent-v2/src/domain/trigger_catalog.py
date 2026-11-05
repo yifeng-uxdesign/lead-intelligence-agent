@@ -37,6 +37,38 @@ SLA_MINUTES_BY_TRIGGER: Final[Mapping[str, int]] = {
 
 DEFAULT_SLA_MINUTES_UNKNOWN_TRIGGER: Final[int] = 60
 
+# --- Human-intervention policy (soul.md value 4: "humans own commitment-critical moments") ---
+#
+# Triggers where the agent must stop conversing and let a person take over.
+# While one of these is open the customer only ever receives an approved
+# holding response (see ``customer_layer.holding_responses``), regardless of
+# whether the rep is online. Other triggers still queue a handoff and brief
+# the rep, but do not by themselves silence the agent when the rep is offline.
+#
+# Pricing / buying-signal / competitor / stakeholder are deliberately NOT in
+# this set yet: their detection is still lexical (e.g. "salesforce" counts as a
+# competitor mention), so making them hard stops would silence the agent on
+# harmless messages. Revisit once LLM interpretation lands (audit Phase 2).
+HUMAN_REQUIRED_TRIGGERS: Final[frozenset[str]] = frozenset(
+    {
+        HandoffTriggerType.HUMAN_REQUEST.value,
+        HandoffTriggerType.FRUSTRATION.value,
+    }
+)
+
+# Frustration whose target is positively identified as something other than
+# this agent does not, by itself, require a human. Anything NOT in this set —
+# including "current_agent" and "unspecified" — still escalates. Suppressing an
+# escalation needs positive evidence; missing evidence escalates.
+NON_AGENT_FRUSTRATION_TARGETS: Final[frozenset[str]] = frozenset(
+    {"previous_vendor", "internal_process"}
+)
+
+
+def trigger_requires_human(trigger_type: str) -> bool:
+    """True when this trigger means a person must take over the conversation."""
+    return trigger_type in HUMAN_REQUIRED_TRIGGERS
+
 # Map orchestration trigger -> rep-assist canonical key (RepAssistEngine / alerts).
 HANDOFF_TO_REP_BRIEF_KEY: Final[Mapping[str, str]] = {
     HandoffTriggerType.NONE.value: "none",

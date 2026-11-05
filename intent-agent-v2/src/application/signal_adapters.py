@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Final
 
+from src.domain.trigger_catalog import NON_AGENT_FRUSTRATION_TARGETS
 from src.signals.extractor import LeadSignals
 
 # Shared lexical hints for pricing (kept in one place; extractor may overlap).
@@ -27,7 +28,12 @@ def lead_signals_to_trust_signals(lead: LeadSignals) -> Dict[str, Any]:
     if lead.sentiment == "positive":
         trust_score = 0.82
     elif lead.sentiment in ("negative", "frustration"):
-        trust_score = 0.28
+        # Dissatisfaction aimed at a previous vendor or the prospect's own
+        # process is evidence about *that*, not about trust in this agent.
+        if lead.sentiment_target in NON_AGENT_FRUSTRATION_TARGETS:
+            trust_score = 0.55
+        else:
+            trust_score = 0.28
 
     return {
         "intent": intent,
@@ -49,6 +55,7 @@ def handoff_signal_dict_from_lead(lead: LeadSignals, raw_message: str) -> Dict[s
         "pricing_discussion": pricing_hit,
         "strong_buying_signal": lead.buying_signal,
         "sentiment": lead.sentiment,
+        "sentiment_target": lead.sentiment_target,
         "competitor_mention": lead.competitor_mention,
         "stakeholder_approval_needed": lead.stakeholder_signal,
     }

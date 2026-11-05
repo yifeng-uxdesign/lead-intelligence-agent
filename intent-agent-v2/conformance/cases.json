@@ -1,0 +1,1872 @@
+{
+ "version": 1,
+ "product": "Northstar",
+ "adapted_from": "tests/PERSONA_SCRIPTS.md + role-play issues 1-3",
+ "defaults_assumed": {
+  "D1": "buying/pricing interest before fit: alert rep, keep running fit check",
+  "D2": "after a human request: restricted autonomy until resolved",
+  "D3": "approval gate with rep offline: restricted, never unrestricted",
+  "D4": "only human request, agent-directed frustration, commitment/accountability demand, pricing negotiation, contract/legal ask are interventions"
+ },
+ "cases": [
+  {
+   "id": "A1-reps-frustrated",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "My reps are frustrated because they waste hours qualifying leads that go nowhere.",
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A2-team-junk-leads",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'm frustrated that my team keeps getting junk leads.",
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A3-previous-vendor",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'm so frustrated with our previous vendor, their scoring was a waste of time.",
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A4-team-fed-up",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Honestly the whole team is fed up with how we qualify leads.",
+     "expect": {
+      "route": "frustration_other",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A5-agent-ignoring",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "You keep ignoring my question, this is ridiculous.",
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A6-circles",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "A7-skeptical-ai",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'm skeptical, I'm not convinced another AI tool will work for us.",
+     "expect": {
+      "route": "skeptical",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "A8-reps-distrust-scores",
+   "group": "issue1_frustration_target",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Our reps don't trust the scores from our current tool.",
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B1-who-accountable",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Who is accountable if the agent qualifies a lead wrong and we lose a deal?",
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B2-hold-responsible",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "If this makes a mistake, who do I hold responsible?",
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B3-guarantee-lift",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Can you guarantee a 30% lift in conversion?",
+     "expect": {
+      "route": "unsupported",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "30\\s?%"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "B4-commit-in-writing",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Will you commit to that in writing?",
+     "expect": {
+      "route": "commitment_request",
+      "escalation": [
+       "human_path",
+       "hold"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B5-agent-wrong",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "What happens when the agent is wrong?",
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B6-liable-prospect",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Who's liable if it says something wrong to one of our prospects?",
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "B7-promise-golive",
+   "group": "issue2_accountability",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Can you promise the go-live will be before end of quarter?",
+     "expect": {
+      "route": [
+       "unsupported-timeline",
+       "unsupported"
+      ],
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C1-volume-crm-process",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We get around 300 inbound leads a month but only 20% become opportunities, and our CRM is Salesforce but there's no consistent process.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "300",
+       "volume",
+       "inbound",
+       "Salesforce",
+       "CRM",
+       "process"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C2-replace-or-help",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'm not sure whether this replaces our SDRs or just helps them.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "replace",
+       "SDR",
+       "reps",
+       "help",
+       "team"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C3-reps-ignore-score",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Honestly my main worry is that reps will ignore whatever score it gives them.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "reps",
+       "trust",
+       "adopt",
+       "ignore",
+       "score",
+       "evidence"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "C4-reps-stopped-opening",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We tried something like this and the reps just stopped opening it.",
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C5-vs-gong",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "How is this different from what Gong does?",
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C6-priced-per-seat",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Is it priced per seat? Just curious how it scales.",
+     "expect": {
+      "route": "pricing",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C7-vp-approves",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "My VP has to approve anything like this before we move.",
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "C8-legal-reviews-vendors",
+   "group": "issue3_nuance",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "We use Salesforce and our legal team reviews every vendor we bring in.",
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H1-real-person",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Can I talk to a real person?",
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H2-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I'd rather speak with someone on your sales team.",
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H3-ai-agent-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me about your AI agent.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "H4-someone-in-finance",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "I need to talk to someone in finance before we commit.",
+     "expect": {
+      "route": "stakeholder",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H5-our-sales-team",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Tell me more about how this works.",
+     "expect": {}
+    },
+    {
+     "u": "Our sales team is small.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I1-bot-or-ai",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Are you a bot or an AI?",
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "I2-real-person-question",
+   "group": "human_and_identity",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Am I talking to a real person?",
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "L1-vague-loop",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "ok",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "hmm",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "maybe",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "not sure",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "what else",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "sure",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "go on",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "M1-facts-not-reasked",
+   "group": "loops_and_memory",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "We get about 300 leads a month.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Our CRM is Salesforce.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "how much (volume|traffic)"
+      ]
+     }
+    },
+    {
+     "u": "We have no consistent qualification process.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "how many (leads|inquiries)",
+       "which (crm|system)",
+       "what (crm|system)"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "P1-skeptic",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "I've been looking at a few AI lead qualification tools. Honestly I'm pretty skeptical — we tried one last year and it was a disaster.",
+     "expect": {
+      "route": [
+       "burned",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Tell me more about how Northstar actually works. But I'm not going to just take your word for it.",
+     "expect": {
+      "route": [
+       "skeptical",
+       "product"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "Are you actually a bot or a real person? I want to know who I'm talking to.",
+     "expect": {
+      "route": "identity",
+      "escalation": [
+       "none"
+      ],
+      "must_include_any": [
+       "AI"
+      ],
+      "must_not": [
+       "\\bi('m| am) (a )?(real )?(human|person)\\b"
+      ]
+     }
+    },
+    {
+     "u": "OK fine. So what happens when the AI gets it wrong? Who's responsible?",
+     "expect": {
+      "route": "accountability",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "I'm still not convinced this won't just create more work for my team.",
+     "expect": {
+      "route": [
+       "morework",
+       "skeptical"
+      ],
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "P2-eager-buyer",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "This looks amazing — we've been looking for something exactly like this for months!",
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We get about 3,000 inbound leads a month, mostly small-business inquiries, and we're on HubSpot.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true,
+      "must_include_any": [
+       "3,000",
+       "volume",
+       "leads",
+       "HubSpot",
+       "inquir"
+      ]
+     }
+    },
+    {
+     "u": "I'm ready to move forward — can we get this set up this week?",
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    },
+    {
+     "u": "We have budget approved and our CTO is on board. What do we need to sign?",
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "rep_notified": true,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "P3-ghoster",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "Hi, I came across Northstar and it looks interesting. We're exploring options for our sales team.",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "That's helpful. I'll need to think about it and chat with my team before going further.",
+     "expect": {
+      "route": "pause",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": ".",
+     "expect": {
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "Sorry, got pulled into meetings. Just checking back in — still thinking about it.",
+     "expect": {
+      "route": "return",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    },
+    {
+     "u": "When you can, no rush — but we might start a pilot next quarter.",
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "limited time",
+       "act now",
+       "don't wait",
+       "hurry",
+       "before it's too late",
+       "spots are filling",
+       "last chance"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "P4-frustrated",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "We've been trying to get our lead follow-up under control for six months. Nothing has worked.",
+     "expect": {
+      "route": "empathy",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "I've already tried two other tools this year. Both were a waste of time and money.",
+     "expect": {
+      "route": "burned",
+      "escalation": [
+       "none"
+      ],
+      "not_fallback": true
+     }
+    },
+    {
+     "u": "This is getting really frustrating. I feel like I'm going in circles and nobody actually solves anything.",
+     "expect": {
+      "route": "frustration_agent",
+      "escalation": [
+       "hold"
+      ],
+      "rep_notified": true
+     }
+    },
+    {
+     "u": "Can you at least tell me what Northstar costs?",
+     "expect": {
+      "escalation": [
+       "hold",
+       "human_path"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "P5-poor-fit",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "Hi! We're a small startup — 4 people on the team right now. We get maybe 20 inbound leads a month.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "We don't have a CRM yet — we just use email and a shared inbox.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "I've been really impressed with what I've seen — I think this could really help us.",
+     "expect": {
+      "route": "enthusiasm",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "great!",
+       "awesome!",
+       "fantastic!",
+       "amazing!",
+       "exciting",
+       "thrilled"
+      ]
+     }
+    },
+    {
+     "u": "We'd love to get started — is there a way to sign up?",
+     "expect": {
+      "route": "buying",
+      "escalation": [
+       "none"
+      ],
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ],
+      "must_include_any": [
+       "fit",
+       "early",
+       "volume",
+       "small",
+       "not yet",
+       "evidence",
+       "honest"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "P6a-human-requester",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Hi, I'm interested in learning more about your platform.",
+     "expect": {
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "Actually, can I just speak to a real person? I'd rather talk to someone directly.",
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P6b-human-late",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "I've been evaluating a few tools. We're comparing Northstar against Intercom and Conversica.",
+     "expect": {
+      "route": "compare",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "This is helpful. I think I'm pretty close to a decision — but I'd really like to speak to someone on your team before committing.",
+     "expect": {
+      "route": "human",
+      "escalation": [
+       "hold",
+       "human_path"
+      ],
+      "rep_notified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "P7-objection-resolution",
+   "group": "persona",
+   "layer": "understanding",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "I'm worried about the implementation timeline. We can't afford disruption right now.",
+     "expect": {
+      "route": "setup",
+      "escalation": [
+       "none",
+       "human_path"
+      ],
+      "not_fallback": true,
+      "trust_state": "OBJECTION"
+     }
+    },
+    {
+     "u": "Actually, you know what — I think we could make the timeline work if we started with one lead source.",
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    },
+    {
+     "u": "That makes sense — let's explore what a pilot would look like.",
+     "expect": {
+      "route": "pilot",
+      "escalation": [
+       "none"
+      ]
+     }
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "POL-01-human-offline",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "customer_facing": "holding",
+      "rep_notified": true,
+      "intervention_open": true,
+      "escalation": [
+       "hold"
+      ]
+     },
+     "signals": {
+      "human_request": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-02-human-online",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "customer_facing": "holding",
+      "rep_notified": true,
+      "intervention_open": true,
+      "escalation": [
+       "hold"
+      ]
+     },
+     "signals": {
+      "human_request": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-03-agent-frustration-offline",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "(labeled) agent-directed frustration",
+     "expect": {
+      "customer_facing": "holding",
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {
+      "sentiment": "frustration",
+      "sentiment_target": "current_agent"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-04-frustration-previous-vendor",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) vendor frustration",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": false,
+      "intervention_open": false
+     },
+     "signals": {
+      "sentiment": "frustration",
+      "sentiment_target": "previous_vendor"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-05-frustration-internal-process",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) process frustration",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": false,
+      "intervention_open": false
+     },
+     "signals": {
+      "sentiment": "frustration",
+      "sentiment_target": "internal_process"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-06-frustration-unspecified-escalates",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) unclear frustration",
+     "expect": {
+      "customer_facing": "holding",
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {
+      "sentiment": "frustration",
+      "sentiment_target": "unspecified"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-07-competitor-is-context",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) we use a competitor",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": true,
+      "intervention_open": false
+     },
+     "signals": {
+      "competitor_mention": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-08-stakeholder-is-context",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) my boss approves",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": true,
+      "intervention_open": false
+     },
+     "signals": {
+      "stakeholder_signal": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-09-buying-before-fit-online",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) ready to move forward",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": true,
+      "intervention_open": false,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     },
+     "signals": {
+      "buying_signal": true,
+      "intent": "buy"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-10-buying-before-fit-offline",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "(labeled) ready to move forward",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": true,
+      "intervention_open": false,
+      "must_not": [
+       "let me connect you",
+       "connecting you",
+       "i'll connect you",
+       "i will connect you",
+       "i'll set that up",
+       "i'll schedule",
+       "i'll get that scheduled"
+      ]
+     },
+     "signals": {
+      "buying_signal": true,
+      "intent": "buy"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-11-pricing-interest",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "What does it cost to pilot this?",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": true,
+      "intervention_open": false
+     },
+     "signals": {
+      "intent": "explore"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-12-pricing-negotiation",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "Can you give us a 30% discount if we sign this quarter?",
+     "expect": {
+      "customer_facing": [
+       "holding",
+       "restricted_answer"
+      ],
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {
+      "buying_signal": true
+     }
+    }
+   ],
+   "_note": "Rep OFFLINE on purpose: online, ALERT would hold by accident and mask the missing negotiation policy."
+  },
+  {
+   "id": "POL-13-accountability-demand",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Will you commit in writing to a lift in conversion or we get a refund?",
+     "expect": {
+      "customer_facing": [
+       "holding",
+       "restricted_answer"
+      ],
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {}
+    }
+   ]
+  },
+  {
+   "id": "POL-14-contract-ask",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "Can our legal team redline your contract terms?",
+     "expect": {
+      "customer_facing": [
+       "holding",
+       "restricted_answer"
+      ],
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {}
+    }
+   ]
+  },
+  {
+   "id": "POL-15-skepticism-is-objection",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) exploring",
+     "expect": {},
+     "signals": {
+      "intent": "explore"
+     }
+    },
+    {
+     "u": "(labeled) not convinced",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": false,
+      "intervention_open": false,
+      "trust_state": "OBJECTION"
+     },
+     "signals": {
+      "objection_type": "trust"
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-16-identity-answered",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) are you a bot",
+     "expect": {
+      "customer_facing": "answer",
+      "rep_notified": false,
+      "must_include_any": [
+       "AI assistant"
+      ]
+     },
+     "signals": {
+      "identity_question": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-17-relay-withholds-draft",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "relay",
+   "turns": [
+    {
+     "u": "(labeled) neutral",
+     "expect": {
+      "customer_facing": "draft_for_rep",
+      "rep_notified": false,
+      "escalation": [
+       "none"
+      ]
+     },
+     "signals": {}
+    }
+   ]
+  },
+  {
+   "id": "POL-18-shadow-suggests-only",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "shadow",
+   "turns": [
+    {
+     "u": "(labeled) neutral",
+     "expect": {
+      "customer_facing": "rep_suggestion",
+      "rep_notified": false
+     },
+     "signals": {}
+    }
+   ]
+  },
+  {
+   "id": "POL-19-relay-human-request-holds",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "relay",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "customer_facing": "holding",
+      "intervention_open": true
+     },
+     "signals": {
+      "human_request": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-20-restricted-after-human-request",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "customer_facing": "holding",
+      "intervention_open": true
+     },
+     "signals": {
+      "human_request": true
+     }
+    },
+    {
+     "u": "What integrations does Northstar support?",
+     "expect": {
+      "customer_facing": "restricted_answer",
+      "intervention_open": true
+     },
+     "signals": {}
+    }
+   ]
+  },
+  {
+   "id": "POL-21-approval-gate-offline-not-unrestricted",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "relay",
+   "turns": [
+    {
+     "u": "(labeled) neutral",
+     "expect": {
+      "customer_facing": "draft_for_rep"
+     },
+     "signals": {}
+    },
+    {
+     "u": "What does the agent do?",
+     "expect": {
+      "customer_facing": [
+       "restricted_answer",
+       "draft_for_rep",
+       "holding"
+      ]
+     },
+     "signals": {},
+     "rep": "offline"
+    }
+   ]
+  },
+  {
+   "id": "POL-22-intervention-survives-rep-offline",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "customer_facing": "holding",
+      "intervention_open": true
+     },
+     "signals": {
+      "human_request": true
+     }
+    },
+    {
+     "u": "ok thanks",
+     "expect": {
+      "customer_facing": [
+       "holding",
+       "restricted_answer"
+      ],
+      "intervention_open": true
+     },
+     "signals": {},
+     "rep": "offline"
+    }
+   ]
+  },
+  {
+   "id": "POL-23-interpreter-failure-keeps-human-request",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "Can I talk to a real person?",
+     "expect": {
+      "customer_facing": "holding",
+      "rep_notified": true,
+      "intervention_open": true
+     },
+     "signals": {
+      "__raise": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-24-interpreter-failure-no-trust-change",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "   ",
+     "expect": {
+      "trust_state": "AWARENESS",
+      "rep_notified": false,
+      "escalation": [
+       "none"
+      ]
+     },
+     "signals": {
+      "__raise": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "POL-25-loop-guard",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "offline",
+   "turns": [
+    {
+     "u": "ok",
+     "expect": {},
+     "signals": {}
+    },
+    {
+     "u": "hmm",
+     "expect": {},
+     "signals": {}
+    },
+    {
+     "u": "maybe",
+     "expect": {},
+     "signals": {}
+    },
+    {
+     "u": "sure",
+     "expect": {},
+     "signals": {}
+    }
+   ],
+   "assert_no_repeat": true
+  },
+  {
+   "id": "POL-26-hold-followups-not-verbatim-repeat",
+   "group": "policy",
+   "layer": "policy",
+   "rep": "online",
+   "turns": [
+    {
+     "u": "(labeled) person please",
+     "expect": {
+      "intervention_open": true
+     },
+     "signals": {
+      "human_request": true
+     }
+    },
+    {
+     "u": "ok",
+     "expect": {},
+     "signals": {}
+    },
+    {
+     "u": "hello?",
+     "expect": {},
+     "signals": {}
+    },
+    {
+     "u": "anyone there",
+     "expect": {},
+     "signals": {}
+    }
+   ],
+   "assert_no_repeat": true
+  }
+ ]
+}

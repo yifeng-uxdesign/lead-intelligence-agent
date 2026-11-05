@@ -15,8 +15,9 @@ state or buying signal alone. The evaluation result gates the
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from src.application.signal_adapters import (
     handoff_signal_dict_from_lead,
@@ -27,17 +28,29 @@ from src.collaboration.handoff_manager import HandoffManager
 from src.collaboration.mode_state_machine import CollaborationMode, ModeStateMachine
 from src.core.handoff_queue import HandoffQueue
 from src.core.lead_context import LeadContext
+from src.collaboration.delivery_policy import DeliveryStatus, authorize_delivery
 from src.core.memory_store import MemoryStore
 from src.customer_layer.behavior_engine import CustomerBehaviorEngine
+from src.customer_layer.fallback_variants import loop_breaker
+from src.customer_layer.holding_responses import holding_response
 from src.customer_layer.trust_state_machine import TrustState, TrustStateMachine
 from src.domain.session_state import (
     KEY_COLLABORATION_MODE,
+    KEY_LAST_BASE_RESPONSE,
+    KEY_REPEAT_STREAK,
+    discard_relay_drafts,
+    first_open_human_trigger,
+    has_open_human_intervention,
     hydrate_mode_machine,
     hydrate_trust_machine,
+    next_turn_number,
+    open_intervention,
     persist_collaboration_mode,
+    persist_last_trigger,
     persist_trust_state,
+    stage_relay_draft,
 )
-from src.domain.trigger_catalog import rep_brief_key_for_handoff
+from src.domain.trigger_catalog import rep_brief_key_for_handoff, trigger_requires_human
 from src.rep_layer.rep_assist_engine import AlertBrief, RepAssistEngine
 from src.signals.extractor import LeadSignalExtractor, LeadSignals
 
@@ -92,6 +105,79 @@ def _prospect_signals_from_lead(lead: LeadSignals) -> Dict[str, bool]:
 
 
 # ---------------------------------------------------------------------------
+# Interpretation safety + loop guard
+# ---------------------------------------------------------------------------
+
+_log = logging.getLogger(__name__)
+
+# What "we learned nothing" looks like. Used for empty input and total
+# interpretation failure; never inferred from a message that actually parsed.
+_NO_INFORMATION = LeadSignals(
+    intent="general",
+    urgency="medium",
+    sentiment="neutral",
+    objection_type="none",
+    human_request=False,
+    competitor_mention=False,
+    buying_signal=False,
+    stakeholder_signal=False,
+)
+
+# Trust states whose reply is functionally specific (fit check, thank-you) and
+# must not be swapped for generic loop-breaker copy.
+_LOOP_GUARD_EXEMPT_STATES = frozenset({TrustState.DECISION_READY, TrustState.COMMITMENT})
+
+
+def interpret_message(
+    extractor: LeadSignalExtractor, raw_message: str
+) -> Tuple[LeadSignals, str]:
+    """Extract signals without ever letting interpretation failure break a turn.
+
+    Returns ``(signals, status)`` where status is:
+    - ``"ok"``       — the configured extractor succeeded.
+    - ``"fallback"`` — it raised; the deterministic rule-based extractor was used.
+    - ``"empty"``    — blank input; nothing to interpret.
+    - ``"failed"``   — everything failed; signals carry no information.
+
+    ``"empty"`` and ``"failed"`` mean *no information*: callers must not advance
+    or regress trust on them.
+    """
+    if not raw_message or not str(raw_message).strip():
+        return _NO_INFORMATION, "empty"
+    try:
+        return extractor.extract(raw_message), "ok"
+    except Exception:  # noqa: BLE001 — an interpreter must never take the turn down
+        _log.exception("signal extractor failed; falling back to rule-based extraction")
+    try:
+        return LeadSignalExtractor().extract(raw_message), "fallback"
+    except Exception:  # noqa: BLE001
+        _log.exception("fallback extractor failed; treating turn as no-information")
+        return _NO_INFORMATION, "failed"
+
+
+def guard_against_repetition(
+    metadata: Dict, base_text: str, *, exempt: bool = False
+) -> str:
+    """Never send the same scripted reply twice in a row.
+
+    Compares the *scripted* text (before substitution) with the previous turn's
+    scripted text, so a loop-breaker can't itself become half of an A/B/A loop.
+    """
+    if exempt:
+        metadata[KEY_REPEAT_STREAK] = 0
+        metadata[KEY_LAST_BASE_RESPONSE] = base_text
+        return base_text
+    streak = (
+        int(metadata.get(KEY_REPEAT_STREAK, 0)) + 1
+        if metadata.get(KEY_LAST_BASE_RESPONSE) == base_text
+        else 0
+    )
+    metadata[KEY_REPEAT_STREAK] = streak
+    metadata[KEY_LAST_BASE_RESPONSE] = base_text
+    return loop_breaker(streak) if streak > 0 else base_text
+
+
+# ---------------------------------------------------------------------------
 # Orchestration path functions
 # ---------------------------------------------------------------------------
 
@@ -102,13 +188,19 @@ def run_mode_transition_path(
     live_session: bool,
     handoff_triggered: bool,
     awaiting_approval: bool,
+    context: Optional[LeadContext] = None,
 ) -> CollaborationMode:
-    """Compute next collaboration mode (autonomous vs rep-assisted variants)."""
+    """Compute next collaboration mode (autonomous vs rep-assisted variants).
+
+    Passing ``context`` lets the machine record an interruption event when the
+    rep drops offline mid-ALERT/RELAY/SHADOW (soul.md value 4).
+    """
     return mode_machine.transition(
         rep_online=rep_online,
         live_session=live_session,
         handoff_triggered=handoff_triggered,
         awaiting_approval=awaiting_approval,
+        context=context,
     )
 
 
@@ -179,6 +271,7 @@ def run_customer_response_path(
             "trust_state": trust_state,
             "topic": topic,
             "fit_confirmed": fit_confirmed,
+            "identity_question": lead_signals.identity_question,
         },
     )
 
@@ -188,8 +281,13 @@ def run_rep_alert_path(
     handoff_manager: HandoffManager,
     context: LeadContext,
     trigger_type: str,
+    rep_online: Optional[bool] = None,
 ) -> AlertBrief:
-    """Build internal rep alert brief and enqueue handoff for rep layer pickup."""
+    """Build internal rep alert brief and enqueue handoff for rep layer pickup.
+
+    Called for every handoff trigger regardless of collaboration mode or rep
+    availability: a human requirement must never depend on the rep being online.
+    """
     brief_trigger = rep_brief_key_for_handoff(trigger_type)
     brief = rep_engine.create_alert_brief(context, brief_trigger)
     handoff_manager.request_rep_handoff(
@@ -198,6 +296,7 @@ def run_rep_alert_path(
             "trigger_type": trigger_type,
             "alert_brief": brief.as_dict(),
             "sla_minutes": handoff_manager.get_sla(trigger_type),
+            "rep_online_at_trigger": rep_online,
         },
     )
     return brief
@@ -221,6 +320,18 @@ class OrchestrationResult:
     rep_alert_brief: Optional[AlertBrief]
     fit_confirmed: bool = False
     fit_score: Optional[int] = None
+    # --- delivery contract (see collaboration.delivery_policy) --------------
+    # ``customer_message`` is ONLY text that is safe to show the customer now:
+    # an agent response (AUTONOMOUS) or an approved holding response. Rep-only
+    # output lives in ``pending_draft`` / ``rep_suggestion`` and must never be
+    # forwarded to the customer channel.
+    delivery_status: str = DeliveryStatus.DELIVERED.value
+    handoff_queued: bool = False
+    human_intervention_open: bool = False
+    pending_draft: Optional[str] = None
+    pending_draft_id: Optional[str] = None
+    rep_suggestion: Optional[str] = None
+    interpretation_status: str = "ok"
 
 
 # ---------------------------------------------------------------------------
@@ -261,37 +372,60 @@ def run_turn(
             Pass ``SIERRA_FIT_CRITERIA`` from fit_criteria.py for live use.
     """
 
-    # 1) Load or create lead context from memory store
+    # 1) Load or create lead context from memory store.
+    #    Reset the (possibly shared) machine first so one lead's mode can never
+    #    bleed into another's; hydrate then restores this lead's persisted mode.
     ctx = store.get(lead_id)
     if ctx is None:
         ctx = LeadContext(lead_id=lead_id)
+    mode_machine.current_mode = CollaborationMode.AUTONOMOUS
     hydrate_mode_machine(
         mode_machine, ctx.metadata.get(KEY_COLLABORATION_MODE)
     )
+    turn_number = next_turn_number(ctx.metadata)
 
-    # 2) Extract structured signals from raw customer message
-    lead_signals = signal_extractor.extract(raw_message)
-    ctx.update_sentiment(lead_signals.sentiment)
-    ctx.update_summary(f"User: {raw_message.strip()[:2000]}")
+    # 2) Extract structured signals. Failure degrades (fallback extractor, then
+    #    "no information") instead of crashing the turn.
+    lead_signals, interpretation_status = interpret_message(signal_extractor, raw_message)
+    no_information = interpretation_status in ("empty", "failed")
+    if not no_information:
+        ctx.update_sentiment(lead_signals.sentiment)
+    if raw_message and str(raw_message).strip():
+        ctx.update_summary(f"User: {raw_message.strip()[:2000]}")
 
     trust_machine = hydrate_trust_machine(ctx.metadata)
 
-    # 3) Update customer psychological trust state
-    trust_state = run_customer_trust_path(ctx, trust_machine, lead_signals)
+    # 3) Update customer psychological trust state. A turn that taught us
+    #    nothing must not move trust in either direction.
+    if no_information:
+        trust_state = trust_machine.get_state()
+        persist_trust_state(ctx.metadata, trust_state)
+        ctx.customer_state = trust_state.value
+    else:
+        trust_state = run_customer_trust_path(ctx, trust_machine, lead_signals)
 
-    # 4) Evaluate handoff trigger conditions
+    # 4) Evaluate handoff trigger conditions (deterministic; the extractor only
+    #    supplies evidence).
     handoff_payload = handoff_signal_dict_from_lead(lead_signals, raw_message)
     handoff_triggered, trigger_type = handoff_manager.should_trigger(
         handoff_payload, ctx
     )
 
-    # 5) Transition collaboration mode
+    # A human requirement is state, not a one-turn event: an unresolved
+    # human-required handoff from an earlier turn still holds the conversation.
+    earlier_human_trigger = first_open_human_trigger(ctx.metadata)
+    this_turn_human_trigger = handoff_triggered and trigger_requires_human(trigger_type)
+    human_hold = this_turn_human_trigger or earlier_human_trigger is not None
+
+    # 5) Transition collaboration mode. Mode models rep availability only; the
+    #    handoff and delivery decisions below do not depend on its value.
     collaboration_mode = run_mode_transition_path(
         mode_machine,
         rep_online=rep_online,
         live_session=live_session,
-        handoff_triggered=handoff_triggered,
+        handoff_triggered=handoff_triggered or earlier_human_trigger is not None,
         awaiting_approval=awaiting_approval,
+        context=ctx,
     )
     ctx.collaboration_mode = collaboration_mode.value
     persist_collaboration_mode(ctx.metadata, collaboration_mode)
@@ -301,23 +435,70 @@ def run_turn(
     rep_brief: Optional[AlertBrief] = None
     fit_confirmed: bool = False
     fit_score: Optional[int] = None
+    handoff_queued = False
+    pending_draft: Optional[str] = None
+    pending_draft_id: Optional[str] = None
+    rep_suggestion: Optional[str] = None
 
-    # 6-7) Branch: rep alert path or customer response path
-    if collaboration_mode == CollaborationMode.ALERT:
-        # Trust-critical moment — route to rep, suppress customer response.
-        # soul.md value 4: this moment belongs to a human rep.
-        rep_brief = run_rep_alert_path(
-            rep_engine, handoff_manager, ctx, trigger_type
+    # 6) Queue the handoff whenever one is triggered — online, offline, any
+    #    mode. Duplicate triggers for an already-open handoff are not re-queued.
+    newly_opened = False
+    if handoff_triggered:
+        persist_last_trigger(ctx.metadata, trigger_type)
+        newly_opened = open_intervention(
+            ctx.metadata,
+            trigger_type,
+            human_required=trigger_requires_human(trigger_type),
+            turn=turn_number,
+        )
+        if newly_opened:
+            rep_brief = run_rep_alert_path(
+                rep_engine, handoff_manager, ctx, trigger_type, rep_online=rep_online
+            )
+            ctx.add_handoff_event(
+                {
+                    "trigger_type": trigger_type,
+                    "reason": "handoff_triggered",
+                    "rep_online": rep_online,
+                    "turn": turn_number,
+                }
+            )
+            handoff_queued = True
+        if this_turn_human_trigger:
+            # Anything staged for approval was written before the human moment.
+            discard_relay_drafts(ctx.metadata)
+
+    # 7) Authorize delivery, then produce only what the policy allows.
+    decision = authorize_delivery(collaboration_mode, human_hold=human_hold)
+
+    if decision.customer_gets_holding_text:
+        # soul.md value 4: this moment belongs to a human. Approved static copy
+        # only — never unrestricted generation, never silence.
+        holding_trigger = (
+            trigger_type
+            if this_turn_human_trigger
+            else (earlier_human_trigger or trigger_type)
+        )
+        customer_message = holding_response(
+            holding_trigger,
+            follow_up=not newly_opened,
+            identity_question=lead_signals.identity_question,
         )
     else:
-        # Autonomous or shadow path — generate customer-facing response.
-        # fit_criteria drives fit_confirmed inside run_customer_response_path.
-        customer_message = run_customer_response_path(
+        agent_text = run_customer_response_path(
             customer_engine,
             ctx,
             trust_state,
             lead_signals,
             fit_criteria=fit_criteria,
+        )
+        agent_text = guard_against_repetition(
+            ctx.metadata,
+            agent_text,
+            exempt=(
+                lead_signals.identity_question
+                or trust_state in _LOOP_GUARD_EXEMPT_STATES
+            ),
         )
 
         # Expose fit assessment in result for logging and test assertions
@@ -326,6 +507,18 @@ def run_turn(
             assessment = fit_summary(prospect_signals, fit_criteria)
             fit_confirmed = assessment["fit_confirmed"]
             fit_score = assessment["score"]
+
+        if decision.customer_gets_agent_text:
+            customer_message = agent_text
+        elif decision.status == DeliveryStatus.PENDING_APPROVAL:
+            # RELAY: the draft goes to the rep, never to the customer.
+            pending_draft = agent_text
+            pending_draft_id = stage_relay_draft(
+                ctx.metadata, agent_text, turn=turn_number
+            )
+        else:
+            # SHADOW: suggestion for the rep, who owns the conversation.
+            rep_suggestion = agent_text
 
     # 8) Persist updated context
     store.save(ctx)
@@ -341,6 +534,13 @@ def run_turn(
         rep_alert_brief=rep_brief,
         fit_confirmed=fit_confirmed,
         fit_score=fit_score,
+        delivery_status=decision.status.value,
+        handoff_queued=handoff_queued,
+        human_intervention_open=has_open_human_intervention(ctx.metadata),
+        pending_draft=pending_draft,
+        pending_draft_id=pending_draft_id,
+        rep_suggestion=rep_suggestion,
+        interpretation_status=interpretation_status,
     )
 
 

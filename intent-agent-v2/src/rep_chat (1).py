@@ -109,8 +109,12 @@ def _print_turn_result(result, label: str = "Customer turn") -> None:
         _print_alert_brief(result.rep_alert_brief)
 
     if result.customer_message:
-        print(f"\n  🤖 Agent said to customer:")
+        label = "Holding response sent" if result.delivery_status == "holding" else "Agent said to customer"
+        print(f"\n  🤖 {label}:")
         print(f"  \"{result.customer_message}\"\n")
+    if result.rep_suggestion:
+        print(f"\n  💡 Suggested reply (NOT sent — you lead in shadow mode):")
+        print(f"  \"{result.rep_suggestion}\"\n")
 
 
 def _print_rep_prompt(rep_online: bool, mode: str) -> None:
@@ -345,8 +349,10 @@ def main() -> None:
 
                 # In relay mode, show the draft for approval rather than
                 # delivering it — rep must approve first.
-                if awaiting_approval and result.customer_message:
-                    pending_relay_draft = result.customer_message
+                # RELAY drafts are rep-only: the orchestrator withholds them from
+                # ``customer_message`` and returns them as ``pending_draft``.
+                if result.pending_draft:
+                    pending_relay_draft = result.pending_draft
                     print(f"\n  📝 RELAY DRAFT (pending your approval):")
                     print(f"  \"{pending_relay_draft}\"")
                     print("  Type 'approve' to deliver, or 'inject' another message.\n")

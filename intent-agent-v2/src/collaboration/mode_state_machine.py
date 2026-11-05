@@ -50,8 +50,14 @@ class ModeStateMachine:
 
         **Edge case:** If both ``handoff_triggered`` and ``awaiting_approval`` are
         true, **ALERT** wins (escalation before approval gating). If the rep is
-        **offline**, mode is **AUTONOMOUS** regardless of other flags—queue
-        handoffs asynchronously rather than blocking the customer thread.
+        **offline**, mode is **AUTONOMOUS** regardless of other flags.
+
+        **AUTONOMOUS-when-offline describes who can respond, not whether a human
+        is required.** This machine only models rep availability. Whether a
+        handoff is open, and what the customer may be sent while it is, is owned
+        by the orchestrator (``domain.session_state`` pending interventions) and
+        ``collaboration.delivery_policy``. Callers must queue the handoff and
+        apply the delivery policy independently of the mode returned here.
         """
         # Rep unavailable: keep system autonomous to maintain lead continuity.
         if not rep_online:

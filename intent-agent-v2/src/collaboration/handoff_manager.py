@@ -6,7 +6,11 @@ from typing import Dict, Tuple
 
 from src.core.lead_context import LeadContext
 from src.core.handoff_queue import HandoffQueue, HandoffTask
-from src.domain.trigger_catalog import HandoffTriggerType, sla_minutes_for_trigger
+from src.domain.trigger_catalog import (
+    NON_AGENT_FRUSTRATION_TARGETS,
+    HandoffTriggerType,
+    sla_minutes_for_trigger,
+)
 
 
 class HandoffManager:
@@ -21,6 +25,9 @@ class HandoffManager:
 
     def should_trigger(self, signals: Dict[str, object], context: LeadContext) -> Tuple[bool, str]:
         """Evaluate whether this conversation should be handed to a rep.
+
+        An explicit human request is checked first and unconditionally: it does
+        not depend on sentiment, trust state, fit, or rep availability.
 
         Returns:
             (triggered, trigger_type)
@@ -39,10 +46,16 @@ class HandoffManager:
         if bool(signals.get("strong_buying_signal", False)):
             return True, HandoffTriggerType.STRONG_BUYING_SIGNAL.value
 
-        # 4) Sentiment drops to frustration.
+        # 4) Sentiment drops to frustration — unless it is positively identified
+        #    as aimed at something other than this agent (a previous vendor, the
+        #    prospect's own process). That is discovery material, not a failing
+        #    conversation. Unknown/unspecified targets still escalate: only
+        #    positive evidence may suppress a human moment.
         sentiment = str(signals.get("sentiment", context.sentiment)).strip().lower()
         if sentiment in {"frustration", "frustrated"}:
-            return True, HandoffTriggerType.FRUSTRATION.value
+            target = str(signals.get("sentiment_target", "unspecified")).strip().lower()
+            if target not in NON_AGENT_FRUSTRATION_TARGETS:
+                return True, HandoffTriggerType.FRUSTRATION.value
 
         # 5) Competitor mention appears.
         if bool(signals.get("competitor_mention", False)):

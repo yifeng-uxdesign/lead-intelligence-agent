@@ -1,0 +1,13 @@
+{
+  "_doc": "Policy cases the current backend is KNOWN to fail, each tied to the roadmap step that fixes it. pytest runs them as strict xfail: when a step lands and a case starts passing, the test goes red until its entry is deleted here. Steps: 3 = trigger taxonomy (D1/D4), 4 = autonomy profiles (D2/D3).",
+  "POL-07-competitor-is-context":  {"step": 3, "decision": "D4", "reason": "Competitor mention opens a handoff and, with a rep online, ALERT holds the conversation. It should be context while the agent continues."},
+  "POL-08-stakeholder-is-context": {"step": 3, "decision": "D4", "reason": "Stakeholder involvement holds the conversation with a rep online. It is context, not an intervention."},
+  "POL-09-buying-before-fit-online": {"step": 3, "decision": "D1", "reason": "A buying signal before fit is confirmed holds the conversation and announces a handoff. It should notify the rep and keep running the fit check."},
+  "POL-11-pricing-interest":       {"step": 3, "decision": "D1/D4", "reason": "Any mention of price/cost/budget holds the conversation with a rep online. Pricing interest is attention; only negotiation is an intervention."},
+  "POL-12-pricing-negotiation":    {"step": 3, "decision": "D4", "reason": "No pricing-negotiation trigger exists; a discount demand with the rep offline is answered autonomously."},
+  "POL-13-accountability-demand":  {"step": 3, "decision": "D4", "reason": "No commitment/accountability trigger exists."},
+  "POL-14-contract-ask":           {"step": 3, "decision": "D4", "reason": "No contract/legal trigger exists."},
+  "POL-20-restricted-after-human-request": {"step": 4, "decision": "D2", "reason": "After a human request the agent only repeats a holding message; no restricted-autonomy profile exists."},
+  "POL-21-approval-gate-offline-not-unrestricted": {"step": 4, "decision": "D3", "reason": "With the approval gate on and the rep offline the mode machine returns AUTONOMOUS and the agent answers unrestricted."},
+  "POL-26-hold-followups-not-verbatim-repeat": {"step": 4, "decision": "D2", "reason": "Follow-ups during an open intervention repeat the same holding text verbatim."}
+}
