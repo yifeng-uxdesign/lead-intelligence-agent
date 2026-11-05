@@ -29,6 +29,11 @@ KEY_OUTBOX: Final[str] = "customer_outbox"
 # substitution) and how many times in a row it would have repeated.
 KEY_LAST_BASE_RESPONSE: Final[str] = "last_base_response"
 KEY_REPEAT_STREAK: Final[str] = "repeat_streak"
+# Context / attention triggers the rep has already been told about (dedup).
+KEY_REP_NOTICES: Final[str] = "rep_notices"
+# Rep-internal per-turn decision traces (newest last, capped).
+KEY_DECISION_TRACE: Final[str] = "decision_trace"
+DECISION_TRACE_KEEP: Final[int] = 50
 
 
 def hydrate_trust_machine(context_metadata: dict[str, Any]) -> TrustStateMachine:
@@ -127,6 +132,43 @@ def resolve_interventions(metadata: dict[str, Any]) -> int:
     n = len(metadata.get(KEY_PENDING_INTERVENTIONS, []))
     metadata[KEY_PENDING_INTERVENTIONS] = []
     return n
+
+
+# ---------------------------------------------------------------------------
+# Rep notices (context / attention triggers)
+#
+# These inform the rep without opening an intervention. Each trigger type is
+# sent once per lead so a prospect who keeps mentioning a competitor does not
+# re-page the rep every turn.
+# ---------------------------------------------------------------------------
+
+def record_rep_notice(
+    metadata: dict[str, Any], trigger_type: str, *, trigger_class: str, turn: int
+) -> bool:
+    """Record that the rep was told about this trigger. False if already told."""
+    items: List[Dict[str, Any]] = metadata.setdefault(KEY_REP_NOTICES, [])
+    if any(i.get("trigger_type") == trigger_type for i in items):
+        return False
+    items.append({"trigger_type": trigger_type, "trigger_class": trigger_class, "turn": turn})
+    return True
+
+
+def rep_notices(metadata: dict[str, Any]) -> List[Dict[str, Any]]:
+    return [dict(i) for i in metadata.get(KEY_REP_NOTICES, [])]
+
+
+# ---------------------------------------------------------------------------
+# Decision trace (rep-internal)
+# ---------------------------------------------------------------------------
+
+def append_decision_trace(metadata: dict[str, Any], trace: Dict[str, Any]) -> None:
+    items: List[Dict[str, Any]] = metadata.setdefault(KEY_DECISION_TRACE, [])
+    items.append(trace)
+    del items[:-DECISION_TRACE_KEEP]
+
+
+def decision_traces(metadata: dict[str, Any]) -> List[Dict[str, Any]]:
+    return [dict(t) for t in metadata.get(KEY_DECISION_TRACE, [])]
 
 
 # ---------------------------------------------------------------------------

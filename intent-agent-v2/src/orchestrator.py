@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from src.application.signal_adapters import (
     handoff_signal_dict_from_lead,
@@ -32,12 +32,22 @@ from src.collaboration.delivery_policy import DeliveryStatus, authorize_delivery
 from src.core.memory_store import MemoryStore
 from src.customer_layer.behavior_engine import CustomerBehaviorEngine
 from src.customer_layer.fallback_variants import loop_breaker
-from src.customer_layer.holding_responses import holding_response
+from src.customer_layer.holding_responses import holding_copy_id, holding_response
 from src.customer_layer.trust_state_machine import TrustState, TrustStateMachine
+from src.domain.decision_trace import (
+    INTERVENTION_ALREADY_OPEN,
+    INTERVENTION_CARRIED_OVER,
+    INTERVENTION_NONE,
+    INTERVENTION_OPENED,
+    DecisionTrace,
+    TriggerHit,
+    outcome_for_delivery_status,
+)
 from src.domain.session_state import (
     KEY_COLLABORATION_MODE,
     KEY_LAST_BASE_RESPONSE,
     KEY_REPEAT_STREAK,
+    append_decision_trace,
     discard_relay_drafts,
     first_open_human_trigger,
     has_open_human_intervention,
@@ -48,9 +58,10 @@ from src.domain.session_state import (
     persist_collaboration_mode,
     persist_last_trigger,
     persist_trust_state,
+    record_rep_notice,
     stage_relay_draft,
 )
-from src.domain.trigger_catalog import rep_brief_key_for_handoff, trigger_requires_human
+from src.domain.trigger_catalog import HandoffTriggerType, TriggerClass, rep_brief_key_for_handoff
 from src.rep_layer.rep_assist_engine import AlertBrief, RepAssistEngine
 from src.signals.extractor import LeadSignalExtractor, LeadSignals
 
@@ -217,12 +228,25 @@ def run_customer_trust_path(
     return new_state
 
 
+# Customer-safe phrasing of a context / attention trigger, used as the reply
+# topic when the prospect raised no objection: the agent continues *and*
+# acknowledges what was raised, instead of repeating its previous template.
+# Never interpolate trigger labels themselves into customer text.
+_NOTICE_TOPIC: Dict[str, str] = {
+    HandoffTriggerType.COMPETITOR_MENTION.value: "how this compares with what you use today",
+    HandoffTriggerType.STAKEHOLDER_APPROVAL_NEEDED.value: "getting the right people involved",
+    HandoffTriggerType.PRICING_DISCUSSION.value: "pricing",
+    HandoffTriggerType.STRONG_BUYING_SIGNAL.value: "the next steps",
+}
+
+
 def run_customer_response_path(
     engine: CustomerBehaviorEngine,
     context: LeadContext,
     trust_state: TrustState,
     lead_signals: LeadSignals,
     fit_criteria: Optional[FitCriteria] = None,
+    notice_trigger: Optional[str] = None,
 ) -> str:
     """Generate the next customer-visible message (warm, non-pushy).
 
@@ -243,6 +267,8 @@ def run_customer_response_path(
     topic = ""
     if lead_signals.objection_type != "none":
         topic = lead_signals.objection_type.replace("_", " ")
+    elif notice_trigger:
+        topic = _NOTICE_TOPIC.get(notice_trigger, "")
 
     # Evaluate product fit against client criteria.
     # soul.md conflict hierarchy priority 2: do not harm the prospect's interest.
@@ -282,11 +308,14 @@ def run_rep_alert_path(
     context: LeadContext,
     trigger_type: str,
     rep_online: Optional[bool] = None,
+    trigger_class: Optional[str] = None,
+    also: Optional[List[str]] = None,
 ) -> AlertBrief:
     """Build internal rep alert brief and enqueue handoff for rep layer pickup.
 
-    Called for every handoff trigger regardless of collaboration mode or rep
-    availability: a human requirement must never depend on the rep being online.
+    Called for every newly-fired trigger of any class, regardless of
+    collaboration mode or rep availability: a human requirement must never
+    depend on the rep being online.
     """
     brief_trigger = rep_brief_key_for_handoff(trigger_type)
     brief = rep_engine.create_alert_brief(context, brief_trigger)
@@ -297,6 +326,8 @@ def run_rep_alert_path(
             "alert_brief": brief.as_dict(),
             "sla_minutes": handoff_manager.get_sla(trigger_type),
             "rep_online_at_trigger": rep_online,
+            "trigger_class": trigger_class,
+            "also_triggered": list(also or []),
         },
     )
     return brief
@@ -332,6 +363,8 @@ class OrchestrationResult:
     pending_draft_id: Optional[str] = None
     rep_suggestion: Optional[str] = None
     interpretation_status: str = "ok"
+    # Why this turn ended the way it did (rep-internal; never send to customer).
+    decision_trace: Optional[DecisionTrace] = None
 
 
 # ---------------------------------------------------------------------------
@@ -404,26 +437,30 @@ def run_turn(
     else:
         trust_state = run_customer_trust_path(ctx, trust_machine, lead_signals)
 
-    # 4) Evaluate handoff trigger conditions (deterministic; the extractor only
-    #    supplies evidence).
+    # 4) Evaluate triggers (deterministic; the extractor only supplies evidence).
+    #    Every trigger has a class (domain.trigger_catalog.TriggerClass):
+    #    context / attention notify the rep and let the agent continue;
+    #    intervention opens a human moment and holds the conversation.
     handoff_payload = handoff_signal_dict_from_lead(lead_signals, raw_message)
-    handoff_triggered, trigger_type = handoff_manager.should_trigger(
-        handoff_payload, ctx
-    )
+    hits = handoff_manager.evaluate(handoff_payload, ctx)
+    handoff_triggered = bool(hits)
+    trigger_type = hits[0].trigger_type if hits else HandoffTriggerType.NONE.value
+    intervention_hits = [h for h in hits if h.trigger_class == TriggerClass.INTERVENTION.value]
+    notice_hits = [h for h in hits if h.trigger_class != TriggerClass.INTERVENTION.value]
+    intervention_trigger = intervention_hits[0].trigger_type if intervention_hits else None
 
     # A human requirement is state, not a one-turn event: an unresolved
-    # human-required handoff from an earlier turn still holds the conversation.
+    # intervention from an earlier turn still holds the conversation.
     earlier_human_trigger = first_open_human_trigger(ctx.metadata)
-    this_turn_human_trigger = handoff_triggered and trigger_requires_human(trigger_type)
-    human_hold = this_turn_human_trigger or earlier_human_trigger is not None
+    human_hold = intervention_trigger is not None or earlier_human_trigger is not None
 
-    # 5) Transition collaboration mode. Mode models rep availability only; the
-    #    handoff and delivery decisions below do not depend on its value.
+    # 5) Transition collaboration mode. Only an intervention puts an online rep
+    #    in ALERT; context / attention never take the conversation away.
     collaboration_mode = run_mode_transition_path(
         mode_machine,
         rep_online=rep_online,
         live_session=live_session,
-        handoff_triggered=handoff_triggered or earlier_human_trigger is not None,
+        handoff_triggered=human_hold,
         awaiting_approval=awaiting_approval,
         context=ctx,
     )
@@ -440,66 +477,80 @@ def run_turn(
     pending_draft_id: Optional[str] = None
     rep_suggestion: Optional[str] = None
 
-    # 6) Queue the handoff whenever one is triggered — online, offline, any
-    #    mode. Duplicate triggers for an already-open handoff are not re-queued.
-    newly_opened = False
+    # 6) Notify the rep whenever something new fired — online, offline, any
+    #    mode. Interventions open (once per trigger until resolved); context /
+    #    attention are recorded once per lead. One queue task per turn, keyed
+    #    on the highest-precedence newly-notified trigger.
     if handoff_triggered:
         persist_last_trigger(ctx.metadata, trigger_type)
-        newly_opened = open_intervention(
-            ctx.metadata,
-            trigger_type,
-            human_required=trigger_requires_human(trigger_type),
-            turn=turn_number,
+    newly_opened = False
+    notified: list = []
+    for h in intervention_hits:
+        if open_intervention(ctx.metadata, h.trigger_type, human_required=True, turn=turn_number):
+            newly_opened = newly_opened or h.trigger_type == intervention_trigger
+            notified.append(h)
+    if intervention_hits:
+        # Anything staged for approval was written before the human moment.
+        discard_relay_drafts(ctx.metadata)
+    for h in notice_hits:
+        if record_rep_notice(
+            ctx.metadata, h.trigger_type, trigger_class=h.trigger_class, turn=turn_number
+        ):
+            notified.append(h)
+    if notified:
+        lead_hit = notified[0]
+        rep_brief = run_rep_alert_path(
+            rep_engine,
+            handoff_manager,
+            ctx,
+            lead_hit.trigger_type,
+            rep_online=rep_online,
+            trigger_class=lead_hit.trigger_class,
+            also=[h.trigger_type for h in notified[1:]],
         )
-        if newly_opened:
-            rep_brief = run_rep_alert_path(
-                rep_engine, handoff_manager, ctx, trigger_type, rep_online=rep_online
-            )
-            ctx.add_handoff_event(
-                {
-                    "trigger_type": trigger_type,
-                    "reason": "handoff_triggered",
-                    "rep_online": rep_online,
-                    "turn": turn_number,
-                }
-            )
-            handoff_queued = True
-        if this_turn_human_trigger:
-            # Anything staged for approval was written before the human moment.
-            discard_relay_drafts(ctx.metadata)
+        ctx.add_handoff_event(
+            {
+                "trigger_type": lead_hit.trigger_type,
+                "trigger_class": lead_hit.trigger_class,
+                "reason": "handoff_triggered",
+                "rep_online": rep_online,
+                "turn": turn_number,
+            }
+        )
+        handoff_queued = True
 
     # 7) Authorize delivery, then produce only what the policy allows.
     decision = authorize_delivery(collaboration_mode, human_hold=human_hold)
+    loop_guard_applied = False
 
     if decision.customer_gets_holding_text:
         # soul.md value 4: this moment belongs to a human. Approved static copy
         # only — never unrestricted generation, never silence.
-        holding_trigger = (
-            trigger_type
-            if this_turn_human_trigger
-            else (earlier_human_trigger or trigger_type)
-        )
+        holding_trigger = intervention_trigger or earlier_human_trigger or trigger_type
         customer_message = holding_response(
             holding_trigger,
             follow_up=not newly_opened,
             identity_question=lead_signals.identity_question,
         )
+        response_source = "holding:" + holding_copy_id(holding_trigger, follow_up=not newly_opened)
     else:
-        agent_text = run_customer_response_path(
+        base_text = run_customer_response_path(
             customer_engine,
             ctx,
             trust_state,
             lead_signals,
             fit_criteria=fit_criteria,
+            notice_trigger=notice_hits[0].trigger_type if notice_hits else None,
         )
         agent_text = guard_against_repetition(
             ctx.metadata,
-            agent_text,
+            base_text,
             exempt=(
                 lead_signals.identity_question
                 or trust_state in _LOOP_GUARD_EXEMPT_STATES
             ),
         )
+        loop_guard_applied = agent_text != base_text
 
         # Expose fit assessment in result for logging and test assertions
         if fit_criteria is not None:
@@ -510,17 +561,37 @@ def run_turn(
 
         if decision.customer_gets_agent_text:
             customer_message = agent_text
+            response_source = "agent"
         elif decision.status == DeliveryStatus.PENDING_APPROVAL:
             # RELAY: the draft goes to the rep, never to the customer.
             pending_draft = agent_text
             pending_draft_id = stage_relay_draft(
                 ctx.metadata, agent_text, turn=turn_number
             )
+            response_source = "rep_draft"
         else:
             # SHADOW: suggestion for the rep, who owns the conversation.
             rep_suggestion = agent_text
+            response_source = "rep_suggestion"
 
-    # 8) Persist updated context
+    # 8) Record why, then persist.
+    trace = _build_trace(
+        turn=turn_number,
+        interpretation_status=interpretation_status,
+        lead_signals=lead_signals,
+        hits=hits,
+        intervention_trigger=intervention_trigger,
+        newly_opened=newly_opened,
+        earlier_human_trigger=earlier_human_trigger,
+        notified=notified,
+        mode=collaboration_mode,
+        mode_reason=mode_machine.last_reason,
+        decision=decision,
+        response_source=response_source,
+        fit_confirmed=fit_confirmed,
+        loop_guard_applied=loop_guard_applied,
+    )
+    append_decision_trace(ctx.metadata, trace.to_dict())
     store.save(ctx)
 
     return OrchestrationResult(
@@ -541,6 +612,65 @@ def run_turn(
         pending_draft_id=pending_draft_id,
         rep_suggestion=rep_suggestion,
         interpretation_status=interpretation_status,
+        decision_trace=trace,
+    )
+
+
+def _build_trace(
+    *,
+    turn: int,
+    interpretation_status: str,
+    lead_signals: LeadSignals,
+    hits: List[TriggerHit],
+    intervention_trigger: Optional[str],
+    newly_opened: bool,
+    earlier_human_trigger: Optional[str],
+    notified: List[TriggerHit],
+    mode: CollaborationMode,
+    mode_reason: str,
+    decision,
+    response_source: str,
+    fit_confirmed: bool,
+    loop_guard_applied: bool,
+) -> DecisionTrace:
+    if intervention_trigger and newly_opened:
+        action, which = INTERVENTION_OPENED, intervention_trigger
+    elif intervention_trigger:
+        action, which = INTERVENTION_ALREADY_OPEN, intervention_trigger
+    elif earlier_human_trigger:
+        action, which = INTERVENTION_CARRIED_OVER, earlier_human_trigger
+    else:
+        action, which = INTERVENTION_NONE, None
+
+    if notified:
+        lead = notified[0]
+        why = f"queued {lead.trigger_type} [{lead.trigger_class}]"
+        if len(notified) > 1:
+            why += "; also " + ", ".join(h.trigger_type for h in notified[1:])
+    elif hits:
+        why = "already notified / open: " + ", ".join(h.trigger_type for h in hits)
+    else:
+        why = "no trigger fired"
+
+    return DecisionTrace(
+        turn=turn,
+        interpretation_status=interpretation_status,
+        signals=lead_signals.as_dict(),
+        triggers=list(hits),
+        primary_trigger=hits[0].trigger_type if hits else HandoffTriggerType.NONE.value,
+        primary_class=hits[0].trigger_class if hits else None,
+        intervention_action=action,
+        intervention_trigger=which,
+        rep_notified=bool(notified),
+        rep_notified_reason=why,
+        mode=mode.value,
+        mode_reason=mode_reason,
+        delivery_status=decision.status.value,
+        delivery_reason=decision.reason,
+        response_source=response_source,
+        outcome=outcome_for_delivery_status(decision.status.value),
+        fit_confirmed=fit_confirmed,
+        loop_guard_applied=loop_guard_applied,
     )
 
 

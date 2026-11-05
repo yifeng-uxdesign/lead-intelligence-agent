@@ -42,6 +42,24 @@ _GENERIC: Final[str] = (
     "conversation."
 )
 
+_PRICING_NEGOTIATION: Final[str] = (
+    "Pricing terms are something a person on our team needs to work through with "
+    "you, so I've passed your question along with the context from our "
+    "conversation. Someone will follow up with you."
+)
+
+_COMMITMENT: Final[str] = (
+    "That's a commitment only a person on our team can make, so I won't make it "
+    "on their behalf. I've passed your question along with the context from our "
+    "conversation, and someone will follow up with you."
+)
+
+_CONTRACT_LEGAL: Final[str] = (
+    "Contract and legal questions need to go to a person on our team. I've "
+    "passed this along with the context from our conversation, and someone will "
+    "follow up with you."
+)
+
 # Used when the customer writes again while a handoff is still open.
 _FOLLOW_UP: Final[str] = (
     "Your request is already with our team, and they have the context from our "
@@ -52,6 +70,9 @@ _FOLLOW_UP: Final[str] = (
 _BY_TRIGGER: Final[dict[str, str]] = {
     HandoffTriggerType.HUMAN_REQUEST.value: _HUMAN_REQUEST,
     HandoffTriggerType.FRUSTRATION.value: _FRUSTRATION,
+    HandoffTriggerType.PRICING_NEGOTIATION.value: _PRICING_NEGOTIATION,
+    HandoffTriggerType.COMMITMENT_DEMAND.value: _COMMITMENT,
+    HandoffTriggerType.CONTRACT_LEGAL_ASK.value: _CONTRACT_LEGAL,
 }
 
 # Prepended when the prospect also sincerely asked whether they're talking to an
@@ -59,7 +80,8 @@ _BY_TRIGGER: Final[dict[str, str]] = {
 AI_DISCLOSURE_PREFIX: Final[str] = "I'm an AI assistant, not a person. "
 
 APPROVED_HOLDING_RESPONSES: Final[frozenset[str]] = frozenset(
-    {_HUMAN_REQUEST, _FRUSTRATION, _GENERIC, _FOLLOW_UP}
+    {_HUMAN_REQUEST, _FRUSTRATION, _GENERIC, _FOLLOW_UP,
+     _PRICING_NEGOTIATION, _COMMITMENT, _CONTRACT_LEGAL}
 )
 
 
@@ -75,3 +97,10 @@ def holding_response(
     if identity_question and "AI assistant" not in text:
         return AI_DISCLOSURE_PREFIX + text
     return text
+
+
+def holding_copy_id(trigger_type: str, *, follow_up: bool = False) -> str:
+    """Stable name of the copy ``holding_response`` picks (for the decision trace)."""
+    if follow_up:
+        return "follow_up"
+    return trigger_type if trigger_type in _BY_TRIGGER else "generic"

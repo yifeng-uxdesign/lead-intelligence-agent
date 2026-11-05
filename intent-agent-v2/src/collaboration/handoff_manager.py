@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 from src.core.lead_context import LeadContext
 from src.core.handoff_queue import HandoffQueue, HandoffTask
+from src.domain.decision_trace import TriggerHit
 from src.domain.trigger_catalog import (
     NON_AGENT_FRUSTRATION_TARGETS,
+    TRIGGER_CLASS,
+    TRIGGER_PRECEDENCE,
     HandoffTriggerType,
     sla_minutes_for_trigger,
 )
@@ -16,56 +19,59 @@ from src.domain.trigger_catalog import (
 class HandoffManager:
     """Creates and dispatches inter-layer handoff tasks.
 
-    Trigger precedence is fixed (see ``should_trigger``): first match wins.
-    SLA values come from ``domain.trigger_catalog`` — single source of truth.
+    ``evaluate`` returns every trigger that fired, ordered by
+    ``TRIGGER_PRECEDENCE`` (interventions, then attention, then context); the
+    first is the primary trigger. SLA values come from ``domain.trigger_catalog``.
     """
 
     def __init__(self, queue: HandoffQueue) -> None:
         self._queue = queue
 
-    def should_trigger(self, signals: Dict[str, object], context: LeadContext) -> Tuple[bool, str]:
-        """Evaluate whether this conversation should be handed to a rep.
+    def evaluate(self, signals: Dict[str, object], context: LeadContext) -> List[TriggerHit]:
+        """All triggers that fired this turn, primary first.
 
-        An explicit human request is checked first and unconditionally: it does
-        not depend on sentiment, trust state, fit, or rep availability.
-
-        Returns:
-            (triggered, trigger_type)
-            - triggered: handoff decision
-            - trigger_type: canonical trigger key or ``"none"``
+        An explicit human request is unconditional: it does not depend on
+        sentiment, trust state, fit, or rep availability.
         """
-        # 1) Customer explicitly asks for a human.
-        if bool(signals.get("human_request", False)):
-            return True, HandoffTriggerType.HUMAN_REQUEST.value
+        evidence: Dict[str, str] = dict(signals.get("_evidence") or {})  # type: ignore[arg-type]
+        fired: Dict[str, str] = {}
 
-        # 2) Pricing discussion starts.
-        if bool(signals.get("pricing_discussion", False)):
-            return True, HandoffTriggerType.PRICING_DISCUSSION.value
+        for key in (
+            HandoffTriggerType.HUMAN_REQUEST.value,
+            HandoffTriggerType.COMMITMENT_DEMAND.value,
+            HandoffTriggerType.PRICING_NEGOTIATION.value,
+            HandoffTriggerType.CONTRACT_LEGAL_ASK.value,
+            HandoffTriggerType.STRONG_BUYING_SIGNAL.value,
+            HandoffTriggerType.PRICING_DISCUSSION.value,
+            HandoffTriggerType.COMPETITOR_MENTION.value,
+            HandoffTriggerType.STAKEHOLDER_APPROVAL_NEEDED.value,
+        ):
+            if bool(signals.get(key, False)):
+                fired[key] = evidence.get(key, f"signal {key}")
 
-        # 3) Strong buying signal detected.
-        if bool(signals.get("strong_buying_signal", False)):
-            return True, HandoffTriggerType.STRONG_BUYING_SIGNAL.value
-
-        # 4) Sentiment drops to frustration — unless it is positively identified
-        #    as aimed at something other than this agent (a previous vendor, the
-        #    prospect's own process). That is discovery material, not a failing
-        #    conversation. Unknown/unspecified targets still escalate: only
-        #    positive evidence may suppress a human moment.
+        # Frustration — unless it is positively identified as aimed at something
+        # other than this agent (a previous vendor, the prospect's own process).
+        # That is discovery material, not a failing conversation. Unknown /
+        # unspecified targets still escalate: only positive evidence may
+        # suppress a human moment.
         sentiment = str(signals.get("sentiment", context.sentiment)).strip().lower()
         if sentiment in {"frustration", "frustrated"}:
             target = str(signals.get("sentiment_target", "unspecified")).strip().lower()
             if target not in NON_AGENT_FRUSTRATION_TARGETS:
-                return True, HandoffTriggerType.FRUSTRATION.value
+                fired[HandoffTriggerType.FRUSTRATION.value] = f"sentiment={sentiment}, target={target}"
 
-        # 5) Competitor mention appears.
-        if bool(signals.get("competitor_mention", False)):
-            return True, HandoffTriggerType.COMPETITOR_MENTION.value
+        return [
+            TriggerHit(t, TRIGGER_CLASS[t].value, fired[t])
+            for t in TRIGGER_PRECEDENCE
+            if t in fired
+        ]
 
-        # 6) Stakeholder approval is needed.
-        if bool(signals.get("stakeholder_approval_needed", False)):
-            return True, HandoffTriggerType.STAKEHOLDER_APPROVAL_NEEDED.value
-
-        return False, HandoffTriggerType.NONE.value
+    def should_trigger(self, signals: Dict[str, object], context: LeadContext) -> Tuple[bool, str]:
+        """Primary trigger only: ``(triggered, trigger_type)`` or ``(False, "none")``."""
+        hits = self.evaluate(signals, context)
+        if not hits:
+            return False, HandoffTriggerType.NONE.value
+        return True, hits[0].trigger_type
 
     def get_sla(self, trigger_type: str) -> int:
         """Return SLA target in minutes for a trigger type."""

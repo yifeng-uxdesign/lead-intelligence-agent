@@ -620,19 +620,19 @@
      "u": "Will you commit to that in writing?",
      "dims": {
       "route": "fail",
-      "escalation": "fail",
-      "not_fallback": "fail"
+      "escalation": "pass",
+      "not_fallback": "pass"
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "reply": "That's a commitment only a person on our team can make, so I won't make it on their behalf. I've passed your question along with the context from our conversation, and someone will follow up with you.",
       "route": "none",
-      "escalation": "none",
-      "rep_notified": false,
-      "customer_facing": "answer",
-      "intervention_open": false,
+      "escalation": "hold",
+      "rep_notified": true,
+      "customer_facing": "holding",
+      "intervention_open": true,
       "trust_state": "CURIOSITY",
-      "fallback_used": true
+      "fallback_used": false
      },
      "expect": {
       "route": "commitment_request",
@@ -844,11 +844,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -1076,11 +1076,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -1099,7 +1099,7 @@
    "id": "C6-priced-per-seat",
    "group": "issue3_nuance",
    "layer": "understanding",
-   "status": "fail",
+   "status": "pass",
    "repetition": [],
    "claims": [],
    "n_turns": 2,
@@ -1124,16 +1124,16 @@
      "u": "Is it priced per seat? Just curious how it scales.",
      "dims": {
       "route": "pass",
-      "escalation": "fail",
+      "escalation": "pass",
       "not_fallback": "pass"
      },
-     "status": "fail",
+     "status": "pass",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "Thanks for saying that \u2014 it makes sense to raise it. I'm here to help you work through it, not to talk you into anything. On price, would it help if we walked through what you're worried about and what would need to be true for this to feel workable?",
       "route": "pricing",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "OBJECTION",
       "fallback_used": false
@@ -1183,11 +1183,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about getting the right people involved. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "stakeholder",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -1236,11 +1236,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -1736,7 +1736,9 @@
    "group": "loops_and_memory",
    "layer": "understanding",
    "status": "fail",
-   "repetition": [],
+   "repetition": [
+    "question_reasked@2"
+   ],
    "claims": [],
    "n_turns": 3,
    "turns": [
@@ -1770,14 +1772,14 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
       "escalation": "human_path",
       "rep_notified": true,
       "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
-      "fallback_used": true
+      "fallback_used": false
      },
      "expect": {
       "escalation": [
@@ -1797,14 +1799,14 @@
      },
      "status": "pass",
      "obs": {
-      "reply": "Let me try this a different way. If it's easier, share just one thing about how you handle this today, or ask me whatever is on your mind. And if you'd rather talk to a person, just say so and I'll set that up.",
+      "reply": "To point you in the right direction, could you share what you're hoping to learn or solve right now? There's no rush \u2014 take it in whatever order feels natural.",
       "route": "none",
       "escalation": "none",
       "rep_notified": false,
       "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
-      "fallback_used": true
+      "fallback_used": false
      },
      "expect": {
       "escalation": [
@@ -2004,8 +2006,7 @@
    "layer": "understanding",
    "status": "fail",
    "repetition": [
-    "identical_reply@2",
-    "identical_reply@3"
+    "question_reasked@2"
    ],
    "claims": [],
    "n_turns": 4,
@@ -2052,11 +2053,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about how this compares with what you use today. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "compare",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -2085,11 +2086,11 @@
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "I'd love to understand what matters most to you about the next steps. What would success look like for you in the next few months, and what's one thing you'd want to get clearer on first?",
       "route": "buying",
-      "escalation": "hold",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
       "fallback_used": false
@@ -2114,21 +2115,21 @@
     {
      "u": "We have budget approved and our CTO is on board. What do we need to sign?",
      "dims": {
-      "route": "fail",
+      "route": "pass",
       "escalation": "fail",
       "rep_notified": "pass",
       "must_not": "pass"
      },
      "status": "fail",
      "obs": {
-      "reply": "I want to make sure this gets the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
-      "route": "pricing",
-      "escalation": "hold",
+      "reply": "I want to make sure I'm being useful rather than asking you the same thing twice. We can go a few ways: tell me about what you're trying to solve, ask me anything about how this works, or say \"talk to a person\" and I'll arrange for someone on our team to reach out. Which would you prefer?",
+      "route": "buying",
+      "escalation": "human_path",
       "rep_notified": true,
-      "customer_facing": "holding",
+      "customer_facing": "answer",
       "intervention_open": false,
       "trust_state": "CURIOSITY",
-      "fallback_used": false
+      "fallback_used": true
      },
      "expect": {
       "route": "buying",
@@ -2331,9 +2332,7 @@
    "group": "persona",
    "layer": "understanding",
    "status": "fail",
-   "repetition": [
-    "identical_reply@3"
-   ],
+   "repetition": [],
    "claims": [],
    "n_turns": 4,
    "turns": [
@@ -2422,7 +2421,7 @@
      },
      "status": "pass",
      "obs": {
-      "reply": "I hear that this hasn't been going well, and I want it to get the right attention. I'm asking someone from our team to follow up with you, and they'll have the context from our conversation.",
+      "reply": "Your request is already with our team, and they have the context from our conversation. A person will follow up with you, so I'll hold off on anything that should come from them.",
       "route": "pricing",
       "escalation": "hold",
       "rep_notified": true,
@@ -2785,11 +2784,11 @@
  ],
  "metrics": {
   "cases_scored": 40,
-  "overall_pass_rate": 0.275,
-  "route_accuracy": 0.426,
+  "overall_pass_rate": 0.3,
+  "route_accuracy": 0.447,
   "false_escalation_rate": 0.196,
-  "missed_intervention_rate": 0.111,
-  "fallback_rate": 0.42,
+  "missed_intervention_rate": 0.0,
+  "fallback_rate": 0.391,
   "repeat_rate": 0.111,
   "unsupported_claim_rate": 0.0
  }

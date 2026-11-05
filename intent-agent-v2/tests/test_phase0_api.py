@@ -110,9 +110,17 @@ def test_chat_response_never_exposes_rep_internals(api) -> None:
     body = chat(api, "You keep ignoring my question, this is ridiculous.")
     assert body["handoff_triggered"] is True
     forbidden = {"rep_alert_brief", "pending_draft", "rep_suggestion", "pending_relay_drafts",
-                 "pending_interventions", "handoff_queue", "conversation_summary", "recommended_action"}
+                 "pending_interventions", "handoff_queue", "conversation_summary", "recommended_action",
+                 "decision_trace", "rep_notices"}
     assert forbidden.isdisjoint(body.keys())
     assert "ridiculous" not in str(body["customer_message"]).lower()
+
+
+def test_decision_trace_is_rep_only(api) -> None:
+    chat(api, "Can I talk to a real person?")
+    trace = api.get("/context/w1", headers=REP).json()["decision_trace"]
+    assert trace[-1]["outcome"] == "held" and trace[-1]["primary_trigger"] == "human_request"
+    assert api.get("/context/w1").status_code in (401, 403, 503)
 
 
 def test_relay_draft_not_in_chat_response_or_outbox_before_approval(api) -> None:

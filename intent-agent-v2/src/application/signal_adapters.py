@@ -5,7 +5,8 @@ Replace bodies with LLM-backed parsers later without changing orchestrator shape
 
 from __future__ import annotations
 
-from typing import Any, Dict, Final
+import re
+from typing import Any, Dict, Final, Optional, Pattern, Tuple
 
 from src.domain.trigger_catalog import NON_AGENT_FRUSTRATION_TARGETS
 from src.signals.extractor import LeadSignals
@@ -14,6 +15,48 @@ from src.signals.extractor import LeadSignals
 _PRICING_LEXEMES: Final[frozenset[str]] = frozenset(
     ("pricing", "price", "quote", "cost", "budget")
 )
+
+
+# Lexical evidence for intervention triggers the extractor has no label for yet.
+# Deliberately narrow: each must mean the prospect wants something only a person
+# may give (decision D4). Questions *about* accountability ("who is responsible
+# if it's wrong?") or capability ("can you guarantee a lift?") are answered by the
+# agent and do not match. Replace with interpreter labels in roadmap step 7.
+_NEGOTIATION: Final[Tuple[Pattern[str], ...]] = tuple(re.compile(p, re.I) for p in (
+    r"\bdiscount",
+    r"\b\d+\s?%\s?off\b",
+    r"\bcheaper\b",
+    r"\b(lower|better|best|reduced?)\s+(the\s+)?(price|rate|deal|offer|quote)\b",
+    r"\bnegotiat",
+    r"\bprice[- ]match",
+    r"\bmatch\s+(their|the|a|that)\s+(price|quote|offer)\b",
+    r"\bwaive\b",
+))
+_COMMITMENT: Final[Tuple[Pattern[str], ...]] = tuple(re.compile(p, re.I) for p in (
+    r"\bin writing\b",
+    r"\bwritten\s+(guarantee|commitment|promise)\b",
+    r"\brefund\b",
+    r"\bmoney[- ]back\b",
+))
+_CONTRACT_LEGAL: Final[Tuple[Pattern[str], ...]] = tuple(re.compile(p, re.I) for p in (
+    r"\bcontract",
+    r"\bredline",
+    r"\bmsa\b",
+    r"\bmaster services?\s+agreement\b",
+    r"\bdpa\b",
+    r"\bdata processing agreement\b",
+    r"\bterms\s+(and|&)\s+conditions\b",
+    r"\bindemnif",
+    r"\bliability cap\b",
+))
+
+
+def _first_match(patterns: Tuple[Pattern[str], ...], text: str) -> Optional[str]:
+    for rx in patterns:
+        m = rx.search(text)
+        if m:
+            return m.group(0)
+    return None
 
 
 def lead_signals_to_trust_signals(lead: LeadSignals) -> Dict[str, Any]:
@@ -45,17 +88,40 @@ def lead_signals_to_trust_signals(lead: LeadSignals) -> Dict[str, Any]:
 
 
 def handoff_signal_dict_from_lead(lead: LeadSignals, raw_message: str) -> Dict[str, Any]:
-    """Build HandoffManager.should_trigger input from extraction + raw text."""
-    lower = raw_message.lower()
-    pricing_hit = lead.objection_type == "price" or any(
-        w in lower for w in _PRICING_LEXEMES
-    )
+    """Build HandoffManager input from extraction + raw text.
+
+    ``_evidence`` maps each lexically-detected trigger key to the text that
+    matched, so the decision trace can say *why* it fired.
+    """
+    raw = raw_message or ""
+    lower = raw.lower()
+    evidence: Dict[str, str] = {}
+
+    pricing_word = next((w for w in _PRICING_LEXEMES if w in lower), None)
+    if pricing_word:
+        evidence["pricing_discussion"] = f"text '{pricing_word}'"
+    elif lead.objection_type == "price":
+        evidence["pricing_discussion"] = "objection_type=price"
+
+    detected = {}
+    for key, patterns in (
+        ("pricing_negotiation", _NEGOTIATION),
+        ("commitment_demand", _COMMITMENT),
+        ("contract_legal_ask", _CONTRACT_LEGAL),
+    ):
+        hit = _first_match(patterns, raw)
+        detected[key] = hit is not None
+        if hit is not None:
+            evidence[key] = f"text '{hit}'"
+
     return {
         "human_request": lead.human_request,
-        "pricing_discussion": pricing_hit,
+        "pricing_discussion": "pricing_discussion" in evidence,
         "strong_buying_signal": lead.buying_signal,
         "sentiment": lead.sentiment,
         "sentiment_target": lead.sentiment_target,
         "competitor_mention": lead.competitor_mention,
         "stakeholder_approval_needed": lead.stakeholder_signal,
+        **detected,
+        "_evidence": evidence,
     }

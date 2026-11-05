@@ -20,7 +20,7 @@ Unknown modes fail closed to the holding response.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Union
 
@@ -37,6 +37,8 @@ class DeliveryStatus(str, Enum):
 @dataclass(frozen=True)
 class DeliveryDecision:
     status: DeliveryStatus
+    # Which rule decided (for the decision trace). Not part of equality.
+    reason: str = field(default="", compare=False)
 
     @property
     def generate_agent_text(self) -> bool:
@@ -69,18 +71,20 @@ def authorize_delivery(
             earlier unresolved one). Overrides every mode.
     """
     if human_hold:
-        return DeliveryDecision(DeliveryStatus.HOLDING)
+        return DeliveryDecision(
+            DeliveryStatus.HOLDING, "open intervention requires a human (overrides mode)"
+        )
 
     try:
         resolved = CollaborationMode(mode)
     except ValueError:
-        return DeliveryDecision(DeliveryStatus.HOLDING)
+        return DeliveryDecision(DeliveryStatus.HOLDING, f"unknown mode {mode!r}: fail closed")
 
     if resolved == CollaborationMode.AUTONOMOUS:
-        return DeliveryDecision(DeliveryStatus.DELIVERED)
+        return DeliveryDecision(DeliveryStatus.DELIVERED, "AUTONOMOUS: agent may answer")
     if resolved == CollaborationMode.RELAY:
-        return DeliveryDecision(DeliveryStatus.PENDING_APPROVAL)
+        return DeliveryDecision(DeliveryStatus.PENDING_APPROVAL, "RELAY: rep must approve before send")
     if resolved == CollaborationMode.SHADOW:
-        return DeliveryDecision(DeliveryStatus.REP_SUGGESTION)
+        return DeliveryDecision(DeliveryStatus.REP_SUGGESTION, "SHADOW: rep owns the live conversation")
     # ALERT
-    return DeliveryDecision(DeliveryStatus.HOLDING)
+    return DeliveryDecision(DeliveryStatus.HOLDING, "ALERT: rep is taking over")

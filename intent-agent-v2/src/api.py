@@ -36,7 +36,9 @@ from src.domain.session_state import (
     drain_outbox,
     has_open_human_intervention,
     hydrate_mode_machine,
+    decision_traces,
     open_interventions,
+    rep_notices,
     pending_relay_drafts,
     persist_collaboration_mode,
     reject_relay_draft,
@@ -206,6 +208,9 @@ class ContextResponse(BaseModel):
     handoff_queue: list
     pending_interventions: List[Dict[str, Any]] = []
     pending_relay_drafts: List[Dict[str, Any]] = []
+    rep_notices: List[Dict[str, Any]] = []
+    # Rep-internal: why each recent turn was answered / held / drafted.
+    decision_trace: List[Dict[str, Any]] = []
 
 
 class BriefResponse(BaseModel):
@@ -315,6 +320,8 @@ def get_context(lead_id: str) -> ContextResponse:
         handoff_queue=ctx.handoff_queue,
         pending_interventions=open_interventions(ctx.metadata),
         pending_relay_drafts=pending_relay_drafts(ctx.metadata),
+        rep_notices=rep_notices(ctx.metadata),
+        decision_trace=decision_traces(ctx.metadata),
     )
 
 

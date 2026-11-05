@@ -157,7 +157,9 @@ def test_agent_directed_frustration_holds_even_when_rep_offline(deps) -> None:
 # --- Finding 3: ALERT is never silent ---------------------------------------
 
 def test_alert_mode_always_returns_holding_response(deps) -> None:
-    r = turn(deps, "Can you send a quote for this?", rep_online=True)  # pricing trigger -> ALERT
+    # Only an intervention-class trigger puts an online rep in ALERT (roadmap step 2).
+    r = turn(deps, "Can our legal team redline your contract?", rep_online=True)
+    assert r.trigger_type == "contract_legal_ask"
     assert r.collaboration_mode == CollaborationMode.ALERT
     assert r.customer_message in APPROVED_HOLDING_RESPONSES
     assert r.rep_alert_brief is not None
