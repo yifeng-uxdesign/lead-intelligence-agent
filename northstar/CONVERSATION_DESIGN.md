@@ -3,10 +3,56 @@
 Status: **design draft, not implemented.** Nothing in `scenarios.js`, `engine.js` or `widget.js` has changed.
 Written 2026-11-12. Companion to the proposal in `PLANNING_LOG.md`.
 
-How to read this: Part 1 is the big picture (what conversation design is made of). Part 2 is the rules.
+How to read this: Part 0 is the vision and the language rules (what the visitor should feel, and the words we
+use). Part 1 is the big picture (what conversation design is made of). Part 2 is the rules.
 Part 3 is the conversation map, stage by stage, tied to the scenarios in `scenarios.js`. Parts 4 to 6 are
-the specs (evidence, recovery with drafted copy, timing). Part 7 is tone. Part 8 is how we measure.
-Part 9 is a glossary, so the vocabulary is in one place.
+the specs (evidence and knowledge, recovery with drafted copy, timing). Part 7 is tone. Part 8 is how we
+measure. Part 9 is a glossary, so the vocabulary is in one place.
+
+---
+
+## 0. Vision: who we talk to, and what for
+
+**What the visitor experiences.** Someone arrives curious, undecided, or wary. The agent helps them understand
+the product, answers honestly, and earns enough trust that they *choose* to take a next step with the team.
+The best result is a relationship that carries into the sales process, not a form filled in.
+
+**What the business needs (internal only).** The lead agent exists to capture and route leads. That goal shapes
+what the system does behind the scenes. It never shows in what the visitor reads. The visitor should feel helped,
+never processed, scored or sold to.
+
+Four principles for everything the visitor reads:
+
+- **V1. Anyone can follow it.** Plain words that a person from any industry or role understands on first read.
+  Short sentences. If the visitor used a word, use theirs. Do not assume sales jargon (SDR, MQL, pipeline) unless
+  they used it first. Explain a product term the first time it appears.
+- **V2. The visitor is a person, not a lead.** No label for them (qualified, unqualified, prospect, lead, "a fit")
+  ever appears in copy.
+- **V3. No pressure, and no talk about collecting.** We never say or imply that we are, or are not, capturing
+  them. Show respect by not pushing, rather than by announcing that we are not.
+- **V4. Interest is earned, not extracted.** Give something useful first. Ask after.
+
+**Word list for visitor-facing copy.** The internal words are fine in this document, in code and in traces.
+They stay out of the chat.
+
+| Instead of | Say |
+|---|---|
+| "qualified", "unqualified", "not a fit", "fit check" (about the visitor) | "whether this would suit your team", "make sure this would actually help" |
+| "evidence", "signals", "I've noted {fit}" | "what you've told me", "what matters to you" |
+| "hand off", "escalate", "intervention" | "connect you with someone on the team", "bring in a person" |
+| "lead capture", "we won't store / keep your details", "no contact details needed" | "if you'd like someone to follow up, tell me how to reach you" |
+| "I'm not asking this to close a deal", "no sales pitch from me" | (just don't pitch; it shows) |
+| "hold", "alert" | "I'm waiting for a person to take this over" |
+| "prototype", "simulated" | (describe the product, not the demo; see R15) |
+
+Product vocabulary stays when it describes *their* business and the product's job, for example "inquiries that
+come in", "deciding which are worth a conversation". Prefer "inquiries" or "people who get in touch" unless the
+visitor says "leads" first.
+
+**Audit of existing copy** (`scenarios.js`, to review at implementation): several lines break V2 or V3 today.
+Examples: `curious.contact` ("I'm not asking for this to close a deal"), `buyer.mismatch` ("probably isn't the
+right fit"), `fit.ack` ("I've noted {fit_new}"), `product.intro` and `qualify.explain` ("evidence for and against
+fit"), and the `contact.*` and `intervention.*` nodes ("simulated", "nothing was stored").
 
 ---
 
@@ -27,10 +73,11 @@ constraints**. So every part below serves one loop: *understand → gather the n
 | 6 | **Response library** | What exactly do we say? | `NODES[...].replies` (copy lives here, never in UI code) |
 | 7 | **Recovery (repair)** | What do we do when we did not understand, or cannot help? | per-node `fallback` (to be redesigned, Part 5) |
 | 8 | **Turn-taking and pacing** | Who speaks when, how long do we wait, can the visitor interrupt? | `typingDelayMs`, `typing` lock (to be redesigned, Part 6) |
-| 9 | **Trust and disclosure** | Do they know it is an AI, what is stored, what is simulated? | welcome message, `trust.*`, "simulated" wording |
+| 9 | **Trust and disclosure** | Do they know it is an AI, what is kept? | welcome message, `trust.*` |
 | 10 | **Handoff** | How does a person take over, and with what context? | `intervention.*`, `alert.*`, `contact.*` |
 | 11 | **Memory** | What do we already know, so we never re-ask? | `answered`, `fit`, `seen` (full model is roadmap step 5) |
 | 12 | **Measurement** | How do we know it got better? | `intent-agent-v2/conformance/` |
+| 13 | **Knowledge** | What may the agent state as fact, and from which approved source? | Today: facts are hard-written inside nodes. Proposed: an approved `KNOWLEDGE` table now, retrieval (RAG) later (4.3) |
 
 Who owns what (the architecture rule): **deterministic code owns decisions** (which node plays, hold, handoff,
 fit gate). **Copy is data** (`scenarios.js` / `config.js`). **The UI only presents.** A future LLM may only
@@ -44,7 +91,10 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 
 **Understanding and evidence**
 - R1. **Ask only what changes the next decision.** Every question must map to a fit tag or a routing outcome. If we would do the same thing either way, do not ask.
-- R2. **One question per turn.** Never stack two asks.
+- R2. **One topic per turn.** Ask one thing, or one small *cluster* of closely related things that share one
+  purpose and are natural to answer in one sentence (for example, a name and how to reach you). A cluster has at
+  most three items, every item is optional, and it never mixes topics. If the visitor answers only part of it,
+  ask only for what is missing (R4). See 4.2.
 - R3. **Say why you are asking**, in one short clause, the first time the question type appears. (Existing `tone: "cue"` messages do this.)
 - R4. **Never re-ask what you already know.** A fact the visitor stated, or a question they declined, is marked answered. (`state.answered`; step 5 formalises it.)
 - R5. **Make the cheapest answer easy.** Offer suggested replies for every question. Free text always works too.
@@ -61,16 +111,35 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 - R12. **Always disclose AI, and answer "are you a bot?" directly**, every time it is asked.
 - R13. **Do not claim what you cannot verify.** No prices, guarantees, dates, SLAs, reviews or security details. Say so plainly and route to a person.
 - R14. **Do not push.** No urgency language, no mirrored excitement, no defending. A buying signal triggers a fit check, not a handoff.
-- R15. **Be honest about the prototype.** Any handoff or note is described as simulated. Nothing is stored or sent.
+- R15. **Talk about the product, not the machinery.** Say what the product does and how people work with it.
+  Visitor-facing copy never mentions lead capture, lead status, scoring, fit checks, the demo or prototype, or
+  whether anything is being collected (V2, V3). *(Replaces the earlier "be honest about the prototype" rule, by
+  owner decision. Honesty about the product itself stays in R12 and R13.)*
 - R16. **Frustration holds the conversation.** Once frustrated, the agent stops answering on its own, and holding replies must still vary (never verbatim).
 - R17. **A request for a person is honoured at once**, with no detour through more questions. A second request gets a shorter reply.
-- R18. **Contact details only after real interest or a human request, company email only.** Always skippable.
+- R18. **Ask how to reach them only when they want a person to follow up, or have asked for one.** Always
+  skippable. The visitor chooses the channel; a work email is preferred, and a phone number is allowed if they
+  offer it.
 
 **Timing and interaction**
 - R19. **The visitor can always speak.** The input is never locked while the agent is "typing" (Part 6).
 - R20. **Never drop a decision.** A frustration or human-request message is always processed, even if it arrives mid-reply.
 - R21. **Pacing follows length.** Short replies arrive quickly, long ones after a longer beat, never instant and never slow. Reduced-motion users get the minimum delay.
 - R22. **Accessibility is not optional.** New messages are announced politely, focus never falls to `<body>`, restart drops in-flight replies.
+
+**Knowledge and asking**
+- R25. **Value before asking.** Give a useful answer before the first evidence question. Then ask something
+  related to what was just said.
+- R26. **Ask when needed, not by schedule.** Ask only when (a) a pending decision depends on the answer, (b) the
+  visitor invites questions, or (c) there is a natural opening tied to what they just said. Otherwise keep
+  answering and listening (4.1).
+- R27. **Listen quietly, never secretly.** Pick up what the visitor says along the way (company, volume, tools,
+  worries, topics they care about) without interrogating. If they ask what we keep or whether we are taking notes,
+  answer honestly (R13) and route specifics to a person.
+- R28. **Facts come only from approved knowledge.** If the knowledge base has no answer, say so plainly and offer
+  a person. Never improvise a fact (4.3).
+- R29. **Knowledge informs, it never decides.** Retrieved content cannot change trust state, hold, or the
+  decision to bring in a person. Those stay deterministic.
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -94,6 +163,10 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
    LIMIT   (pricing, setup, legal, guarantees: decline + route)
 ```
 
+**Orient is the longest stage, on purpose.** It is where trust is earned. Two things interleave: *explaining*
+(answering from approved knowledge) and *listening* (quietly picking up what the visitor tells us). No evidence
+questions are scheduled here; they come only when needed (R26). Gathering evidence is quiet, not secret (R27).
+
 ### 3.2 Stage to scenario to node map
 
 | Stage | Scenario / persona | Nodes in `scenarios.js` | Evidence it collects or decision it makes |
@@ -105,7 +178,7 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 | **Gather** | C Promising, Poor fit | `promising.scale / process / volume / outcome` | Volume, process and tools, pain, desired outcome (the four fit tags) |
 | **Decide** | C, Poor fit | `__fit_gate__` → `buyer.handoff`, `buyer.mismatch`, `buyer.unclear`, `buyer.fitcheck(_again)` | confirmed / poor / unclear fit |
 | **Limit** | D Unsupported commitment | `unsupported.honest / timeline`, `pricing.person`, `setup.person`, `trust.accountability`, `trust.reviews` | Decline, say why, route to a person |
-| **Route** | E Human intervention | `intervention.explain / again / noted / close`, `contact.*` | Person path, optional work email, simulated note |
+| **Route** | E Human intervention | `intervention.explain / again / noted / close`, `contact.*` | Person path, optional way to reach them, a note for the team |
 | **Hold** | Frustrated | `alert.handoff / noted / hold` | Agent stops; no product answers |
 | **Quiet** | Ghoster | `quiet.*`, `pause.normalize`, `share.summary`, `eval.pilot*`, `stakeholder.open` | Patience, shareable summary, timeline honoured |
 
@@ -121,6 +194,8 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 | States evidence ("about 300 leads a month") | **Acknowledge, mark answered, ask next gap** | `extractFit` → `fit.ack` |
 | Answers the node's question | **Advance** | node `choices` / `routes` |
 | Says nothing useful ("ok", "hmm", ".") | **Patient reply**, no pressure | `isMinimal` → `quiet.*` |
+| Asks about the product | **Answer from approved knowledge**, then at most one related question | proposed: `KNOWLEDGE` (4.3) |
+| Asks something the knowledge does not cover | **Knowledge-gap recovery**: say so, offer nearby topics, then a person | proposed (5.4) |
 | Not understood | **Recover** (Part 5), tier by miss count | proposed: `RECOVERY` table |
 | Refuses a question | **Respect, mark answered, move on** | proposed (R6) |
 | Off-topic | **State scope, redirect** | proposed (Part 5.3) |
@@ -137,9 +212,82 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 | Triage pain (`triage_pain`) | The problem this product solves | `promising.volume` | `FIT.patterns.triage` |
 | Automation goal (`wants_automation`) | Wants the outcome the agent delivers | `promising.outcome` | `FIT.patterns.automation` |
 
-Rules for this plan: ask at most 3 fit questions (`fitChecks`), skip any already stated (R4), accept "not sure"
-as an answer (R6), and never ask about fit once frustrated or after a human request.
+Rules for this plan: ask only when needed (R26), at most 3 fit questions (`fitChecks`), skip any already stated
+(R4), accept "not sure" as an answer (R6), and never ask once frustrated or after a human request.
 These thresholds are **demo heuristics**, not the product's real scoring.
+
+### 4.1 Quiet evidence in Orient
+
+While the agent explains, it keeps listening. Nothing here is shown to the visitor as tracking, and none of it is
+hidden if they ask (R27).
+
+| What we notice | Where it comes from | What it changes |
+|---|---|---|
+| Facts they state (volume, tools, team, role) | free text via `extractFit` | Fills the evidence without a question (R4) |
+| Topics they ask about (pricing, setup, privacy, comparison, integrations) | `GLOBAL_ROUTES` matches | What to explain next; pricing and setup suggest they are nearing a person |
+| Wording and mood (worried, burned, rushed, brief) | routes and patterns | Tone and pacing; frustration holds (R16) |
+| Engagement (questions they volunteer, whether they return) | turn counts | Whether to offer a next step or just keep helping |
+| Blockers and other decision-makers | routes | Offer a short summary they can share |
+
+**When the agent asks (R26).**
+
+| Trigger | What it asks | Shape |
+|---|---|---|
+| They want a demo, pricing, or to start | Volume and current tools, as one cluster (4.2) | "So the right person can help, two quick things…" |
+| They describe a problem | One follow-up about that problem | Bridge from their words, then the question |
+| They invite it ("ask me", "what do you need?") | The next unanswered gap | One question, plus why |
+| They ask for a person | How to reach them (contact cluster) | Cluster, every part optional |
+| Several useful answers, no evidence yet | **Permission first**, not a question | "Would it help if I asked a couple of questions about how you handle this today, so my answers fit you better?" |
+
+**Worked example (Orient, quiet listening):**
+- Visitor: "How does this work with the inquiries we get through our website?"
+- Agent: answers from knowledge in two short sentences, then: "Is that how it works for your team today, or do inquiries reach you another way?"
+- Visitor: "We get a few hundred a month and a rep reads all of them."
+- Agent: "Thanks, that helps. A few hundred a month, all read by hand, is exactly where it tends to save time." *(volume and triage pain recorded; those two questions are never asked again)* then the next useful answer or, only if needed, one related question.
+
+### 4.2 Clusters (when related questions can be asked together)
+
+Asking related things together can sound more human than a form of single questions, if it passes four tests: the
+items share **one purpose**, they are **natural in one breath**, **each is optional**, and the visitor can answer
+**partially**.
+
+| Cluster | Items | Shared purpose | Example phrasing |
+|---|---|---|---|
+| About you | what should I call you, and your role | So the conversation fits them | "What should I call you, and what do you do there?" |
+| Your inquiries | how they reach you, and roughly how many | Understand their situation | "How do inquiries reach you today, and roughly how many a month?" |
+| Reaching you | name, work email or phone | So a person can follow up | "So a person can pick this up properly, what should I call you, and what's the best way to reach you, a work email or a phone number? Skip any part you like." |
+
+Do not cluster across topics (for example volume plus a worry), and never ask for more than three items. For a
+partial answer, ask only for what is missing, in the next turn.
+*Engineering note:* today `captureEmail` handles only a work email. A name and phone need small new parsing in
+`engine.js`. Nothing about this changes that nothing is stored in the demo.
+
+### 4.3 Knowledge layer (RAG-ready, deterministic today)
+
+To earn trust the agent needs to answer product questions well, and only from facts the team has approved (R28).
+There is no model or retrieval service in this demo, so we design the *contract* now and swap the engine later.
+
+- **Today (demo):** an approved `KNOWLEDGE` table in `scenarios.js`. Each entry: `id`, `topic`, `keywords`,
+  `answer` (plain-language, V1), `source`, `verified: true/false`, and no commitments (no price, date,
+  guarantee). Matching is deterministic keyword lookup. A match plays the approved answer, then optionally one
+  related question (R25).
+- **Later (RAG):** retrieval replaces keyword lookup; a model may phrase the answer but only from the retrieved
+  passages, and a deterministic validator rejects any reply with a price, date, guarantee or claim not in the
+  passages. Each answer records its source id in the decision trace.
+- **No match:** the knowledge-gap recovery (5.4). It never guesses.
+- **Retrieval never decides** (R29): it cannot trigger a hold, a handoff, or change trust state.
+
+Starting topics. "Unverified" means the answer is "a person can tell you", not a made-up one:
+
+| Topic | Status | What the agent says |
+|---|---|---|
+| What the product does | approved (from `product.intro`) | Plain description |
+| How a conversation works | approved (from `qualify.explain`) | One question at a time, honest about being an AI |
+| What it will not do | approved (from `hesitant.boundaries`) | No guarantees, no pressure |
+| How a person gets involved | approved | A person joins for pricing, contracts, timing |
+| Integrations, pricing, security and data handling, setup timelines | **unverified** | Say so plainly; offer a person |
+
+Owner input needed: which facts are verified and may be stated, and in what words.
 
 ---
 
@@ -161,6 +309,7 @@ rough picture helps", which does not tell the visitor *what* kind of answer woul
 |---|---|---|
 | **No match** | "it's complicated" | Ladder (below) |
 | **Vague / minimal** | "ok", "maybe", "." | Patient reply, narrow the ask, never chase (Ghoster rules) |
+| **Knowledge gap** | "Does it work with our ticketing tool?" | Say we do not have a reliable answer, offer nearby topics, then a person (5.4) |
 | **Out of authority** | "How much is it?" | Decline plainly, route to a person (existing nodes) |
 | **Off-topic** | "What's the weather?" | State scope in one line, redirect (5.3) |
 | **Refusal** | "I'd rather not say" | Respect it, mark answered, move on (R6) |
@@ -185,10 +334,10 @@ copy for a tier is never identical to the copy for another tier of the same node
 
 Conventions: *T1/T2/T3* = tier. "Chips" = the node's existing suggested replies stay visible. "→" = where tier 3
 moves the conversation (same destination as today's fallback where it already advances). All copy keeps the AI
-disclosure, avoids promises, and describes handoffs as simulated.
+disclosure, avoids promises, and follows the word list in Part 0 (no lead, fit, capture or demo language).
 
 **Open (welcome, a first message we cannot place)**
-- T1: "I may have missed what you're after. I can explain how Northstar's agent works, help you see whether it fits your sales process, or answer questions about getting started. Which is closest?" *(starters stay visible)*
+- T1: "I may have missed what you're after. I can explain how Northstar's agent works, help you see whether it would suit how your team works, or answer questions about getting started. Which is closest?" *(starters stay visible)*
 - T2: "No need to word it perfectly. Pick the one that's nearest, or just tell me what you were hoping to find out."
 - T3: "That's fine. I'll start with the basics, and you can steer me from there." → `product.intro`
 
@@ -203,9 +352,9 @@ disclosure, avoids promises, and describes handoffs as simulated.
 - T3: "It's fine if it's messy. I'll take that as \"no consistent process\" unless you tell me otherwise." → `curious.contact`
 
 **A. Curious, contact (`curious.contact`)**: missing: whether they want a follow-up
-- T1: "No pressure either way. If you do want a follow-up, a work address like name@yourcompany.com is all that's needed, and it's only so a person can reach you."
+- T1: "Whenever you like. If you'd want someone from the team to follow up, tell me the best way to reach you."
 - T2: "You can share one, keep exploring here, or stop. Which would you like?" *(chips)*
-- T3: "Then we'll leave contact details out. Nothing here depends on them." → `curious.close`
+- T3: "Sounds good. We can carry on without it." → `curious.close`
 
 **B. Hesitant, worry (`hesitant.ack`)**: missing: which concern
 - T1: "You don't need to name it exactly. Is it closer to the agent saying something wrong, pressuring people, or what happens to the details people share?"
@@ -223,7 +372,7 @@ disclosure, avoids promises, and describes handoffs as simulated.
 - T3: "I don't want to keep guessing at what would help. A person can take your question directly, or we can leave it here." → person / stop chips
 
 **C. Promising, scale (`promising.scale`)**: missing: monthly volume
-- T1: "A rough range is fine. I only use it to judge fit. Is it closer to dozens, a few hundred, or thousands a month?"
+- T1: "A rough range is fine. It just helps me point you to the right things. Is it closer to dozens, a few hundred, or thousands a month?"
 - T2: "Pick the nearest, or \"not sure\" is fine too." *(chips)*
 - T3: "Okay, I won't guess a number for you. I'll carry on with what you've told me." → `__fit_next__`, marked answered
 
@@ -235,20 +384,31 @@ disclosure, avoids promises, and describes handoffs as simulated.
 **C. Promising, pain (`promising.volume`)**: missing: the harder problem
 - T1: "No need to be exact. If you think about last week's inquiries, what bothered you most?"
 - T2: "Pick the closest, even if none is perfect." *(chips)*
-- T3: "Fair enough. I'll note that this part is unclear rather than guess." → `__fit_next__`, marked answered
+- T3: "No problem. I'll go with what you've shared so far." → `__fit_next__`, marked answered
 
 **C. Promising, outcome (`promising.outcome`)**: missing: what "better" looks like
 - T1: "Think of your best possible week. What would be different for your reps?"
 - T2: "Which of these sounds most like it?" *(chips)*
 - T3: "That's enough for me to describe a responsible next step." → `__fit_next__`, marked answered *(unchanged: this one is already good)*
 
+**Orient, answer then ask (`qualify.explain`, `product.intro`, and any answered product question)**
+Pattern: *approved answer (short, plain) → a bridge from what they said → one optional, related question.*
+- Bridge examples: "Is that how it works for your team today?" · "Does that match what you were picturing?" · "What would you want it to do first?"
+- Permission ask (after several useful answers, no evidence yet): "Would it help if I asked a couple of questions about how you handle this today, so my answers fit you better?" *(chips: Sure / Not now)*
+- Never ask in the first reply, and never twice in a row (R25, R26).
+
+**Orient, knowledge gap (no approved answer for the question)**
+- T1: "I don't have a reliable answer to that, and I'd rather not guess. I can speak to what the agent does, how a conversation works, and what it won't do. Which would help?"
+- T2: "Would it help to have someone on the team answer that directly, or shall I try a different question?" *(chips: Connect me with someone / Ask something else)*
+- T3: "That one is best answered by a person. I can connect you, or we can leave it for now." → `intervention.explain` as a chip, no forced move
+
 **Decide, offer a person (`buyer.handoff`)**
 - T1: "No rush. I can pass this along whenever you say so, or we can keep talking first."
 - T2: "Would you like to share a work email, wait a bit, or keep asking questions?" *(chips)*
-- T3: "Let's leave it here. Nothing is sent unless you choose to, and the chat stays open."
+- T3: "Let's leave it here. The chat stays open whenever you want to pick it up."
 
-**Decide, not a fit yet (`buyer.mismatch`, `buyer.growth`)**
-- T1: "I know that isn't the answer you hoped for. If you expect your volume to change, tell me roughly when and I'll note it."
+**Decide, not the right moment yet (`buyer.mismatch`, `buyer.growth`)**
+- T1: "I know that isn't the answer you hoped for. If you expect your volume to change, tell me roughly when and I'll keep that in mind."
 - T2: "Would one of these be useful?" *(chips)*
 - T3: "I'll leave it there. You're welcome to come back when it's closer, or a person can weigh in."
 
@@ -268,19 +428,20 @@ disclosure, avoids promises, and describes handoffs as simulated.
 - T3: "A person is the right place for this, so I'll show you that path." → `intervention.explain`
 
 **Compare (`eval.compare`)**
-- T1: "Pick one thing that matters most, such as honesty, fit, or setup effort, and I'll stay with that."
+- T1: "Pick one thing that matters most, such as how it handles honesty, how well it suits your team, or setup effort, and I'll stay with that."
 - T2: "Which of these is nearest?" *(chips)*
 - T3: "I can't compare other products reliably, so a person is a better source for that." → `intervention.explain`
 
 **Route, human path (`intervention.explain`, `intervention.again`)**: a person was already requested
 - T1: "A person is still the right next step. You can share a work email, leave a note without one, or stop here."
 - T2: "Which would you like?" *(chips)*
-- T3: "I'll leave a simulated note so nothing you said is lost. No one has been contacted." → `intervention.noted`
+- T3: "I'll pass along what we've talked about, so you won't have to repeat yourself." → `intervention.noted`
 
-**Route, contact capture (`contact.ask`, `contact.personal`)**
-- T1: "A work address looks like name@yourcompany.com. It's only so a person can follow up, and nothing is stored here."
-- T2: "You can also skip. I can leave a simulated note without any contact details."
-- T3: "Skipping is fine. Nothing here depends on it." → `intervention.noted`
+**Route, reaching you (`contact.ask`, `contact.personal`)**: one cluster, every part optional (R2, 4.2)
+- Ask: "So a person can pick this up properly, what should I call you, and what's the best way to reach you, a work email or a phone number? Skip any part you like."
+- T1 (partial answer): "Thanks. And what's the best way to reach you, a work email or a phone number?"
+- T2: "Whichever is easiest: just an email, just a phone number, or neither for now. A person can still read our conversation and take it from there."
+- T3: "Skipping is fine. We can carry on without it." → `intervention.noted`
 
 **Pilot, stakeholders (`eval.pilot`, `stakeholder.open`)**
 - T1: "A rough idea is enough. Would it matter more for rep time, how prospects react, or handoff quality?" *(stakeholder: safety, cost, or effort?)*
@@ -294,7 +455,7 @@ disclosure, avoids promises, and describes handoffs as simulated.
 
 **Hold (`alert.hold`)**: *not a recovery ladder.* The agent stays on hold, but repeated holding replies must vary (R16, and the widget twin of the backend gap POL-26).
 - Hold 1: "I'm holding here so a person can take this over. I won't keep answering on my own, because that isn't what would help." *(existing, kept)*
-- Hold 2: "Still holding. A person should pick this up, so I'm not answering questions in the meantime. You can leave a simulated note below."
+- Hold 2: "Still holding. A person should pick this up, so I'm not answering questions in the meantime. You can leave a note for the team below."
 - Hold 3+: "Nothing has changed on my side: I'm waiting for a person. The note option is below, or you can restart the chat."
 
 ### 5.5 Where this lives (implementation sketch, for later)
@@ -361,6 +522,10 @@ The voice: **calm, plain, transparent, never pushy.** Written for a busy sales o
 | "That's fine. We can skip this." | "I need this to continue." | Refusal is an answer (R6) |
 | "I can't promise that. A person can." | "Unfortunately that is not possible." | Decline plainly, then route (R13) |
 | Short sentences, one idea each | Long stacked explanations | Reads fast on a small panel |
+| "Whether this would suit your team." | "Whether you're a fit / qualified." | The visitor is a person, not a lead (V2) |
+| "If you'd like someone to follow up, tell me how to reach you." | "We won't capture your details." | Do not talk about collecting at all (V3) |
+| The visitor's own words ("inquiries", "tickets") | Sales jargon they did not use | Anyone can follow it (V1) |
+| Answer first, then ask | A question in the first reply | Value before asking (R25) |
 | Vary wording by tier | The same stock phrase everywhere | "Sounds scripted" is a trust problem |
 
 **Scripted-sounding audit** (use when reviewing any reply): Would a person say it this way? Does it repeat a
@@ -416,3 +581,7 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Review the drafted copy in 5.4. Mark lines that sound off. Those edits are the practice.
 - [ ] Approve pacing starting values (6.2), or ask for a "slower / faster" variant to compare.
 - [ ] Should tier 3 ever *close* the chat itself, or always leave the visitor a choice (current draft: always a choice)?
+- [ ] Which product facts are verified and may be stated (4.3)? The knowledge table can only contain what you approve.
+- [ ] Prototype wording is removed from visitor copy (R15). The demo still does not contact anyone or store anything.
+  Where should that be said, if anywhere (for example, on the page around the widget instead of inside the chat)?
+- [ ] Reaching-you cluster adds name and phone. Confirm the optional phone, and whether work email stays preferred (R18).

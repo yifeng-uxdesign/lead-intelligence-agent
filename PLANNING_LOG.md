@@ -27,6 +27,32 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-12 — Owner review of the conversation design plan (three changes)
+
+**Context / trigger:** Owner reviewed `northstar/CONVERSATION_DESIGN.md`.
+
+**Decisions:**
+- **R2 changed** from "one question per turn" to "one topic per turn", allowing a small cluster of closely related
+  items (max 3, all optional, partial answers accepted, never mixing topics). Added section 4.2 with the tests and
+  example clusters, including a contact cluster (name, work email or phone).
+- **R15 replaced.** The "be honest about the prototype" rule is removed. Visitor copy talks about the product, not the
+  demo, and never mentions lead capture, lead status, scoring, fit checks, or whether anything is collected. Honesty
+  about the product itself stays in R12 and R13.
+- **New Part 0 (vision and language):** the visitor must understand every line, whatever their industry; the goal is
+  interest and trust leading into the sales process; the lead-capture goal stays internal; a word list of internal
+  terms that stay out of the chat. Rules V1 to V4.
+- **Orient stage and knowledge:** Orient is the longest stage; evidence is gathered quietly (never secretly) and
+  asked only when needed. New rules R25 to R29 and section 4.3, a deterministic approved `KNOWLEDGE` table now with a
+  RAG-ready contract (answer only from approved passages, retrieval never decides, no-match goes to a new
+  knowledge-gap recovery). Recovery copy revised to match, plus new copy for answer-then-ask and knowledge gaps.
+
+**Status:** design only. No widget code changed; `scenarios.js` still contains the older wording (audit list in Part 0).
+
+**Open:** the owner must supply which product facts are verified; where the demo's limits are stated if not in the chat
+(R15); confirm the optional phone and preferred work email (R18).
+
+---
+
 ### 2026-11-12 — Decisions on the conversation-quality proposal; full design plan drafted
 
 **Context / trigger:** Owner could not judge order and turn-taking without conversation-design foundations, so asked
