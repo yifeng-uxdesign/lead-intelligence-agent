@@ -27,6 +27,98 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-12 — Design proposal: Northstar conversation quality (awaiting owner approval)
+
+**Context / trigger:** Impact assessment flagged recovery and turn-taking as high. Owner also wants this work to
+double as conversation-design practice, aligned to two role profiles: a Staff UX Designer for Conversational AI
+(experience direction, recovery, turn-taking, pacing, trust, handoffs, principles and frameworks, research from
+interaction data) and a conversation / prompt designer for LLM sales agents (diagnose from transcripts, hear what
+sounds scripted, routing between answer / clarify / escalate / decline, contracts, prove a fix worked).
+**Status: proposal only. No code changed.**
+
+**What the code actually shows (corrections to the planning assessment; `scenarios.js` now read):**
+- The canned line in `engine.js` `applyNode` ("I don't have a scripted path…") only fires for an *unknown node id*. It is
+  effectively dead. The live recovery problem is the 56 per-node `fallback` entries in `scenarios.js`. 36 of them are
+  `next: null` (stay on the node), so the same sentence repeats. Conformance case L1-vague-loop (widget) fails with the
+  identical reply five turns in a row. P2 and others re-ask questions.
+- The fit-question state already exists (`state.answered`, `FIT.questionNodes`, `FIT.tagNode`, `fitChecks`). Recovery can
+  reuse it. A full memory model is still roadmap step 5.
+- `run_widget.mjs` detects `fallback_used` by matching the node's own fallback text. A recovery reply that replaces
+  fallback text is therefore not counted as a fallback. I will **not** treat a drop in `fallback_rate` as proof. Evidence
+  of improvement is L1, `repeat_rate`, P2 `question_reasked`, and a manual transcript review. I will not edit the observer.
+- Baseline today (widget): pass 0.575, route_accuracy 0.745, false_escalation 0.137, missed_intervention 0.111,
+  fallback 0.188, repeat 0.083. pytest and the 3 known xfails are untouched by widget work.
+- Routing misses (many `route=none` failures, e.g. B2, B5, P3) are a keyword-coverage problem. That is the
+  step 7 LLM interpreter's job. It is out of scope here and I will not tune patterns to the cases.
+
+**Proposal, in priority order:**
+
+1. **Evidence-seeking recovery (replaces repeating fallbacks).** A recovery ladder driven by a per-node miss counter:
+   - Miss 1: say what was understood (reuse the `fit.ack` pattern), then ask the single most useful missing-evidence
+     question (next unanswered fit question), offered with suggested-reply chips. Keep the node's own fallback copy where it is
+     already good.
+   - Miss 2: narrow it to a choice (chips only) and say what a rough answer unlocks.
+   - Miss 3+: stop probing. Offer the human path or an explicit "that's enough" exit. Never the same sentence twice.
+   - Copy lives in `scenarios.js` (a `RECOVERY` table keyed by tier and missing-evidence tag). The engine only selects.
+   - Guards: never fires in the alert hold, on human requests, or on minimal replies (`quiet.*` handles those).
+2. **Turn-taking.** Options: (A) keep the lock, (B) enable the input while typing and queue sends FIFO, (C) a new message
+   cancels the pending reply. **Recommend B now, C later and only for non-committed replies.**
+   - Replies land atomically after a timer, so cancelling is easy. The danger is cancelling a decision: a frustration or
+     human-request route must never be dropped by a correction. So under B nothing is dropped.
+   - Restart bumps the existing epoch, which also clears the queue. Queue cap 2.
+   - Accessibility: the input stays focusable (no focus loss from `disabled`), announcements unchanged. Conformance calls `send`
+     sequentially, so it is unaffected.
+   - Presentation-only: `widget.js` stops disabling the input. `engine.js` owns the queue.
+3. **Length-aware pacing.** `delay = clamp(min, base + chars × perChar, max)` from `config.js`, 80 ms under reduced motion.
+   Cost: `respond` currently computes the delay before `resolve()`, and `resolve`/`applyNode` mutate state (`seen`,
+   `fitChecks`). I would split into compute (pure) then commit, so length is known before waiting. Later, for an LLM:
+   `wait = max(pacing floor, real latency)` so the indicator absorbs latency while decisions stay deterministic.
+4. **Tone for evidence gathering** (a checklist for copy review, written to `northstar/CONVERSATION_DESIGN.md`):
+   acknowledge before asking; one question at a time; say why it is asked; make the cheapest answer easy (chips); allow
+   declining with no penalty; ask only what changes the routing decision; no urgency, no mirrored excitement, no
+   defending (already the stated "never" list in `DEMO_SCRIPTS.md`); keep the AI disclosure; vary wording across tiers.
+5. **Determinism.** Every selection is a pure function of `(nodeId, misses, answered, alert, fit tags)`. No randomness
+   (variation is by tier, not by dice). The queue and pacing are presentation timing and never change which node plays.
+   Alert/hold, handoff, and the email-domain gate are untouched. Copy is data. A future LLM may only phrase a tier inside
+   an approved response contract (roadmap 4/7).
+
+**Learning layer (how this maps to the two role profiles):**
+
+| Skill asked for | Where it is practised here | Artifact to keep |
+|---|---|---|
+| Diagnose from transcripts; explain how you knew a fix worked | L1, P2, M1 before/after; manual transcript read of 56 fallbacks | Diagnosis log with hypothesis, change, measured result |
+| Hear scripted / off-tone copy | Rewrite of the repeating fallbacks against the tone checklist | Copy audit (before/after pairs) |
+| Routing: answer / clarify / escalate / decline | Recovery ladder + guards | Decision table (one page) |
+| Recovery, trust, handoff across a journey | Tiers ending in the human path | Recovery pattern with rationale |
+| Turn-taking, interruption, latency, pacing | Items 2–3 (text analogues of barge-in and end-of-speech) | Note on how each maps to a voice channel |
+| Reusable principles and frameworks | `CONVERSATION_DESIGN.md` | Principles with evidence |
+| Contracts and measurement | Deterministic selection plus conformance gates | Metrics before/after, honest regressions |
+| Storytelling / influence | Short case study at the end | Portfolio write-up |
+
+Method per change: write the hypothesis, read real transcripts, state the principle, change the smallest thing, measure,
+write what surprised me.
+
+**Decision:** pending owner. Nothing implemented.
+
+**Why:** Highest-leverage failures first. Recovery has measurable loops today. Turn-taking depends on the same `send` path.
+Pacing needs the compute/commit split, so it goes after recovery.
+
+**What would change my mind:** Transcript review showing the real failures are routing misses, not recovery. Then recovery
+effort drops and keyword/label work moves up the list.
+
+**Open questions for the owner:**
+- [ ] Approve the order (recovery, turn-taking B, pacing, tone doc)?
+- [ ] Turn-taking: queue (B) first, or go straight to supersede (C) with the committed-route guard?
+- [ ] Learning mode: should I draft recovery copy and you critique it, or should you draft the copy and I critique, wire it in and measure?
+- [ ] Is `northstar/CONVERSATION_DESIGN.md` the right home for the principles, and is the case-study write-up wanted?
+
+**Follow-ups:**
+- [ ] After approval: implement in small commits, run `./intent-agent-v2/conformance/run_all.sh "$PWD/northstar"` and
+  `cd intent-agent-v2 && python3 -m pytest -q` after each, and report any regression plainly. Record baselines only if
+  nothing regressed.
+
+---
+
 ### 2026-11-12 — Product vision: Intelligent Intake & Decision Routing
 
 **Context / trigger:** Writing down what I am trying to achieve with the lead agent product.
