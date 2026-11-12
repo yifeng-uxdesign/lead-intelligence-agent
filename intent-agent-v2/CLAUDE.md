@@ -7,6 +7,26 @@ Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) 
 - **LLM (later) only interprets** into a frozen label set, and **phrases** within an approved response contract. A deterministic validator checks outputs.
 - Constitution: `src/core/soul.md`. Existing soul-compliance tests must keep passing.
 
+## Product framing (owner's framing, 2026-11-12; see PLANNING_LOG.md)
+**Inbound lead agent = an intelligent inbound decision and routing system that turns unstructured demand into evidence-backed qualification and appropriate next actions.** First prove the core decision architecture can reliably turn ambiguous inbound demand into evidence-backed, explainable, outcome-aware routing decisions. That is a meaningful product problem in its own right.
+
+Category (potential, not an established standard): Intelligent Intake & Decision Routing. Stages: intake → interpretation → qualification → matching/routing → disposition & feedback.
+
+| Traditional lead qualification | Northstar direction |
+|---|---|
+| Capture form submissions | Acquire signals from multiple channels |
+| Extract lead info | Interpret intent and business context |
+| Calculate lead score | Evaluate fit with evidence and uncertainty |
+| Assign lead owner | Match to the right sales motion/destination |
+| Trigger CRM workflow | Coordinate agent and human actions |
+| Track conversion | Learn from downstream outcomes |
+
+Component → role (these are a decision system under uncertainty, not chatbot features): signal extractor = interpretation; fit criteria = what suitability means; trust state machine = how the agent interacts and gathers missing evidence; mode state machine = autonomy/collaboration; handoff manager = when human judgment is required; feedback layer (future) = routing decisions ↔ actual outcomes.
+
+**Scope implication (decided in planning, owner may revise):** the product is decision-system-centric, not rep-facing or customer-facing only. The Northstar widget is one *signal-acquisition channel* into that system, and reps/CRM are the *action* side. Priority order for design effort: decision quality and explainability (decision trace, conformance) first; customer conversation polish second. Widget polish must not change decisions; decisions are made by deterministic Python, the widget only presents them.
+
+**Widget conversation-quality scope (text widget today):** in scope now = recovery (replace the canned "I don't have a scripted path" fallback), tone/trust copy, pacing (typing delay is a fixed 720 ms, unrelated to reply length), turn-taking (input is locked while the agent "types", so users cannot interrupt), and asking for missing evidence one question at a time (roadmap step 5). Out of scope until a voice channel exists = end-of-speech detection, pronunciation, expressiveness, barge-in. Latency is simulated today; it becomes real when an LLM phrases replies (step 7).
+
 ## Current state
 - Phase 0 done: target-aware frustration, explicit human requests, offline handoff queuing, ALERT holding copy, RELAY approval (`/rep/approve`), backend-owned authorization (`/chat` takes only lead_id+message; rep endpoints need `X-Rep-Token` / env `LEAD_AGENT_REP_TOKEN`, fail closed 503), loop guard, interpretation-failure handling.
 - Delivery matrix (`src/collaboration/delivery_policy.py`): AUTONOMOUS→delivered; ALERT→holding; SHADOW→rep suggestion; RELAY→pending approval; open human intervention overrides to holding; unknown mode fails closed.

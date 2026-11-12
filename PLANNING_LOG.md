@@ -27,6 +27,25 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-12 — Reframe: decision system, not a chatbot
+
+**Context / trigger:** Considered whether the vision is mainly about agent behavior toward human reps, and whether it changes the customer-facing widget.
+
+**Thinking:**
+- Partly right. Qualification, routing and handoff do surface to reps. But intake and interpretation happen in the customer conversation, and the trust state machine governs how the agent gathers missing evidence from the customer. So the product is decision-system-centric; the widget is one signal-acquisition channel and reps/CRM are the action side.
+- The widget is text-only and scripted, so voice concerns (end-of-speech, pronunciation, expressiveness, barge-in) do not apply yet.
+- Checked in code: typing delay is a fixed 720 ms (`northstar/config.js`); input is locked while typing (`engine.js` `send`), so no interruption; the unscripted fallback is canned ("I don't have a scripted path for that yet...", `engine.js`), which matches known role-play issue 3.
+
+**Decision:** Product framing and widget scope recorded in `intent-agent-v2/CLAUDE.md` ("Product framing").
+
+**What would change my mind:** a voice channel, or evidence that customer-facing polish drives qualification outcomes more than routing quality.
+
+**Follow-ups:**
+- [ ] Replace the canned fallback with evidence-seeking recovery.
+- [ ] Make typing delay depend on reply length (keep reduced-motion behavior).
+
+---
+
 ### 2026-11-12 — Product vision: Intelligent Intake & Decision Routing
 
 **Context / trigger:** Writing down what I am trying to achieve with the lead agent product.
