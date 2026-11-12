@@ -27,6 +27,30 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-12 — Decisions on the conversation-quality proposal; full design plan drafted
+
+**Context / trigger:** Owner could not judge order and turn-taking without conversation-design foundations, so asked
+for the whole plan first and for the agent to draft the copy.
+
+**Decision:**
+- Order approved (delegated to me): recovery, then turn-taking, then pacing, then tone doc. Reason: fix what blocks the
+  visitor before what only feels slightly off.
+- Turn-taking: queue first, cancel later and only with a guard for committed routes (frustration, human request).
+- **Supersedes the earlier "owner drafts copy" choice:** the agent drafts recovery copy per stage and scenario, the
+  owner reviews and marks lines that sound off.
+- Home for principles: `northstar/CONVERSATION_DESIGN.md`. Case-study write-up wanted at the end.
+
+**Output:** `northstar/CONVERSATION_DESIGN.md`: components, 24 rules, stage map, decision table, evidence plan,
+recovery ladder with drafted copy for every stage, turn-taking and pacing spec, tone guide, measurement plan, glossary.
+
+**Status:** design only. No widget code changed. Pacing values and recovery copy are untested drafts.
+
+**Follow-ups:**
+- [ ] Owner reviews the copy in section 5.4 and the three open questions in section 10.
+- [ ] Then implement recovery (small commits), run conformance and pytest, report honestly.
+
+---
+
 ### 2026-11-12 — Design proposal: Northstar conversation quality (awaiting owner approval)
 
 **Context / trigger:** Impact assessment flagged recovery and turn-taking as high. Owner also wants this work to
