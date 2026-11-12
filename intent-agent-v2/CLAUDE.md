@@ -1,6 +1,6 @@
 # Lead Intelligence Agent (intent-agent-v2) — working notes for Claude Code
 
-Portfolio-centerpiece B2B sales-qualification agent. Python backend (this repo) + a static JS "Northstar" widget demo (separate repo/folder). Goal: make the deterministic behavior layer correct and *measurable* before adding an LLM, so the demo highlights the behavior-layer design.
+Demo for enterpiece B2B sales-qualification agent. Python backend (this repo) + a static JS "Northstar" widget demo (separate repo/folder). Goal: make the deterministic behavior layer correct and *measurable* before adding an LLM, so the demo highlights the behavior-layer design.
 
 ## Architecture rule (do not violate)
 - **Deterministic Python owns decisions**: trust state, autonomy, handoff, authorization, delivery.
