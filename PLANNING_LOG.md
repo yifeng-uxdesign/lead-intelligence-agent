@@ -27,6 +27,33 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-12 — Product vision: Intelligent Intake & Decision Routing
+
+**Context / trigger:** Writing down what I am trying to achieve with the lead agent product.
+
+**Thinking:**
+
+The product category is **Intelligent Intake & Decision Routing**. This is a potential product category, not an established industry standard.
+
+The five stages:
+
+1. **Intake:** What is being requested?
+2. **Interpretation:** What does the request actually need?
+3. **Qualification:** Is it qualified, eligible, and suitable?
+4. **Matching and routing:** Where should it go, and why?
+5. **Disposition and feedback:** What happened after routing?
+
+**Decision:** _(none yet; this is the framing)_
+
+**Open threads** (my notes, not decisions; edit or delete):
+- Which stages does the current code cover? Possible mapping to check: `signals/extractor.py` for interpretation, the `clients/sierra` fit criteria for qualification, and `collaboration/` handoff for routing. Stage 5 (disposition and feedback) may be the least built.
+- Do roadmap steps 5 to 7 in `intent-agent-v2/CLAUDE.md` (memory, qualification separation, LLM interpretation) line up with these five stages?
+
+**Follow-ups:**
+- [ ] Map each stage to current code and demo scenarios, and note the gaps.
+
+---
+
 ### 2026-11-12 — Cloud environment for the repo
 
 **Context:** Setting up a Claude Cloud dev environment, with the current priority on the Northstar frontend.
