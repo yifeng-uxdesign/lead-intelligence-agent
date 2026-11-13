@@ -1,0 +1,10 @@
+{
+  "description": "This AI-driven B2B sales workspace streamlines lead management by autonomously capturing and qualifying leads, allowing sales reps to focus on resolving blockers and guiding the process.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
