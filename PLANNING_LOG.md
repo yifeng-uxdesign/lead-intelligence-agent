@@ -27,6 +27,31 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-13 — Question patterns and timing from the lead data model
+
+**Context / trigger:** Owner reviewed `CONVERSATION_DESIGN.md` and found no rules for how the agent asks for lead
+information. The lead data model lives in the lead-workspace session, not in this branch.
+
+**Findings:**
+- The path the owner gave points at the generic `docs` skill, not the data model. The model is
+  `docs/lead-data-model.md` (v0.1 draft) on branch `claude/charming-ptolemy-nr2s9t`, not merged. I read it from that branch.
+- It has four layers: A identity and context, B fit, C opportunity readiness, D system-owned. Four decisions in it are
+  still open in that session (own-team reading, four or five readiness fields, minimum to accept, hard disqualifiers).
+
+**Decision (proposed, owner to confirm):**
+- New section 4.4 and rules R36 to R43: five-part question anatomy, seven ask patterns, a sensitivity ladder L0 to L4
+  computed from counted events, a field plan mapped to the data model, and a registry design for later.
+- **Timing:** do not lead with identity. Company context (kind of business, size) early as tuning; name and role when the
+  assistant starts tailoring or a person is about to join; company name, contact and explicit consent only at the connect
+  moment. When a person is live the assistant stops collecting. Treated as a hypothesis to test once there is traffic.
+
+**Status:** design only. No code changed.
+
+**Open:** answer the four decisions in the lead-workspace session; confirm the timing; decide whether to merge the data
+model branch before building the registry.
+
+---
+
 ### 2026-11-13 — Resolve and hand back; demo knowledge base; copy audit
 
 **Context / trigger:** Owner asked whether the recovery copy really follows the word list, for a demo knowledge base,

@@ -79,6 +79,7 @@ constraints**. So every part below serves one loop: *understand → gather the n
 | 12 | **Measurement** | How do we know it got better? | `intent-agent-v2/conformance/` |
 | 13 | **Knowledge** | What may the agent state as fact, and from which approved source? | Today: facts are hard-written inside nodes. Proposed: an approved `KNOWLEDGE` table now, retrieval (RAG) later (4.3) |
 | 14 | **Presence and takeover** | Who is speaking for the company right now (assistant or a person), and how does a person join? | Today: nothing. Proposed: presence state plus an in-page lead workspace stand-in (3.4, 6.4) |
+| 15 | **Lead information** | Which facts do we ask for, in what order, and when? | Today: four fit tags. Proposed: a field registry driven by the lead data model (4.4) |
 
 Who owns what (the architecture rule): **deterministic code owns decisions** (which node plays, hold, handoff,
 fit gate). **Copy is data** (`scenarios.js` / `config.js`). **The UI only presents.** A future LLM may only
@@ -142,6 +143,24 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   a person. Never improvise a fact (4.3).
 - R29. **Knowledge informs, it never decides.** Retrieved content cannot change trust state, hold, or the
   decision to bring in a person. Those stay deterministic.
+
+**Lead information (asking by data layer)**
+- R36. **Climb a sensitivity ladder.** Ask low-sensitivity things first, medium next, high last, and never skip ahead
+  unless the visitor opens the topic. The level is computed from counted events, not guessed from mood (4.4).
+- R37. **Pending decision first.** Ask what the next pending decision needs (keep talking, bring in a person,
+  next steps) before anything else.
+- R38. **Confirm, don't assume.** An inferred value is confirmed lightly or stays on the team's side. Never quote
+  enrichment or CRM data the visitor did not give (soul value 7: nothing that feels like surveillance).
+- R39. **Unknown is an answer.** "Not sure", "can't share" and a skip are stored as unknown or declined, with a
+  source, never as "no", and not asked again unless the visitor reopens it.
+- R40. **Conflicts go to a person, not to the visitor.** If what they say differs from the record, do not
+  confront them; ask neutrally and flag it for the person.
+- R41. **Consent is explicit and separate.** Before any follow-up, ask whether it is okay to follow up, in the same
+  sentence as the contact ask or right after it. Sharing a contact is not consent by itself.
+- R42. **Pace the asks.** At most one ask or cluster per turn, never two ask turns in a row, and no asks during a
+  hold or while a person is live (the person asks, R33).
+- R43. **Every value carries its source.** Customer-stated, inferred, or from the system, with when it was said,
+  mirroring the lead data model's field status model.
 
 **Presence and handoff**
 - R30. **Always show who is speaking.** Assistant and person messages are visibly different (name, label, style),
@@ -303,6 +322,9 @@ Rules for this plan: ask only when needed (R26), at most 3 fit questions (`fitCh
 (R4), accept "not sure" as an answer (R6), and never ask once frustrated or after a human request.
 These thresholds are **demo heuristics**, not the product's real scoring.
 
+> The four fit tags above are a small part of the lead data model's Layer B. The full plan for what to ask, in
+> what order and when is in 4.4.
+
 ### 4.1 Quiet evidence in Orient
 
 While the agent explains, it keeps listening. Nothing here is shown to the visitor as tracking, and none of it is
@@ -377,6 +399,140 @@ Starting topics. "Unverified" means the answer is "a person can tell you", not a
 The drafted knowledge base is in `northstar/KNOWLEDGE_BASE.md`: nine entries taken only from the repository's design
 documents (status `draft`, awaiting owner approval) plus the confirmed list of topics where the assistant says "a person
 can tell you" (R28).
+
+### 4.4 Asking by data layer (question patterns from the lead data model)
+
+Source: `docs/lead-data-model.md`, a **v0.1 draft** written in the lead-workspace session on branch
+`claude/charming-ptolemy-nr2s9t` (not merged). It has four layers: **A** identity and context, **B** fit,
+**C** opportunity readiness, **D** system-owned conversation state. Its own principles apply here: every field earns
+its place by changing a decision; every value carries its source; "unknown" is a first-class value; ask once and
+ask when relevant, paced to trust; collect the minimum personal data.
+
+**Assumption to confirm.** This section assumes the data model's reading that the visitor is someone evaluating
+Northstar for their own team, so the questions are about *their* sales process. That reading, the readiness
+fields, the minimum for accepting a lead and the hard disqualifiers are still open decisions in that session; if
+they change, the field list below changes with them.
+
+#### The anatomy of one question
+
+Every ask has the same five parts, which makes it sound human and keeps it light:
+
+1. **Bridge** from what they just said ("That's a lot of inquiries to read by hand.")
+2. **Reason** in one clause ("so I can point you to the right things")
+3. **One ask**, or one small cluster (R2)
+4. **An easy way to answer** (chips, a range, an example)
+5. **Permission to skip** ("or just say pass")
+
+#### Seven ask patterns
+
+| Pattern | Use for | Shape |
+|---|---|---|
+| **Permission ask** | Opening the door to questions | "Would it help if I asked a couple of questions about how you handle this today?" |
+| **Open story** | Business need, pain | "What made you start looking at this?" |
+| **Range chips** | Volume, team size, timeline | Three or four ranges plus "not sure" |
+| **Confirm inferred** | Anything we picked up without being told | "It sounds like you're on Salesforce. Is that right?" |
+| **Neutral reach** | Other decision-makers, buyer | "When a team like yours picks a tool like this, who else usually weighs in?" |
+| **Cluster** | Name and role, contact and consent | Related items, all optional (4.2) |
+| **Defer to a person** | Budget negotiation, compliance, security | Acknowledge, record that it matters, bring in a person (R13) |
+
+#### The sensitivity ladder (R36)
+
+The level is computed by counting events. It only goes up; it is ignored during a hold or while a person is live.
+
+| Level | Reached when | May ask |
+|---|---|---|
+| **L0 Open** | Conversation starts | Nothing. The first reply answers (R25). |
+| **L1 Orient** | The visitor has received one useful answer | Low sensitivity, by permission or bridge: how inquiries arrive, current process and tools, the pain, kind of business |
+| **L2 Engaged** | At least two useful answers **and** the visitor volunteered a fact, accepted a permission ask, or asked two or more product questions | Medium: monthly volume, team size, their role, region, a timeline they raised, alternatives they raised |
+| **L3 Connecting** | The visitor asked for a person, showed strong interest, offered contact details, or accepted the agent's offer of a person | Name, company name, work email (preferred) or phone, and consent to follow up |
+| **L4 Next steps** | The visitor is driving toward next steps, or a person is live | Decision process, who decides, budget, security and compliance needs. A person asks these. The assistant only records what the visitor volunteers and never negotiates. |
+
+#### The field plan
+
+Sensitivity: **low** (about their work), **med** (about their team or themselves), **high** (money, authority, personal contact, compliance).
+
+| Field (layer) | Sens. | Earliest | Pattern | Example ask |
+|---|---|---|---|---|
+| Business need (B) | low | L1 | Open story, or derived from what they say | "What made you start looking at this?" |
+| Pain (B) | low | L1 | Open story | "What's been the hardest part of dealing with new inquiries?" |
+| Use case or source of inquiries (B) | low | L1 | Range chips | "Where do most of your inquiries come from: your website, events, partners, or somewhere else?" |
+| Current process and tools (B) | low | L1 | Open story, then confirm inferred | "When a new inquiry arrives, what happens first?" |
+| Kind of business (A) | low | L1 | Range chips | "What kind of business is this for?" |
+| Active intent (B) | low | derived | **Never asked directly.** Derived from pricing, pilot, timeline or comparison questions | If needed: "Is this something you're looking at for now, or more for later?" |
+| Monthly volume (B) | med | L2 | Range chips | "Roughly how many inquiries reach you in a typical month?" |
+| Team size (B) | med | L2 | Range chips | "About how many people on your team handle them?" |
+| Role (A) | med | L2 | Cluster "About you" | "What should I call you, and what's your role there?" |
+| Region (A, routing) | low | L2 | One ask, or inferred and confirmed | "Which region is your team based in?" |
+| Timeline (C) | med | L2 if they raise it | Range chips | "Is there a date or quarter you're working toward?" |
+| Alternatives considered (B) | med | L2, only if they raise it | Open story | "What else have you looked at so far?" |
+| Name (A) | med | L3 | Cluster "Reaching you" | "So a person can pick this up properly, what should I call you?" |
+| Company name (A) | med | L3 | One ask | "Which company are you with?" |
+| Work email or phone, **plus consent** (A) | high | L3 | Cluster "Reaching you" | "What's the best way to reach you, a work email or a phone number? And is it okay for someone from the team to follow up there?" |
+| Decision process (C) | med | L4 | Neutral reach | "When a team like yours picks a tool like this, who else usually weighs in?" |
+| Who decides (C) | high | L4 | Neutral reach | "Who would make the final call on something like this?" |
+| Budget (C) | high | L4 | Defer to a person | "A person on the team can talk through budget with you. Is there anything they should know going in? No need to share a number." |
+| Security, compliance, data residency (C) | high | any | Defer to a person | "Thanks for flagging that. Security and data questions go to a person, so I'll make sure the team knows it matters to you." |
+| Source, language, time zone, existing account, trigger history, decision trace (A, D) | n/a | n/a | **System-owned. Never asked.** | |
+
+#### Timing: identity and company information
+
+**Recommendation: do not lead with identity. Earn it in three steps.**
+
+1. **Company context before company identity (L1 to L2).** Ask what kind of business and roughly how big, framed as
+   tuning the answers. These are low-risk and change what the assistant says next. Asking for the company name
+   this early adds nothing the assistant can use, and it feels like paperwork.
+2. **Name and role when the assistant starts tailoring, or when a person is about to be involved (L2 to L3).**
+   Accept a name whenever the visitor volunteers it. A name is for being addressed by a person, so it is most
+   natural at the moment a person enters. An AI that asks for a name in its first reply sounds like a form.
+3. **Company name, contact and consent only at the connect moment (L3).** That is when the team genuinely needs it,
+   the visitor has had value, and the reason can be said in one honest clause. Never as a gate before answering a
+   question.
+
+**Why not earlier.** Asking identity first gets more names but costs trust, which is the soul's first value
+("trust before conversion"), and it contradicts value-before-asking (R25). It also gives the visitor a reason to leave
+before they have seen any value. **Why not later than L3.** The team needs a way to follow up, and a visitor who asked for
+a person should not be sent through more questions first (R17).
+
+**Special cases.**
+- **A person is live:** the assistant stops collecting (R42, R33). The person asks whatever they need.
+- **A work email is given:** the company can be inferred for routing on the team's side. The assistant does not
+  announce it or quote details about the company that the visitor did not give (R38). If asked how it knows,
+  it says it noticed the company from the email address (R27).
+- **The visitor volunteers everything up front:** record it with its source and skip those questions (R4, R43).
+- **The visitor refuses:** store it as declined, move on, do not return to it (R39).
+- **What they say conflicts with the record (for example who decides):** do not mention the record. Ask neutrally
+  and flag the conflict for the person (R40).
+
+**This is a hypothesis to test.** The demo has no real traffic, so the timing above rests on the soul's values and
+on conversation-design practice, not on data. When there is traffic, compare asking at the connect moment with asking
+earlier. Watch whether visitors keep going after an ask, and whether they share contact when it is asked.
+
+#### A sample arc (by value, not by turn count)
+
+| Turn | Level | What happens |
+|---|---|---|
+| 1 | L0 | Visitor: "How does this work with our website inquiries?" Agent answers from approved knowledge. No ask. |
+| 2 | L1 | Visitor asks a follow-up. Agent answers, then bridges one low ask: "Is that how inquiries reach you today, or another way?" |
+| 3 | L1 | Visitor: "We get a few hundred a month and a rep reads each one." Agent records volume and process, thanks them, answers. No ask. |
+| 4 | L2 | Visitor asks about setup. Agent says a person can answer it (unverified topic) and offers to bring one in. |
+| 5 | L3 | Visitor: "Yes please." Agent asks the "Reaching you" cluster, with consent. |
+| 6 | L3 to L4 | A person joins. The assistant stops asking. The person asks about timeline and who else is involved. |
+
+#### How it would work in code (not built)
+
+- A `LEAD_FIELDS` registry in `scenarios.js`: field id, layer, sensitivity, earliest level, trigger, pattern, ask copy, chips,
+  extraction patterns. Copy stays in data (R24).
+- A pure `askLevel(state)` and `nextAsk(state)` in `engine.js`: among unanswered, undeclined fields whose level and trigger
+  hold, choose the one the pending decision needs first (R37). The same function enforces R42 (no consecutive asks).
+- `state.answered` becomes `state.fields[id] = { value, source, at }`, matching the data model's field status model, so
+  the lead workspace can later read the same shape (roadmap steps 5 and 6).
+- The existing fit questions (`promising.*`) become four entries in the registry, not a fixed sequence.
+
+#### How we would check it
+
+New checks, as additions rather than loosened cases: no high-sensitivity ask before L3; never two ask turns in a row;
+no ask during a hold or while a person is live; a declined field is never re-asked; a volunteered fact is never asked
+for. Adding conformance cases changes `cases_hash` and needs baselines re-recorded; existing cases stay untouched.
 
 ---
 
@@ -707,3 +863,9 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
   open topic keeps the assistant restricted and fenced. Confirm, or tell me to keep it simpler (resolve-only, no scoped hand back).
 - [ ] The topic list for the fence (pricing and terms, contract or legal, dates and commitments, security and data, other): right set?
 - [ ] Review the nine draft entries and the checklist in `northstar/KNOWLEDGE_BASE.md`.
+- [ ] Answer the four open decisions in the lead-workspace session; 4.4 depends on them: (1) is the visitor always evaluating
+  Northstar for their own team, (2) four readiness fields or five with compliance and security, (3) the minimum for accepting
+  a lead, (4) the hard disqualifiers.
+- [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
+  or tell me if the business needs name or company earlier.
+- [ ] Should the data model branch be merged before we build the field registry, so both use the same field ids?
