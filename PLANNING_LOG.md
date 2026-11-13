@@ -27,6 +27,26 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-13 — Owner answers: show the human rep joining; confirmations
+
+**Context / trigger:** Owner answered the open questions on the conversation design plan.
+
+**Decisions:**
+- **Demo a person joining the conversation.** A lead workspace notifies sales reps, so instead of disclaiming
+  "prototype" in the chat, the demo shows the handoff: notification, context summary, a rep joining, replying, handing
+  back or closing. Added section 3.4 (presence states, copy), rules R30 to R33, component 14, and section 6.4 (an
+  in-page workspace stand-in; the real workspace is not in this repo).
+- Work email stays preferred for follow-up; phone remains an optional alternative (assumed).
+- Unverified product topics (integrations, pricing, security and data, setup timelines) stay "a person can tell you".
+- Hold copy now says someone has been told, which is true once the workspace notification exists.
+
+**Status:** design only. No widget code changed.
+
+**Open:** workspace layout or screens to match; demo rep name and style; whether the assistant resumes fully after a
+hand back (backend decision D2 assumes restricted until a rep resolves).
+
+---
+
 ### 2026-11-12 — Owner review of the conversation design plan (three changes)
 
 **Context / trigger:** Owner reviewed `northstar/CONVERSATION_DESIGN.md`.

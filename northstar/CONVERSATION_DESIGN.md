@@ -78,6 +78,7 @@ constraints**. So every part below serves one loop: *understand → gather the n
 | 11 | **Memory** | What do we already know, so we never re-ask? | `answered`, `fit`, `seen` (full model is roadmap step 5) |
 | 12 | **Measurement** | How do we know it got better? | `intent-agent-v2/conformance/` |
 | 13 | **Knowledge** | What may the agent state as fact, and from which approved source? | Today: facts are hard-written inside nodes. Proposed: an approved `KNOWLEDGE` table now, retrieval (RAG) later (4.3) |
+| 14 | **Presence and takeover** | Who is speaking for the company right now (assistant or a person), and how does a person join? | Today: nothing. Proposed: presence state plus an in-page lead workspace stand-in (3.4, 6.4) |
 
 Who owns what (the architecture rule): **deterministic code owns decisions** (which node plays, hold, handoff,
 fit gate). **Copy is data** (`scenarios.js` / `config.js`). **The UI only presents.** A future LLM may only
@@ -113,7 +114,8 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 - R14. **Do not push.** No urgency language, no mirrored excitement, no defending. A buying signal triggers a fit check, not a handoff.
 - R15. **Talk about the product, not the machinery.** Say what the product does and how people work with it.
   Visitor-facing copy never mentions lead capture, lead status, scoring, fit checks, the demo or prototype, or
-  whether anything is being collected (V2, V3). *(Replaces the earlier "be honest about the prototype" rule, by
+  whether anything is being collected (V2, V3). Because the demo shows a person genuinely joining (3.4), copy
+  about connecting a person is true in the demo too. *(Replaces the earlier "be honest about the prototype" rule, by
   owner decision. Honesty about the product itself stays in R12 and R13.)*
 - R16. **Frustration holds the conversation.** Once frustrated, the agent stops answering on its own, and holding replies must still vary (never verbatim).
 - R17. **A request for a person is honoured at once**, with no detour through more questions. A second request gets a shorter reply.
@@ -140,6 +142,15 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   a person. Never improvise a fact (4.3).
 - R29. **Knowledge informs, it never decides.** Retrieved content cannot change trust state, hold, or the
   decision to bring in a person. Those stay deterministic.
+
+**Presence and handoff**
+- R30. **Always show who is speaking.** Assistant and person messages are visibly different (name, label, style),
+  and a person joining or leaving is announced in the thread.
+- R31. **The visitor never repeats themselves.** A person who joins has already read the conversation, and their
+  first message shows it.
+- R32. **Never promise a response time.** Say that someone has been told, not when they will answer (R13).
+- R33. **When a person is present, the assistant is silent.** Only an explicit action by the person (hand back or
+  close) changes that. Authorization stays on the person's side, never in the visitor's chat.
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -178,7 +189,7 @@ questions are scheduled here; they come only when needed (R26). Gathering eviden
 | **Gather** | C Promising, Poor fit | `promising.scale / process / volume / outcome` | Volume, process and tools, pain, desired outcome (the four fit tags) |
 | **Decide** | C, Poor fit | `__fit_gate__` → `buyer.handoff`, `buyer.mismatch`, `buyer.unclear`, `buyer.fitcheck(_again)` | confirmed / poor / unclear fit |
 | **Limit** | D Unsupported commitment | `unsupported.honest / timeline`, `pricing.person`, `setup.person`, `trust.accountability`, `trust.reviews` | Decline, say why, route to a person |
-| **Route** | E Human intervention | `intervention.explain / again / noted / close`, `contact.*` | Person path, optional way to reach them, a note for the team |
+| **Route** | E Human intervention | `intervention.explain / again / noted / close`, `contact.*` | Person path, optional way to reach them, a person joins live (3.4) |
 | **Hold** | Frustrated | `alert.handoff / noted / hold` | Agent stops; no product answers |
 | **Quiet** | Ghoster | `quiet.*`, `pause.normalize`, `share.summary`, `eval.pilot*`, `stakeholder.open` | Patience, shareable summary, timeline honoured |
 
@@ -188,6 +199,7 @@ questions are scheduled here; they come only when needed (R26). Gathering eviden
 |---|---|---|
 | Visitor says they are frustrated (about the agent or in general) | **Hold**, hand off, stop answering | `GLOBAL_ROUTES.frustration`, deterministic |
 | Visitor asks for a person | **Escalate** now | `GLOBAL_ROUTES.human` |
+| A person was notified and joins | Assistant goes silent, thread shows who joined, the person replies | An explicit action in the lead workspace (3.4) |
 | "Are you a bot?" | **Answer directly** | `GLOBAL_ROUTES.identity` |
 | Asks for a guarantee, date, price, legal, security | **Decline plainly + route to person** | `unsupported*`, `pricing`, `setup`, `human` keywords |
 | Buying signal ("ready to move forward") | **Fit check**, not handoff | `__fit_gate__` |
@@ -200,6 +212,41 @@ questions are scheduled here; they come only when needed (R26). Gathering eviden
 | Refuses a question | **Respect, mark answered, move on** | proposed (R6) |
 | Off-topic | **State scope, redirect** | proposed (Part 5.3) |
 | Corrects themselves mid-reply | **Queue; acknowledge in the next reply** | proposed (Part 6) |
+
+### 3.4 A person joins the conversation (handoff experience)
+
+The product's promise is that the right conversations reach the sales team quickly, with context. The demo must
+*show* that, so a person joining live is a designed scene, not a footnote. Backend vocabulary maps directly:
+interventions (human request, frustration, commitment or pricing negotiation, contract or legal) put the
+conversation on hold and notify a rep; attention signals (strong buying signal, pricing interest) notify a rep
+while the assistant keeps helping; context signals (competitor, other decision-makers) notify once.
+
+**Presence states** (deterministic; one state at a time):
+
+| State | Who speaks | Visitor sees |
+|---|---|---|
+| `agent` | the assistant | normal conversation |
+| `waiting` | the assistant (or silent if on hold) | the assistant says someone has been told (R32) |
+| `rep` | the person | "{Name} from the Northstar team has joined the conversation", then the person's messages |
+| `closed` | nobody | "{Name} has ended the conversation. You can restart whenever you like." |
+| back to `agent` | the assistant | "{Name} has handed the conversation back to the assistant." |
+
+**What the person sees and does (the lead workspace).** A notification with the reason in plain words ("asked
+for a person", "frustrated", "ready for next steps"), a short context summary built from what was said (volume,
+tools, worries, topics asked about, anything they declined to share), the full thread, and three actions: join,
+reply, and hand back or close. This mirrors the backend's context and brief data, so the person starts with the
+whole picture (R31).
+
+**Drafted copy.**
+- Assistant, when a person is notified (replaces the old "simulated" wording): "Of course. I've let someone on the team know you'd like to talk. I can't say exactly when they'll join, so I'll stay here with you until they do."
+- Assistant, waiting reply 2: "Still here. Someone on the team has been told and will join when they can. I'm happy to keep going in the meantime, or we can wait."
+- Assistant, waiting reply 3: "Nothing has changed on my side. They've been told, and I'll stay until they join."
+- Thread events: "{Name} from the Northstar team has joined the conversation." · "{Name} has handed the conversation back to the assistant." · "{Name} has ended the conversation. You can restart whenever you like."
+- Person's quick replies (editable before sending):
+  - Standard: "Hi, I'm {Name} from the Northstar team. I've read what you shared with the assistant, so you don't need to repeat it. Where would you like to start?"
+  - After frustration: "Hi, I'm {Name}. I'm sorry this has been so frustrating. I've read the whole conversation, so let's start with what matters most to you. What would you like sorted out first?"
+  - Ready for next steps: "Hi, I'm {Name}. It sounds like you're ready to look at next steps. I've seen what you told the assistant, so I'll skip what you've already answered."
+  - Hand back: "I'll step back for now. The assistant is here if you need anything, and you can ask for me again anytime."
 
 ---
 
@@ -455,7 +502,7 @@ Pattern: *approved answer (short, plain) → a bridge from what they said → on
 
 **Hold (`alert.hold`)**: *not a recovery ladder.* The agent stays on hold, but repeated holding replies must vary (R16, and the widget twin of the backend gap POL-26).
 - Hold 1: "I'm holding here so a person can take this over. I won't keep answering on my own, because that isn't what would help." *(existing, kept)*
-- Hold 2: "Still holding. A person should pick this up, so I'm not answering questions in the meantime. You can leave a note for the team below."
+- Hold 2: "Still holding. Someone on the team has been told and will join when they can, so I'm not answering questions in the meantime. You can leave a note for the team below."
 - Hold 3+: "Nothing has changed on my side: I'm waiting for a person. The note option is below, or you can restart the chat."
 
 ### 5.5 Where this lives (implementation sketch, for later)
@@ -507,6 +554,26 @@ while decisions stay deterministic.
 | Typing indicator | Filler or acknowledgement ("one moment") |
 | Chips | Spoken options |
 | Tier 3 release | Offering to transfer to a person |
+
+### 6.4 Demo mechanics: the lead workspace stand-in
+
+The real lead workspace is not in this repository (the backend only exposes the rep-side data endpoints). For the
+demo we build a small **in-page stand-in**: no network, no login, deterministic, local state.
+
+- **Where:** a "Lead workspace" panel beside the widget, opened from the page (a toggle for the presenter).
+- **Notification:** when a conversation reaches a trigger (human request, frustration, buying signal), the
+  workspace shows a toast and a lead card with the reason, the context summary and the thread.
+- **Actions:** `Join conversation`, a reply box with the quick replies from 3.4, `Hand back to assistant`,
+  `Close`. Name for the demo person is a placeholder (to confirm).
+- **Engine (additive, presentation-neutral):** a `mode` (`agent | waiting | rep | closed`), `repJoin(name)`,
+  `repSend(text)`, `repHandBack()`, `repClose()`, a `notifications` event the workspace subscribes to, and message
+  roles `rep` and `event`. While `mode` is `rep`, `send` stores the visitor's message and the assistant stays silent.
+- **Widget:** renders the new roles distinctly, announces joins and rep messages through the existing polite live
+  region (R22), focus unchanged. Restart clears presence and bumps the epoch, as today.
+- **Conformance impact:** none expected. The conformance runner only calls `send`, and presence changes only by an
+  explicit workspace action, so observed behavior before a person joins is identical. We still run the full suite.
+- **Honest limits:** the stand-in simulates the rep's side. The product behavior it shows (notify, context, join,
+  hand back) matches the backend's design.
 
 ---
 
@@ -569,6 +636,7 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - **Fallback**: the reply used when nothing matched.
 - **Escalation / handoff**: passing the conversation to a person.
 - **Hold**: the agent deliberately stops answering until a person takes over.
+- **Presence**: who is currently speaking for the company, the assistant or a person. **Takeover**: a person joins and the assistant goes quiet.
 - **Barge-in**: interrupting the agent mid-reply (voice term; here, typing while it replies).
 - **Latency / pacing**: how long a reply takes to appear, and whether that feels natural.
 - **Response contract**: the approved shape and limits of what the agent may say (roadmap step 4).
@@ -581,7 +649,9 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Review the drafted copy in 5.4. Mark lines that sound off. Those edits are the practice.
 - [ ] Approve pacing starting values (6.2), or ask for a "slower / faster" variant to compare.
 - [ ] Should tier 3 ever *close* the chat itself, or always leave the visitor a choice (current draft: always a choice)?
-- [ ] Which product facts are verified and may be stated (4.3)? The knowledge table can only contain what you approve.
-- [ ] Prototype wording is removed from visitor copy (R15). The demo still does not contact anyone or store anything.
-  Where should that be said, if anywhere (for example, on the page around the widget instead of inside the chat)?
-- [ ] Reaching-you cluster adds name and phone. Confirm the optional phone, and whether work email stays preferred (R18).
+- [x] Verified facts: owner confirmed that integrations, pricing, security and data handling, and setup timelines stay "a person can tell you" (4.3). Verified facts to add later come from the owner.
+- [x] Prototype wording: owner decision is to *show* a person joining (3.4, 6.4) rather than disclaim in the chat.
+- [x] Work email is preferred (confirmed). Phone stays an optional alternative (assumed; say if not wanted).
+- [ ] Does the real lead workspace have screens or a layout the stand-in should match? Otherwise I design a simple one.
+- [ ] Name and style for the demo sales person (placeholder "Maya" or something else)?
+- [ ] After a person hands back, should the assistant resume fully, or stay restricted (backend decision D2 says restricted until a rep resolves)?
