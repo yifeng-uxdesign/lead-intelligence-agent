@@ -27,6 +27,31 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-13 — Resolve and hand back; demo knowledge base; copy audit
+
+**Context / trigger:** Owner asked whether the recovery copy really follows the word list, for a demo knowledge base,
+and how a rep's involvement ends (what "resolved" means, whether the visitor approves, whether the assistant can
+continue on other needs).
+
+**Findings and decisions:**
+- **Copy audit:** the earlier rewrite only fixed the lines I had flagged. A full audit found "leads", "prospects",
+  "reps" and "handoff" still in visitor copy. All fixed in `CONVERSATION_DESIGN.md` 5.4. Proposed a word-list lint (8).
+- **Knowledge base:** none existed (facts live inside nodes). Drafted `northstar/KNOWLEDGE_BASE.md` from the repo's own
+  design documents only (nine entries, status `draft`, owner approval needed) plus the confirmed list of unverified
+  topics ("a person can tell you"). No product fact was invented.
+- **Resolve (proposed D5):** a person resolves (backend `/rep/action` `resolve` already exists); the visitor is asked a
+  light check-in but cannot block it, and can reopen at any time. **Scoped hand back:** a person may hand back with a topic
+  still open; the assistant stays restricted and fenced off that topic until a person resolves. This is **not built** in the
+  backend (an open intervention holds all replies today; related known gaps POL-20 and POL-21, roadmap step 3).
+- Lead workspace code and screenshots will be shared in a new session; the stand-in design (6.4) is provisional.
+- "Maya" accepted as the demo person placeholder.
+
+**Status:** design only. No widget or backend code changed.
+
+**Open:** confirm D5 and the fence topic list; review knowledge entries; share the workspace code and screenshots.
+
+---
+
 ### 2026-11-13 — Owner answers: show the human rep joining; confirmations
 
 **Context / trigger:** Owner answered the open questions on the conversation design plan.

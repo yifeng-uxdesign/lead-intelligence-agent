@@ -149,8 +149,12 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 - R31. **The visitor never repeats themselves.** A person who joins has already read the conversation, and their
   first message shows it.
 - R32. **Never promise a response time.** Say that someone has been told, not when they will answer (R13).
-- R33. **When a person is present, the assistant is silent.** Only an explicit action by the person (hand back or
-  close) changes that. Authorization stays on the person's side, never in the visitor's chat.
+- R33. **When a person is present, the assistant is silent.** Only an explicit action by the person (resolve, hand
+  back or close) changes that. Authorization stays on the person's side, never in the visitor's chat.
+- R34. **Only a person resolves.** The visitor's answer to the check-in is a signal, not a gate. A visitor can always
+  bring the person back (R17).
+- R35. **Hand back is not resolution.** After a hand back with an open topic, the assistant is fenced off that topic
+  and can never make a commitment, until a person resolves.
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -229,7 +233,8 @@ while the assistant keeps helping; context signals (competitor, other decision-m
 | `waiting` | the assistant (or silent if on hold) | the assistant says someone has been told (R32) |
 | `rep` | the person | "{Name} from the Northstar team has joined the conversation", then the person's messages |
 | `closed` | nobody | "{Name} has ended the conversation. You can restart whenever you like." |
-| back to `agent` | the assistant | "{Name} has handed the conversation back to the assistant." |
+| `agent` again (**resolved**) | the assistant, normal autonomy | "{Name} has finished helping with this." then a light check-in |
+| `agent_restricted` (**handed back, topic still open**) | the assistant, but not on the open topic | "{Name} has handed the conversation back to the assistant for everything except {topic}." |
 
 **What the person sees and does (the lead workspace).** A notification with the reason in plain words ("asked
 for a person", "frustrated", "ready for next steps"), a short context summary built from what was said (volume,
@@ -241,12 +246,47 @@ whole picture (R31).
 - Assistant, when a person is notified (replaces the old "simulated" wording): "Of course. I've let someone on the team know you'd like to talk. I can't say exactly when they'll join, so I'll stay here with you until they do."
 - Assistant, waiting reply 2: "Still here. Someone on the team has been told and will join when they can. I'm happy to keep going in the meantime, or we can wait."
 - Assistant, waiting reply 3: "Nothing has changed on my side. They've been told, and I'll stay until they join."
-- Thread events: "{Name} from the Northstar team has joined the conversation." · "{Name} has handed the conversation back to the assistant." · "{Name} has ended the conversation. You can restart whenever you like."
+- Thread events: "{Name} from the Northstar team has joined the conversation." · "{Name} has finished helping with this. I'm back if you need anything else, and you can ask for {Name} or someone on the team again anytime." · "{Name} has handed the conversation back to the assistant for everything except {topic}. {Name} will follow up on that." · "{Name} has ended the conversation. You can restart whenever you like."
 - Person's quick replies (editable before sending):
   - Standard: "Hi, I'm {Name} from the Northstar team. I've read what you shared with the assistant, so you don't need to repeat it. Where would you like to start?"
   - After frustration: "Hi, I'm {Name}. I'm sorry this has been so frustrating. I've read the whole conversation, so let's start with what matters most to you. What would you like sorted out first?"
   - Ready for next steps: "Hi, I'm {Name}. It sounds like you're ready to look at next steps. I've seen what you told the assistant, so I'll skip what you've already answered."
-  - Hand back: "I'll step back for now. The assistant is here if you need anything, and you can ask for me again anytime."
+  - Hand back: "I'll step back for now. The assistant is here if you need anything else, and you can ask for me again anytime. I'll follow up with you on {topic}."
+
+**Ending a person's involvement: resolve, hand back, close.** Three explicit actions, all taken by the person in the
+workspace and never by the visitor's chat (R33, R34). They answer three questions: how do we know it is resolved, does
+the visitor have to approve it, and can the assistant carry on while something is still open?
+
+| Action | Meaning | What happens next | Backend today |
+|---|---|---|---|
+| **Resolve** | The reason the person was needed is dealt with | Open intervention closes; assistant resumes with normal autonomy; light check-in to the visitor | Exists: `/rep/action` `resolve` ("agent may resume") |
+| **Hand back, topic still open** | The person is not finished with one matter (for example pricing or a contract) but the visitor has other needs | Intervention **stays open**; assistant resumes in `restricted` mode with a **topic fence** | **Not built.** Today an open intervention holds every reply (decision D2, known gaps POL-20 and POL-21, roadmap step 3) |
+| **Close** | Conversation is over | Thread ends | Not a distinct action today |
+
+**When is it "resolved"?** A person decides, using a short checklist in the workspace: (1) the visitor's question was
+answered, or the commitment-critical item has a clear owner and next step; (2) the visitor has an agreed next step or
+has said they don't need one; (3) the person presses Resolve. There is no automatic or timed resolution, because
+"resolved" means a person is willing to stand behind it.
+
+**Does the visitor have to approve it? No, but they are asked.** Making resolution depend on the visitor would let a
+chat message change an internal status, and would stall when the visitor has left. Instead, after Resolve the assistant
+asks a light question, and the answer is a signal for the person, not a gate:
+- Check-in: "Did that cover what you needed, or is there anything still open?" *(chips: That covers it · I still need something · I'd like a person again)*
+- "I still need something" and "I'd like a person again" **reopen** the intervention at once and notify the person (R17).
+- No answer is treated as no change; nothing blocks the visitor from asking for the person later.
+
+**Can the assistant carry on with the visitor's other needs? Yes, with a topic fence.** This is a new, scoped hand-back
+(proposed decision D5; needs a backend change, tied to roadmap step 3 "restricted" profiles).
+- The person chooses the open topic(s) from a fixed list: pricing and terms · contract or legal · dates and commitments ·
+  security and data · other (short text). Plain-language names are shown to the visitor.
+- **Allowed while fenced:** answer from approved knowledge on other topics; ask for information only when needed
+  (R26); help the visitor reach the person again.
+- **Not allowed while fenced:** anything on the open topic; any commitment; any claim outside approved knowledge.
+- **Fenced topic raised again:** "That one is with {Name}, and they'll pick it up. I can help with anything else." Then
+  varied (R7): "{Name} still has that one. Is there something else I can help with meanwhile?" · "That's still with {Name}. If you'd like them again now, I can let them know."
+- **New trigger while fenced** (frustration, a new request for a person, a new commitment demand): full hold again, and
+  the person is notified (R16, R17).
+- The open intervention remains until a person presses Resolve. Hand back is not resolution.
 
 ---
 
@@ -334,7 +374,9 @@ Starting topics. "Unverified" means the answer is "a person can tell you", not a
 | How a person gets involved | approved | A person joins for pricing, contracts, timing |
 | Integrations, pricing, security and data handling, setup timelines | **unverified** | Say so plainly; offer a person |
 
-Owner input needed: which facts are verified and may be stated, and in what words.
+The drafted knowledge base is in `northstar/KNOWLEDGE_BASE.md`: nine entries taken only from the repository's design
+documents (status `draft`, awaiting owner approval) plus the confirmed list of topics where the assistant says "a person
+can tell you" (R28).
 
 ---
 
@@ -391,10 +433,10 @@ disclosure, avoids promises, and follows the word list in Part 0 (no lead, fit, 
 **A. Curious, business (`curious.business`)**: missing: kind of company
 - T1: "That's okay. I only ask so my examples fit you. A few words is plenty, like \"B2B software\" or \"a consulting firm\"."
 - T2: "Let me make it easier. Does one of these come close?" *(chips)*
-- T3: "No need to label it. We can skip this and look at how you handle inbound leads instead." → `curious.process`
+- T3: "No need to label it. We can skip this and look at how new inquiries reach you instead." → `curious.process`
 
 **A. Curious, process (`curious.process`)**: missing: how leads are judged today
-- T1: "Thanks. Even one word helps here: when a lead comes in, does a person look at it first, a tool, or nobody in particular?"
+- T1: "Thanks. Even one word helps here: when a new inquiry comes in, does a person look at it first, a tool, or nobody in particular?"
 - T2: "Which of these is nearest to what happens?" *(chips)*
 - T3: "It's fine if it's messy. I'll take that as \"no consistent process\" unless you tell me otherwise." → `curious.contact`
 
@@ -409,7 +451,7 @@ disclosure, avoids promises, and follows the word list in Part 0 (no lead, fit, 
 - T3: "We can leave it there. If you'd rather a person talk this through, I can show you that path." → `intervention.explain` as a chip, no forced move
 
 **B. Hesitant, privacy / boundaries (`hesitant.privacy`, `hesitant.boundaries`)**
-- T1: "Just to be sure I answer the right thing: is it about what you'd have to share, or about what the agent says to prospects?"
+- T1: "Just to be sure I answer the right thing: is it about what you'd have to share, or about what the agent says to people who get in touch?"
 - T2: "Which of these is closest?" *(chips)*
 - T3: "I'd rather not guess at the worry. A person can answer this directly, or we can pause here." → chips: person / pause
 
@@ -434,7 +476,7 @@ disclosure, avoids promises, and follows the word list in Part 0 (no lead, fit, 
 - T3: "No problem. I'll go with what you've shared so far." → `__fit_next__`, marked answered
 
 **C. Promising, outcome (`promising.outcome`)**: missing: what "better" looks like
-- T1: "Think of your best possible week. What would be different for your reps?"
+- T1: "Think of your best possible week. What would be different for your team?"
 - T2: "Which of these sounds most like it?" *(chips)*
 - T3: "That's enough for me to describe a responsible next step." → `__fit_next__`, marked answered *(unchanged: this one is already good)*
 
@@ -480,7 +522,7 @@ Pattern: *approved answer (short, plain) → a bridge from what they said → on
 - T3: "I can't compare other products reliably, so a person is a better source for that." → `intervention.explain`
 
 **Route, human path (`intervention.explain`, `intervention.again`)**: a person was already requested
-- T1: "A person is still the right next step. You can share a work email, leave a note without one, or stop here."
+- T1: "A person is still the right next step. You can tell me how to reach you, leave a message for the team, or stop here."
 - T2: "Which would you like?" *(chips)*
 - T3: "I'll pass along what we've talked about, so you won't have to repeat yourself." → `intervention.noted`
 
@@ -491,7 +533,7 @@ Pattern: *approved answer (short, plain) → a bridge from what they said → on
 - T3: "Skipping is fine. We can carry on without it." → `intervention.noted`
 
 **Pilot, stakeholders (`eval.pilot`, `stakeholder.open`)**
-- T1: "A rough idea is enough. Would it matter more for rep time, how prospects react, or handoff quality?" *(stakeholder: safety, cost, or effort?)*
+- T1: "A rough idea is enough. Would it matter more for how much time your team saves, how people respond to an AI, or how smoothly a person gets brought in?" *(stakeholder: safety, cost, or effort?)*
 - T2: "Pick the nearest." *(chips)*
 - T3: "That can wait. I can write a short summary you can pass along instead." → `share.summary`
 
@@ -559,14 +601,17 @@ while decisions stay deterministic.
 
 The real lead workspace is not in this repository (the backend only exposes the rep-side data endpoints). For the
 demo we build a small **in-page stand-in**: no network, no login, deterministic, local state.
+**Provisional:** the owner has workspace code and screenshots and will share them in a new session, which may change
+this section, so it is the lowest-priority part of the plan until then.
 
 - **Where:** a "Lead workspace" panel beside the widget, opened from the page (a toggle for the presenter).
 - **Notification:** when a conversation reaches a trigger (human request, frustration, buying signal), the
   workspace shows a toast and a lead card with the reason, the context summary and the thread.
-- **Actions:** `Join conversation`, a reply box with the quick replies from 3.4, `Hand back to assistant`,
-  `Close`. Name for the demo person is a placeholder (to confirm).
-- **Engine (additive, presentation-neutral):** a `mode` (`agent | waiting | rep | closed`), `repJoin(name)`,
-  `repSend(text)`, `repHandBack()`, `repClose()`, a `notifications` event the workspace subscribes to, and message
+- **Actions:** `Join conversation`, a reply box with the quick replies from 3.4, `Resolve`, `Hand back (topic still
+  open)` with the topic picker, and `Close`. The demo person is "Maya" (placeholder, accepted).
+- **Engine (additive, presentation-neutral):** a `mode` (`agent | waiting | rep | agent_restricted | closed`),
+  `repJoin(name)`, `repSend(text)`, `repResolve()`, `repHandBack({ topics })`, `repClose()`, a topic fence checked
+  by the same pure selection as recovery, a `notifications` event the workspace subscribes to, and message
   roles `rep` and `event`. While `mode` is `rep`, `send` stores the visitor's message and the assistant stays silent.
 - **Widget:** renders the new roles distinctly, announces joins and rep messages through the existing polite live
   region (R22), focus unchanged. Restart clears presence and bumps the epoch, as today.
@@ -618,6 +663,10 @@ cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 | `overall_pass_rate`, `false_escalation_rate`, `missed_intervention_rate` | Must not regress |
 | `fallback_rate` | **Caution.** The observer detects a fallback by matching the node's own fallback text, so replacing that text makes the number fall without proving anything. We report it but do not use it as proof, and we do not edit the observer. |
 
+**Word-list lint (proposed).** A tiny check that scans visitor-facing strings in `scenarios.js` and `config.js` for
+the internal words in Part 0 (lead, qualified, fit check, evidence, capture, hand off, prototype, simulated) and fails on
+a hit, with a short allow-list for product description. This keeps the audit from drifting back.
+
 Known baseline (widget): pass 0.575, route_accuracy 0.745, false_escalation 0.137, missed_intervention 0.111,
 fallback 0.188, repeat 0.083.
 
@@ -652,6 +701,9 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [x] Verified facts: owner confirmed that integrations, pricing, security and data handling, and setup timelines stay "a person can tell you" (4.3). Verified facts to add later come from the owner.
 - [x] Prototype wording: owner decision is to *show* a person joining (3.4, 6.4) rather than disclaim in the chat.
 - [x] Work email is preferred (confirmed). Phone stays an optional alternative (assumed; say if not wanted).
-- [ ] Does the real lead workspace have screens or a layout the stand-in should match? Otherwise I design a simple one.
-- [ ] Name and style for the demo sales person (placeholder "Maya" or something else)?
-- [ ] After a person hands back, should the assistant resume fully, or stay restricted (backend decision D2 says restricted until a rep resolves)?
+- [ ] Lead workspace: the owner has code and screenshots and will share them in a new session. The stand-in in 6.4 stays provisional until then.
+- [x] Demo sales person: "Maya" is accepted as the placeholder.
+- [ ] Proposed decision **D5** (3.4): only a person resolves; the visitor is asked but cannot block it; a hand back with an
+  open topic keeps the assistant restricted and fenced. Confirm, or tell me to keep it simpler (resolve-only, no scoped hand back).
+- [ ] The topic list for the fence (pricing and terms, contract or legal, dates and commitments, security and data, other): right set?
+- [ ] Review the nine draft entries and the checklist in `northstar/KNOWLEDGE_BASE.md`.
