@@ -161,6 +161,11 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   hold or while a person is live (the person asks, R33).
 - R43. **Every value carries its source.** Customer-stated, inferred, or from the system, with when it was said,
   mirroring the lead data model's field status model.
+- R44. **Gauge interest before gathering.** Visitors vary: evaluators, curious readers, existing customers, people who
+  are not buyers. Answer first and ask nothing about their own sales process until they show they are evaluating
+  Northstar for their team (4.5).
+- R45. **A hard disqualifier ends the lead path, never the conversation.** Be honest, kind and specific, never use a
+  label for the visitor, and leave the door open. Say it before taking contact details, not after.
 
 **Presence and handoff**
 - R30. **Always show who is speaking.** Assistant and person messages are visibly different (name, label, style),
@@ -408,10 +413,11 @@ Source: `docs/lead-data-model.md`, a **v0.1 draft** written in the lead-workspac
 its place by changing a decision; every value carries its source; "unknown" is a first-class value; ask once and
 ask when relevant, paced to trust; collect the minimum personal data.
 
-**Assumption to confirm.** This section assumes the data model's reading that the visitor is someone evaluating
-Northstar for their own team, so the questions are about *their* sales process. That reading, the readiness
-fields, the minimum for accepting a lead and the hard disqualifiers are still open decisions in that session; if
-they change, the field list below changes with them.
+**Owner decisions (2026-11-14).** The visitor is **not always evaluating Northstar for their own team**. They can ask
+anything about Northstar, and the agent gauges whether they are interested in the product and whether it is worth
+nurturing with a person. So no question about someone's own sales process is asked until interest is shown (R44, 4.5).
+The readiness fields, the criteria for accepting a lead and the hard disqualifiers are in 4.5. They still need to be recorded in the
+lead data model session.
 
 #### The anatomy of one question
 
@@ -443,9 +449,9 @@ The level is computed by counting events. It only goes up; it is ignored during 
 |---|---|---|
 | **L0 Open** | Conversation starts | Nothing. The first reply answers (R25). |
 | **L1 Orient** | The visitor has received one useful answer | Low sensitivity, by permission or bridge: how inquiries arrive, current process and tools, the pain, kind of business |
-| **L2 Engaged** | At least two useful answers **and** the visitor volunteered a fact, accepted a permission ask, or asked two or more product questions | Medium: monthly volume, team size, their role, region, a timeline they raised, alternatives they raised |
-| **L3 Connecting** | The visitor asked for a person, showed strong interest, offered contact details, or accepted the agent's offer of a person | Name, company name, work email (preferred) or phone, and consent to follow up |
-| **L4 Next steps** | The visitor is driving toward next steps, or a person is live | Decision process, who decides, budget, security and compliance needs. A person asks these. The assistant only records what the visitor volunteers and never negotiates. |
+| **L2 Engaged** | At least two useful answers **and** the visitor volunteered a fact, accepted a permission ask, or asked two or more product questions | Medium: monthly volume, team size, company size, their role, **region (before any contact ask)**, a timeline they raised, alternatives they raised |
+| **L3 Connecting** | The visitor asked for a person, showed strong interest, offered contact details, or accepted the agent's offer of a person | Name, company name, work email (preferred) or phone, consent to follow up, and who else weighs in |
+| **L4 Next steps** | The visitor is driving toward next steps, or a person is live | Who decides, budget, security and compliance needs. A person asks these. The assistant only records what the visitor volunteers and never negotiates. |
 
 #### The field plan
 
@@ -461,6 +467,7 @@ Sensitivity: **low** (about their work), **med** (about their team or themselves
 | Active intent (B) | low | derived | **Never asked directly.** Derived from pricing, pilot, timeline or comparison questions | If needed: "Is this something you're looking at for now, or more for later?" |
 | Monthly volume (B) | med | L2 | Range chips | "Roughly how many inquiries reach you in a typical month?" |
 | Team size (B) | med | L2 | Range chips | "About how many people on your team handle them?" |
+| Company size and industry (A) | med | L2 | Range chips | "Roughly how big is the company?" |
 | Role (A) | med | L2 | Cluster "About you" | "What should I call you, and what's your role there?" |
 | Region (A, routing) | low | L2 | One ask, or inferred and confirmed | "Which region is your team based in?" |
 | Timeline (C) | med | L2 if they raise it | Range chips | "Is there a date or quarter you're working toward?" |
@@ -468,7 +475,7 @@ Sensitivity: **low** (about their work), **med** (about their team or themselves
 | Name (A) | med | L3 | Cluster "Reaching you" | "So a person can pick this up properly, what should I call you?" |
 | Company name (A) | med | L3 | One ask | "Which company are you with?" |
 | Work email or phone, **plus consent** (A) | high | L3 | Cluster "Reaching you" | "What's the best way to reach you, a work email or a phone number? And is it okay for someone from the team to follow up there?" |
-| Decision process (C) | med | L4 | Neutral reach | "When a team like yours picks a tool like this, who else usually weighs in?" |
+| Decision process, the path to a decision (C) | med | L3 | Neutral reach | "When a team like yours picks a tool like this, who else usually weighs in?" |
 | Who decides (C) | high | L4 | Neutral reach | "Who would make the final call on something like this?" |
 | Budget (C) | high | L4 | Defer to a person | "A person on the team can talk through budget with you. Is there anything they should know going in? No need to share a number." |
 | Security, compliance, data residency (C) | high | any | Defer to a person | "Thanks for flagging that. Security and data questions go to a person, so I'll make sure the team knows it matters to you." |
@@ -533,6 +540,67 @@ earlier. Watch whether visitors keep going after an ask, and whether they share 
 New checks, as additions rather than loosened cases: no high-sensitivity ask before L3; never two ask turns in a row;
 no ask during a hold or while a person is live; a declined field is never re-asked; a volunteered fact is never asked
 for. Adding conformance cases changes `cases_hash` and needs baselines re-recorded; existing cases stay untouched.
+
+### 4.5 Interest gauge, readiness, accepting a lead, and disqualifiers
+
+*Owner decisions, 2026-11-14. Wording below that reads as a proposal needs the owner's confirmation.*
+
+#### The interest gauge
+
+Visitors differ, so before gathering anything the agent works out what kind of visit this is. The classification is
+deterministic and uses only what the visitor said and asked.
+
+| Kind of visit | Signals | What the agent does |
+|---|---|---|
+| **Evaluating for their team** | Talks about their team, process, volume, tools, timeline; asks about a pilot, demo, pricing or next steps | Gathers what the ladder allows (4.4) and offers a person when the criteria below are met |
+| **Curious or researching** | General questions about what Northstar is or how it works; no mention of their own team | Answers well, asks nothing about their process, never asks for contact, keeps the door open |
+| **Existing customer** | Says they already use Northstar, or have an account or an open conversation | Does not run the lead flow. Offers to connect them with their account contact (R38: never reveal what the system knows) |
+| **Not a buyer** | Job seeker, press, student, vendor | Answers what it can, politely, no asks |
+| **Unknown** | Not enough yet | Answers, and may use one light question: "Are you looking at this for your own team, or just curious how it works? Either is fine." |
+
+"Worth nurturing" means an evaluator who meets some but not all of the criteria below. Only then does the agent offer to
+bring in a person to collaborate (R44).
+
+#### The five readiness fields
+
+Taken as the data model's Layer C, with compliance added as the fifth: **budget, timeline, who decides, decision process,
+security and compliance requirements.** *(Confirm this reading of "five readiness fields".)* Budget and who decides are L4 and are asked by
+a person (4.4). Security and compliance are never answered by the agent; if the visitor raises them, the agent records that they matter and
+brings in a person.
+
+#### The five criteria for accepting a lead
+
+| Criterion | What it needs | Who gathers it | In the demo |
+|---|---|---|---|
+| **1. Data validity and reachability** | A real person, a working business email or phone, a deduplicated record | Agent asks (L3, cluster "Reaching you"). The system validates and dedupes | The demo can only check that an email is not a personal domain. It cannot verify that it works or dedupe, so the workspace stand-in shows these as fields the team checks |
+| **2. ICP fit** | Industry, size, region and role match the target profile | Agent asks kind of business (L1), company size, region and role (L2) | **Needs the owner's ICP definition** (target industries, sizes, regions). None exists yet |
+| **3. Lead score threshold** | Behavioral and firmographic scores cross the agreed handoff bar | System only. The agent never asks about it or mentions a score | The demo has illustrative fit heuristics only. **Needs the owner's bar** |
+| **4. Intent and timing** | Clear signs they are actively evaluating | Mostly derived (pricing, pilot, comparison questions); the agent asks for a timeline only if they raise it | Derived signals work today |
+| **5. Reachable decision-maker** | The contact can decide or has a path to a conversation with someone who can | Agent asks role (L2) and who else weighs in (L3) | Role and a path question; no verification |
+
+#### The hard disqualifiers, and how each shows up in conversation
+
+None of these is ever said as a label (V2, V3, R45).
+
+| Disqualifier | Where it is found | What the agent does | Disposition to confirm |
+|---|---|---|---|
+| **Unsupported geography** | Region, asked at L2 **before** any contact ask | Says honestly and kindly that it cannot serve that region yet, before taking contact details | Polite decline, door open. **Needs the owner's supported-region list** |
+| **Invalid contact details** | Contact cluster at L3 | Re-ask once, gently ("That doesn't look like a work address. Would a different one work, or a phone number?"), then carry on without it. Never loops (R7, R39) | Cannot be accepted until reachable; the conversation continues |
+| **No buying authority** | Role and who else weighs in | Neutral reach, never a challenge ("who else usually weighs in?") | The criterion accepts someone with a **path** to a decision-maker, so define this one as "no authority **and** no path". Otherwise nurture |
+| **Active customer or open deal** | CRM lookup on the team's side, or the visitor says so | Never revealed to the visitor (R38). If the visitor says it, route to the existing account contact | Route to the account owner, not reject |
+| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Records "unknown" or "not yet", never "no" (R39) | **Conflict:** the data model (§5) sends "fit confirmed but no near-term timeline" to **nurture**, while this list says disqualify. Recommend **nurture** |
+
+#### Dispositions the agent can lead to
+
+| Disposition | When | Visitor-facing |
+|---|---|---|
+| **Accept** (offer a person) | All five criteria met (3 is checked by the system) | "I think a conversation with the team would be worth your time. Would you like me to connect you?" |
+| **Nurture** | Interested, some criteria missing, no near-term timeline | "No rush. If it helps, I can have someone follow up when the timing is right." |
+| **Route to account contact** | Existing customer | "Let me connect you with the person who looks after your account." |
+| **Decline politely** | Unsupported region, or not an evaluator | Honest reason, door open |
+
+*Caution:* the system has no real scoring, deduplication or ICP today. The demo shows the conversation behavior; the decision itself would belong to the
+deterministic backend (D1 to D5), not to the widget.
 
 ---
 
@@ -819,6 +887,10 @@ cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 | `overall_pass_rate`, `false_escalation_rate`, `missed_intervention_rate` | Must not regress |
 | `fallback_rate` | **Caution.** The observer detects a fallback by matching the node's own fallback text, so replacing that text makes the number fall without proving anything. We report it but do not use it as proof, and we do not edit the observer. |
 
+**Scenario evaluation.** The owner's six scenarios and six interruptions, with a rubric, a measured baseline of the current
+widget and proposed extra scenarios, are in `northstar/EVALUATION_PLAN.md`. The baseline shows the same canned fallback answering
+four different interruptions (24 of 24) and the email being asked again after a refusal (3 of 6), which supports building recovery first.
+
 **Word-list lint (proposed).** A tiny check that scans visitor-facing strings in `scenarios.js` and `config.js` for
 the internal words in Part 0 (lead, qualified, fit check, evidence, capture, hand off, prototype, simulated) and fails on
 a hit, with a short allow-list for product description. This keeps the audit from drifting back.
@@ -863,9 +935,12 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
   open topic keeps the assistant restricted and fenced. Confirm, or tell me to keep it simpler (resolve-only, no scoped hand back).
 - [ ] The topic list for the fence (pricing and terms, contract or legal, dates and commitments, security and data, other): right set?
 - [ ] Review the nine draft entries and the checklist in `northstar/KNOWLEDGE_BASE.md`.
-- [ ] Answer the four open decisions in the lead-workspace session; 4.4 depends on them: (1) is the visitor always evaluating
-  Northstar for their own team, (2) four readiness fields or five with compliance and security, (3) the minimum for accepting
-  a lead, (4) the hard disqualifiers.
+- [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
+- [ ] Confirm that the five readiness fields are budget, timeline, who decides, decision process, and security and compliance.
+- [ ] Supply the **ICP definition** (target industries, company sizes, regions), the **supported-region list**, and the **lead score bar**. The agent cannot state or enforce any of these without them.
+- [ ] Choose the disposition for **no budget or timeline**: nurture (recommended, matches the data model) or disqualify. And define **no buying authority** as "no authority and no path".
+- [ ] Is the demo's small-volume heuristic an approved fact the agent may explain from, or should it only describe what the visitor said (EVALUATION_PLAN S3)?
+- [ ] Add the extra scenarios S7 to S11 from `EVALUATION_PLAN.md`, and confirm replaying the six scenarios as the standing baseline.
 - [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
   or tell me if the business needs name or company earlier.
 - [ ] Should the data model branch be merged before we build the field registry, so both use the same field ids?

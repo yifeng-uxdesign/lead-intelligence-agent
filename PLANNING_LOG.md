@@ -27,6 +27,42 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-14 — Lead data model decisions, accept criteria, and a measured evaluation baseline
+
+**Context / trigger:** Owner answered the open data-model questions and supplied six test scenarios and six interruptions
+to use for the widget's design test and evaluation.
+
+**Decisions (owner):**
+- The visitor is **not always** evaluating Northstar for their own team. They can ask anything; the agent gauges interest and
+  whether the visitor is worth nurturing with a person. Added the interest gauge (rule R44) so no question about someone's own
+  process is asked before interest is shown.
+- **Five readiness fields**; **five criteria to accept a lead** (data validity and reachability, ICP fit, score threshold,
+  intent and timing, reachable decision-maker); **five hard disqualifiers** (unsupported geography, invalid contact, no buying
+  authority, active customer or open deal, no budget or timeline). Written up in `CONVERSATION_DESIGN.md` 4.5 with the
+  conversation behavior for each.
+- Owner will use the six scenarios as the test and evaluation set: adopted. See `northstar/EVALUATION_PLAN.md`.
+
+**What I changed and why:**
+- Moved "who else weighs in" to L3 and asked region before any contact (accept criteria 2 and 5; do not take contact from
+  someone we cannot serve). Added R44, R45.
+- Flagged a **conflict**: "no budget or timeline" as a disqualifier vs the data model sending it to nurture. Recommended nurture.
+- Flagged what the agent cannot do without owner input: the ICP definition, the supported-region list and the score bar do not exist.
+- Added knowledge entry K10 (what it asks about), needed by scenario S6.
+
+**Measured baseline (current widget, before any change; `northstar/eval/`):**
+- S1 fail, S2 fail, S3 partial, S4 partial, S5 pass, S6 fail. 24 of 24 replies to four of the six interruptions are the same canned fallback.
+  The email is asked again after a refusal in 3 of 6 runs. Identical consecutive replies in S1 and S2.
+- Two keyword false positives found ("sales reps" read as a request for a person, "review" as a request for reviews). Recorded, not patched,
+  to avoid tuning to the test; candidates for the interpretation step or a narrow owner-approved fix.
+- This supports the build order: recovery first.
+
+**Status:** design and evaluation only. No widget code changed.
+
+**Open:** record the decisions in the lead-data-model session; supply ICP, regions and score bar; choose the disposition for no
+budget or timeline; approve S7 to S11; confirm the readiness field list.
+
+---
+
 ### 2026-11-13 — Question patterns and timing from the lead data model
 
 **Context / trigger:** Owner reviewed `CONVERSATION_DESIGN.md` and found no rules for how the agent asks for lead

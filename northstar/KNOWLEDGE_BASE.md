@@ -71,6 +71,13 @@ the assistant does not know, and says a person can answer.
 - **Source:** `soul.md` (value 7), `hesitant.privacy`
 - *Note:* only the principle is stated. Storage details are `unverified` (see below).
 
+### K10 · What it asks about  — `draft`
+- **People ask:** what information do you collect, what will you ask me, why do you ask
+- **Answer:** "Mostly how you handle inquiries today, like roughly how many come in, what tools you use, and what's been hard. If you'd like someone from the team to follow up, I'd ask for your name and how to reach you. You can skip anything, and I'll say why I'm asking."
+- **Source:** `docs/lead-data-model.md` v0.1 (branch `claude/charming-ptolemy-nr2s9t`, layers A to C), `CONVERSATION_DESIGN.md` 4.4
+- *Note:* needed by evaluation scenario S6 turn 2. The data model is a draft; confirm the list before the assistant states it.
+
+
 ---
 
 ## Known unknowns: the assistant says "a person can tell you"
@@ -94,7 +101,7 @@ confirmed this list on 2026-11-13.
 
 ## Owner checklist
 
-- [ ] Approve, edit or remove each `draft` entry (K01 to K09). Change the status to `approved` when happy.
+- [ ] Approve, edit or remove each `draft` entry (K01 to K10). Change the status to `approved` when happy.
 - [ ] Add any verified facts you want the assistant to be able to state (for example integrations or security), with a source.
 - [ ] Confirm the plain-language wording of K07 and the product claim in K06.
 - [ ] Decide whether visitor-facing answers may name sources ("from our product documentation"), later, for retrieval.
