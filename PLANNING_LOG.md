@@ -27,6 +27,25 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-15 — ICP evidence verified against source pages (network settings changed)
+
+**Context:** Owner changed the environment's network access. The `WebFetch` tool still could not resolve hosts in this running session, but `curl` through the
+session proxy worked, so I opened six sources directly and re-checked the ICP draft.
+
+**What changed in `northstar/ICP_DRAFT.md`:**
+- The 100x / 21x response-time figures are **confirmed in the primary document** (InsideSales.com / MIT, six companies, over 15,000 leads) but they measure **phone callbacks only**, were
+  vendor-run, and say nothing about chat or AI. Two claims in circulation are **wrong**: the "Harvard Business Review" attribution and a "400% from 5 to 10 minutes" figure (neither is in the study).
+- The Workato test of 114 B2B companies (March 2026) finds more than 99% do not respond within 5 minutes, so slow response is near-universal and is not a distinguishing ICP signal on its own.
+- The persona evidence (Rework) is for **AI sales ops**, a neighbouring category: 25 to 150 reps, ACV $15K to $150K, 30 to 90 day evaluations, fewer than 10 reps should wait. Qualified now sells to
+  **marketing leaders** as an "AI SDR agent". Added a marketing-leader persona, a sales-team-size row, a placeholder deal value, and a note that a 6-month horizon may suit "no timeline" better than 12.
+- Their stated objections ("reps won't trust it", "no bandwidth to implement") match scenarios S1 and S5. The RevOps Co-op ownership-lookup advice supports routing an existing customer to the account owner.
+
+**Still true:** no independent evidence; ICP bands, regions and score weights remain proposals.
+
+**Open:** unchanged from the previous entry, plus: include marketing leaders as buyers; the right sales-team-size band.
+
+---
+
 ### 2026-11-15 — ICP research, no-budget decision, approved scenarios
 
 **Context / trigger:** Owner answered the open questions and asked for research on the ICP for the Northstar lead product, which is an
