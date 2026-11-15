@@ -887,3 +887,229 @@ export const NODES = {
     fallback: { text: "Take your time. I’m listening.", next: null },
   },
 };
+
+// ============ Recovery (what to say when the visitor's words match nothing) ============
+//
+// A ladder, not a loop (CONVERSATION_DESIGN.md, Part 5). The engine counts consecutive misses on one
+// node and plays tier 1, then 2, then 3. A tier may carry `next` (move on, as today's fallbacks do) and
+// `choices` (suggested replies shown instead of the node's own). Past the last tier the engine cycles
+// through `alternates`, so the same sentence is never repeated in a row.
+//
+// Wording follows the word list in CONVERSATION_DESIGN.md Part 0 (no lead, fit, evidence, qualify).
+// Until the lead workspace stand-in exists, no line may say that a person has been told or contacted.
+const PERSON = { id: "person", label: "I’d like to talk to a person", next: "intervention.explain" };
+const STOP = { id: "stop", label: "That’s enough for now", next: "hesitant.close" };
+
+export const RECOVERY = {
+  alternates: [
+    "No problem. We can leave that there, and I’m here whenever you want to pick it up.",
+    "That’s okay. If it’s easier, I can bring in a person, or you can ask me something different.",
+    "Understood. Tell me in a few words what would help most, or we can stop here.",
+  ],
+  groups: {
+    "curious.business": { tiers: [
+      { text: "That’s okay. I only ask so my examples suit you. A few words is plenty, like “B2B software” or “a consulting firm”." },
+      { text: "Let me make it easier. Does one of these come close?" },
+      { text: "No need to label it. We can skip this and look at how new inquiries reach you instead.", next: "curious.process" },
+    ] },
+    "curious.process": { tiers: [
+      { text: "Thanks. Even one word helps here: when a new inquiry comes in, does a person look at it first, a tool, or nobody in particular?" },
+      { text: "Which of these is nearest to what happens?" },
+      { text: "It’s fine if it’s messy. I’ll take that as “no consistent process” unless you tell me otherwise.", next: "curious.contact" },
+    ] },
+    "curious.contact": { tiers: [
+      { text: "Whenever you like. If you’d want someone from the team to follow up, tell me the best way to reach you." },
+      { text: "You can share one, keep exploring here, or stop. Which would you like?" },
+      { text: "Sounds good. We can carry on without it.", next: "curious.close" },
+    ] },
+    "hesitant.ack": { tiers: [
+      { text: "You don’t need to name it exactly. Is it closer to the agent saying something wrong, pressuring people, or what happens to the details people share?" },
+      { text: "Pick the nearest, or tell me in your own words." },
+      { text: "We can leave it there. If you’d rather a person talk this through, that’s an option too.", choices: [PERSON, STOP] },
+    ] },
+    "hesitant.worry": { tiers: [
+      { text: "Just to be sure I answer the right thing: is it about what you’d have to share, or about what the agent says to people who get in touch?" },
+      { text: "Which of these is closest?" },
+      { text: "I’d rather not guess at the worry. A person can answer this directly, or we can pause here.", choices: [PERSON, { id: "pause", label: "Pause here", next: "hesitant.close" }] },
+    ] },
+    trust: { tiers: [
+      { text: "No need to be precise. One detail is enough: what would you want to see or test first?" },
+      { text: "Here are a few ways to test me. Pick whichever you like." },
+      { text: "I don’t want to keep guessing at what would help. A person can take your question directly, or we can leave it here.", choices: [PERSON, STOP] },
+    ] },
+    "promising.scale": { tiers: [
+      { text: "A rough range is fine. It just helps me point you to the right things. Is it closer to dozens, a few hundred, or thousands a month?" },
+      { text: "Pick the nearest, or “not sure” is fine too." },
+      { text: "Okay, I won’t guess a number for you. I’ll carry on with what you’ve told me.", next: "__fit_next__" },
+    ] },
+    "promising.process": { tiers: [
+      { text: "Even one word helps. Who sees a new inquiry first: a person, a tool, or no one in particular?" },
+      { text: "Which of these is nearest?" },
+      { text: "That’s enough to go on. I’ll leave this one.", next: "__fit_next__" },
+    ] },
+    "promising.volume": { tiers: [
+      { text: "No need to be exact. If you think about last week’s inquiries, what bothered you most?" },
+      { text: "Pick the closest, even if none is perfect." },
+      { text: "No problem. I’ll go with what you’ve shared so far.", next: "__fit_next__" },
+    ] },
+    "promising.outcome": { tiers: [
+      { text: "Think of your best possible week. What would be different for your team?" },
+      { text: "Which of these sounds most like it?" },
+      { text: "That’s enough for me to describe a responsible next step.", next: "__fit_next__" },
+    ] },
+    "buyer.handoff": { tiers: [
+      { text: "No rush. I can pass this along whenever you say so, or we can keep talking first." },
+      { text: "Would you like to share a work email, wait a bit, or keep asking questions?" },
+      { text: "Let’s leave it here. The chat stays open whenever you want to pick it up." },
+    ] },
+    "buyer.mismatch": { tiers: [
+      { text: "I know that isn’t the answer you hoped for. If you expect your volume to change, tell me roughly when and I’ll keep that in mind." },
+      { text: "Would one of these be useful?" },
+      { text: "I’ll leave it there. You’re welcome to come back when it’s closer, or a person can weigh in." },
+    ] },
+    "buyer.unclear": { tiers: [
+      { text: "I’d rather not guess. Would a person looking at this with you be more useful, or shall we keep talking here?" },
+      { text: "Either works for me." },
+      { text: "Either is fine, and I won’t push one. Say the word when you want to pick it up." },
+    ] },
+    commitments: { tiers: [
+      { text: "To be clear, I still can’t promise that. I can do two useful things: explain how the agent is meant to behave, or have a person review your request." },
+      { text: "Which would help more?" },
+      { text: "That’s a question a person should answer, so I’ll show you how that works.", next: "intervention.explain" },
+    ] },
+    limits: { tiers: [
+      { text: "I can’t give you a number or a timeline. A person can. Would you like that route, or shall we keep exploring?" },
+      { text: "Either is fine." },
+      { text: "A person is the right place for this, so I’ll show you that path.", next: "intervention.explain" },
+    ] },
+    "eval.compare": { tiers: [
+      { text: "Pick one thing that matters most, such as how it handles honesty, how well it suits your team, or setup effort, and I’ll stay with that." },
+      { text: "Which of these is nearest?" },
+      { text: "I can’t compare other products reliably, so a person is a better source for that.", next: "intervention.explain" },
+    ] },
+    human: { tiers: [
+      { text: "A person is still the right next step. You can share a work email, leave a note, or stop here." },
+      { text: "Which would you like?" },
+      { text: "I’ll leave a note so nothing you said is lost.", next: "intervention.noted" },
+    ] },
+    reach: { tiers: [
+      { text: "A work address looks like name@yourcompany.com. It’s only so a person can follow up." },
+      { text: "Whichever is easiest: a work address, or skip for now." },
+      { text: "Skipping is fine. We can carry on without it.", next: "intervention.noted" },
+    ] },
+    "eval.pilot": { tiers: [
+      { text: "A rough idea is enough. Would it matter more for how much time your team saves, how people respond to an AI, or how smoothly a person gets brought in?" },
+      { text: "Pick the nearest." },
+      { text: "That can wait. Come back to it whenever it’s useful.", next: "quiet.later" },
+    ] },
+    "stakeholder.open": { tiers: [
+      { text: "A rough idea is enough. Would their question be more about safety, cost, or effort?" },
+      { text: "Pick the nearest." },
+      { text: "That can wait. I can write a short summary you can pass along instead.", next: "share.summary" },
+    ] },
+    // The first quiet reply is the node itself, so these two follow it.
+    quiet: { tiers: [
+      { text: "Still here. If it helps, I can answer one small question, like what Northstar does, or we can stop." },
+      { text: "I’ll leave it there. The chat stays open whenever you come back." },
+    ] },
+    // Holding for a person: the first holding line is the node itself, so these vary it.
+    hold: { tiers: [
+      { text: "Still holding. This one needs a person to take it from here, so I’m not answering product questions in the meantime. You can leave a note for the team below." },
+      { text: "Nothing has changed on my side: I’m waiting for a person to take this over. The note option is below, or you can restart the chat." },
+    ] },
+    "hold.noted": { tiers: [
+      { text: "The note is filed. I’m still holding so a person can take this from here, and I’m not answering product questions meanwhile." },
+      { text: "Nothing has changed on my side. You can restart the chat whenever you like." },
+    ] },
+  },
+  nodeGroup: {
+    "curious.business": "curious.business",
+    "curious.process": "curious.process",
+    "curious.contact": "curious.contact",
+    "hesitant.ack": "hesitant.ack",
+    "hesitant.privacy": "hesitant.worry",
+    "hesitant.boundaries": "hesitant.worry",
+    "trust.skeptic": "trust", "trust.burned": "trust", "trust.honest": "trust", "trust.morework": "trust",
+    "trust.reps": "trust", "trust.incentive": "trust", "trust.nosell": "trust",
+    "promising.scale": "promising.scale",
+    "promising.process": "promising.process",
+    "promising.volume": "promising.volume",
+    "promising.outcome": "promising.outcome",
+    "buyer.handoff": "buyer.handoff",
+    "buyer.mismatch": "buyer.mismatch", "buyer.growth": "buyer.mismatch",
+    "buyer.unclear": "buyer.unclear",
+    "unsupported.honest": "commitments", "unsupported.timeline": "commitments",
+    "pricing.person": "limits", "setup.person": "limits",
+    "eval.compare": "eval.compare",
+    "intervention.explain": "human", "intervention.again": "human",
+    "contact.ask": "reach", "contact.personal": "reach",
+    "eval.pilot": "eval.pilot",
+    "stakeholder.open": "stakeholder.open",
+    "quiet.patient": "quiet", "quiet.return": "quiet",
+    "alert.hold": "hold",
+    "alert.noted": "hold.noted",
+  },
+};
+
+// Keep each node's own `fallback` equal to tier 1. The engine reads RECOVERY, but the conformance observer
+// recognises a fallback by the node's fallback text, so this keeps "the first reply to an unmatched input"
+// counted as a fallback exactly as before. Improving the ladder must not be able to lower that metric by renaming.
+for (const [nodeId, groupId] of Object.entries(RECOVERY.nodeGroup)) {
+  const tier = RECOVERY.groups[groupId].tiers[0];
+  NODES[nodeId].fallback = { text: tier.text, ...(tier.next ? { next: tier.next } : {}) };
+}
+
+// ============ Repair: things a visitor says about the conversation itself ============
+//
+// "That's not what I asked", "Why do you need to know that?", "I don't know", "Just give me a straight answer",
+// "I don't want to share that". They are not answers to the current question, so they are recognised before the
+// node's own routes (after a request for a person, frustration and the other global signals, which still win).
+// Patterns are narrow on purpose. A repeat of the same repair never repeats the same sentence.
+export const REPAIR = {
+  order: ["refusal", "why", "misunderstood", "straight", "unknown"],
+  patterns: {
+    refusal: /\b(i )?(don'?t|do not|won'?t|will not|would rather not|prefer not to|'?d rather not|not comfortable)\b.{0,25}\b(share|give|provide|tell|say|enter|put)\b|\brather not (say|share|answer|give)\b|^\s*(pass|skip( it| that| this| this one)?)[.!]?\s*$/i,
+    why: /\bwhy (do|would|should|are) (you|we) (need|want|asking|ask)\b|\bwhy (do you )?(need|want) (to know|that|this|my)\b|\bwhat('?s| is) (that|this) for\b|\bwhy are you asking\b/i,
+    misunderstood: /\b(that'?s|that is|this is) not what i (asked|meant|said|wanted)\b|\bnot what i (asked|meant)\b|\byou (didn'?t|did not|don'?t|do not) (answer|understand|get)\b|\bi (didn'?t|did not) ask (that|you that)\b/i,
+    straight: /\b(straight|direct|honest|short|simple|clear) answer\b|\bjust (answer|tell me)\b|\bget to the point\b|\bplease (just )?answer\b|\byes or no\b/i,
+    unknown: /^\s*(i )?(honestly |really )?(don'?t|do not) know( the answer| that| yet)?[.!]?\s*$|^\s*(i have )?no idea[.!]?\s*$|^\s*i('?m| am) not (sure|certain)( about that)?[.!]?\s*$|^\s*(i )?(can'?t|cannot) say[.!]?\s*$/i,
+  },
+  // A refusal or "I don't know" closes a fit question. Where it closes a contact ask, the conversation moves here.
+  refusalNext: { "contact.ask": "intervention.noted", "contact.personal": "intervention.noted", "curious.contact": "curious.keep", "buyer.handoff": "buyer.later" },
+  refusal: { tiers: [
+    { text: "Of course, that’s completely fine. We’ll leave that out." },
+    { text: "Understood. You don’t have to share it, and nothing here depends on it." },
+  ] },
+  unknown: { tiers: [
+    { text: "That’s fine. Not knowing is a useful answer, and we’ll go on without it." },
+    { text: "No problem. We can leave it open and carry on." },
+  ] },
+  misunderstood: { tiers: [
+    { text: "Sorry, I missed that. What were you hoping I’d answer? A few words is enough." },
+    { text: "Let me try again. Is your question about how Northstar works, whether it suits your team, or getting started?" },
+    { text: "I’m not getting this right. A person can take your question directly, or tell me in different words and I’ll try once more.", choices: [PERSON, STOP] },
+  ] },
+  straight: { tiers: [
+    { text: "Short version: I’m an AI assistant. I can explain how Northstar works, and I bring in a person for anything that needs a firm answer, like pricing, timing or commitments. What’s the one thing you most want answered?" },
+    { text: "Ask me one specific question. I’ll answer it in a sentence, or tell you plainly that a person has to." },
+  ] },
+  why: {
+    byNode: {
+      "curious.business": "I ask so my examples suit your kind of business instead of being generic.",
+      "curious.process": "It helps me see where you are today, so what I say is relevant. You can skip it.",
+      "curious.contact": "Only so someone from the team can follow up if you’d like that. You can skip it.",
+      "hesitant.ack": "So I can answer the worry you actually have, rather than a generic one.",
+      "promising.scale": "Volume tells me whether a conversation like this is likely to be worth your time, so I’m asking early. A rough range is plenty.",
+      "promising.process": "How inquiries are handled today tells me what would help most. A single word is enough.",
+      "promising.volume": "Knowing what’s hardest helps me point you to the right things.",
+      "promising.outcome": "It tells me what a good result would look like for you, so I can describe a sensible next step.",
+      "buyer.handoff": "I only suggest a person when what you’ve told me points that way, and I’d rather say why.",
+      "contact.ask": "Only so a person can follow up with you. You can skip it, and nothing else depends on it.",
+      "contact.personal": "Only so a person can follow up with you. You can skip it, and nothing else depends on it.",
+    },
+    tiers: [
+      { text: "Fair question. I ask so what I say fits your situation, not to fill in a form. You can skip anything, and I’ll carry on." },
+      { text: "That’s all it’s for: so I’m not guessing about your situation. Say “pass” and I’ll move on." },
+    ],
+  },
+};
