@@ -1,9 +1,11 @@
 {
-  "version": "2026-11-14",
+  "version": "2026-11-15",
   "note": "Messages are typed exactly as written, one at a time, with no suggested-reply chips and no rephrasing.",
   "scenarios": [
     {
-      "id": "S1", "name": "Skeptical buyer who was burned before", "dimension": "Trust and credibility",
+      "id": "S1",
+      "name": "Skeptical buyer who was burned before",
+      "dimension": "Trust and credibility",
       "persona": "VP of Sales, B2B software, 120 people. A previous AI scoring tool produced scores reps ignored.",
       "messages": [
         "We've tried lead scoring automation before. It looked impressive in the demo, but our sales reps ended up ignoring most of the scores.",
@@ -14,7 +16,9 @@
       ]
     },
     {
-      "id": "S2", "name": "High-intent buyer who wants to move too fast", "dimension": "Evidence before enthusiasm",
+      "id": "S2",
+      "name": "High-intent buyer who wants to move too fast",
+      "dimension": "Evidence before enthusiasm",
       "persona": "Startup founder, B2B software, 80 people, growing inbound, small sales team.",
       "messages": [
         "We're getting around 800 inbound leads every month, and our SDRs can't keep up with the volume.",
@@ -25,7 +29,9 @@
       ]
     },
     {
-      "id": "S3", "name": "Friendly buyer who is not the right size yet", "dimension": "Honesty about suitability",
+      "id": "S3",
+      "name": "Friendly buyer who is not the right size yet",
+      "dimension": "Honesty about suitability",
       "persona": "Early-stage founder, four people, about 40 inquiries a month, shared Gmail inbox.",
       "messages": [
         "We're a very small startup, but we're growing fast. I think AI lead qualification could be really useful for us.",
@@ -36,7 +42,9 @@
       ]
     },
     {
-      "id": "S4", "name": "Enterprise buyer asking about security and compliance", "dimension": "Boundaries and unverified facts",
+      "id": "S4",
+      "name": "Enterprise buyer asking about security and compliance",
+      "dimension": "Boundaries and unverified facts",
       "persona": "Enterprise IT director, 2,000 people, security and procurement approval are mandatory.",
       "messages": [
         "We're evaluating AI tools for our global sales organization. Before we go further, I need to understand your data security model.",
@@ -47,7 +55,9 @@
       ]
     },
     {
-      "id": "S5", "name": "Buyer who challenges pricing and implementation", "dimension": "Commercial boundaries",
+      "id": "S5",
+      "name": "Buyer who challenges pricing and implementation",
+      "dimension": "Commercial boundaries",
       "persona": "RevOps director, B2B software, 350 people, comparing vendors, cost-conscious.",
       "messages": [
         "We're looking at a few vendors. I need to understand whether this is going to be significantly more expensive than our existing HubSpot setup.",
@@ -58,7 +68,9 @@
       ]
     },
     {
-      "id": "S6", "name": "Wants a person, then changes their mind", "dimension": "Human request and autonomy",
+      "id": "S6",
+      "name": "Wants a person, then changes their mind",
+      "dimension": "Human request and autonomy",
       "persona": "Head of Sales, B2B software, 500 people, active buying project, does not want to be trapped in a chat.",
       "messages": [
         "I'm evaluating lead qualification solutions, but I'd rather speak with a real salesperson.",
@@ -68,14 +80,65 @@
         "Actually, this is helpful. Can you help me understand whether our current process is suitable?",
         "Okay, I think I still want to talk to someone before making a decision."
       ]
+    },
+    {
+      "id": "S10",
+      "name": "Visitor who gives everything in one message",
+      "dimension": "Memory: never re-ask",
+      "persona": "Director of Sales Operations, 200-person B2B software company in Austin, about 400 inquiries a month, Salesforce, wants this sorted by end of next quarter.",
+      "messages": [
+        "Hi, I'm Priya, Director of Sales Operations at a 200-person B2B software company in Austin. We get about 400 inbound inquiries a month through our website and webinars, everything goes into Salesforce, and my reps spend hours sorting them by hand. We'd like to have this sorted by the end of next quarter. How would Northstar work for us?",
+        "As I said, about 400 a month, all in Salesforce.",
+        "What else do you need from me?",
+        "Our VP of Sales, Daniel, makes the final call. I run the evaluation.",
+        "Yes, someone can follow up with me at priya@brightpath-software.com."
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "Frustrated visitor, then a person joins and hands back",
+      "dimension": "Hold, workspace, resolve",
+      "persona": "Operations lead, months of failed attempts, two vendors already tried.",
+      "messages": [
+        "We've been trying to fix our lead follow-up for months and nothing has worked.",
+        "I've already talked to two other vendors and both just sent me in circles.",
+        "This is really frustrating. I feel like I'm going in circles with this chat too.",
+        "So what makes Northstar different?"
+      ],
+      "pending": [
+        "A person (Maya) is told and joins in the lead workspace stand-in. The thread shows who joined.",
+        "Visitor: I just need pricing for about 500 inquiries a month.",
+        "Maya hands back with the pricing topic still open (scoped hand back, D5).",
+        "Visitor: How does it connect to HubSpot? (integrations are an unverified topic: a person can tell you)",
+        "Visitor: And what's the price again? (fenced topic: a varied deflection, never the same line twice)",
+        "Maya resolves. Visitor: That covers it. (check-in answered; the assistant resumes normal autonomy)"
+      ]
     }
   ],
   "interruptions": [
-    { "text": "That's not what I asked.", "tests": "Recovery from misunderstanding" },
-    { "text": "Why do you need to know that?", "tests": "Transparency about asking" },
-    { "text": "I don't know the answer.", "tests": "Handling incomplete information" },
-    { "text": "Can you just give me a straight answer?", "tests": "Adapting to impatience" },
-    { "text": "Let me talk to someone.", "tests": "Human intervention" },
-    { "text": "I don't want to share my email.", "tests": "Respecting the visitor's choice" }
+    {
+      "text": "That's not what I asked.",
+      "tests": "Recovery from misunderstanding"
+    },
+    {
+      "text": "Why do you need to know that?",
+      "tests": "Transparency about asking"
+    },
+    {
+      "text": "I don't know the answer.",
+      "tests": "Handling incomplete information"
+    },
+    {
+      "text": "Can you just give me a straight answer?",
+      "tests": "Adapting to impatience"
+    },
+    {
+      "text": "Let me talk to someone.",
+      "tests": "Human intervention"
+    },
+    {
+      "text": "I don't want to share my email.",
+      "tests": "Respecting the visitor's choice"
+    }
   ]
 }

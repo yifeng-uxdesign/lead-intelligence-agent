@@ -27,6 +27,34 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-15 — ICP research, no-budget decision, approved scenarios
+
+**Context / trigger:** Owner answered the open questions and asked for research on the ICP for the Northstar lead product, which is an
+**API product that integrates with any CRM**; the widget and the lead workspace are demos of the agent's behavior and its collaboration with humans.
+
+**Decisions (owner):**
+- **No budget or timeline = disqualify.** This supersedes my recommendation (nurture) and the data model's nurture route. Implemented in the design as: only on an
+  *explicit* statement; unknown or "not yet" stays unknown (R39). The horizon for "no timeline" still needs defining.
+- **Five readiness fields confirmed:** budget, timeline, who decides, decision process, security and compliance.
+- **Scenarios:** S10 and S11 approved; S7 to S9 parked.
+
+**Research (`northstar/ICP_DRAFT.md`):** a draft ICP (accounts, buying group, triggers, disqualifiers), a score sketch for the "lead score bar", what the widget can and
+cannot learn, and an explanation of the demo's small-volume rule (150 and 250 a month vs a rule of thumb of about 300 a month per inbound rep).
+**Limits:** no independent (A-grade) evidence; everything is vendor-authored or secondhand from search summaries; four primary pages could not be opened because the
+session's network allowlist blocks them (workato.com, www.mortech.com, www.qualified.com, revopscoop.com). The ICP bands, regions and weights are
+**proposals, not findings**.
+
+**Evaluation:** S10 and S11 added to the replay set. New baseline `northstar/eval/baseline-2026-11-15.md` (the 2026-11-14 file is replaced; S1 to S6 unchanged).
+S10 fails (the visitor gave everything in one message and was asked about it again; the email was not recognised). S11 holds one turn early on frustration about other vendors.
+Across eight scenarios, 32 of 32 replies to four interruptions are the same canned fallback and 3 of 8 re-ask the email after a refusal.
+
+**Status:** design, research and evaluation only. No widget or backend code changed; conformance and pytest unchanged.
+
+**Open:** ICP bands, supported regions, score bar, deal-value minimum, the "no timeline" horizon, customer types (direct vs embedding partners), and recording these
+decisions in the lead-workspace session's data model.
+
+---
+
 ### 2026-11-15 — Shared agent state model (from the lead-workspace session): mapped to this plan
 
 **Context / trigger:** Owner shared that session's Step 0: one agent state model shared by the widget and the rep workspace

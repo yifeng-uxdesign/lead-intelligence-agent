@@ -603,7 +603,7 @@ bring in a person to collaborate (R44).
 #### The five readiness fields
 
 Taken as the data model's Layer C, with compliance added as the fifth: **budget, timeline, who decides, decision process,
-security and compliance requirements.** *(Confirm this reading of "five readiness fields".)* Budget and who decides are L4 and are asked by
+security and compliance requirements.** *(Confirmed by the owner, 2026-11-15.)* Budget and who decides are L4 and are asked by
 a person (4.4). Security and compliance are never answered by the agent; if the visitor raises them, the agent records that they matter and
 brings in a person.
 
@@ -627,14 +627,14 @@ None of these is ever said as a label (V2, V3, R45).
 | **Invalid contact details** | Contact cluster at L3 | Re-ask once, gently ("That doesn't look like a work address. Would a different one work, or a phone number?"), then carry on without it. Never loops (R7, R39) | Cannot be accepted until reachable; the conversation continues |
 | **No buying authority** | Role and who else weighs in | Neutral reach, never a challenge ("who else usually weighs in?") | The criterion accepts someone with a **path** to a decision-maker, so define this one as "no authority **and** no path". Otherwise nurture |
 | **Active customer or open deal** | CRM lookup on the team's side, or the visitor says so | Never revealed to the visitor (R38). If the visitor says it, route to the existing account contact | Route to the account owner, not reject |
-| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Records "unknown" or "not yet", never "no" (R39) | **Conflict:** the data model (§5) sends "fit confirmed but no near-term timeline" to **nurture**, while this list says disqualify. Recommend **nurture** |
+| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Disqualifies **only on an explicit statement** ("we have no budget", "no plans to buy"). "Unknown", "not yet decided" and a skip are recorded as unknown, never "no" (R39), and keep the conversation going | **Owner decision 2026-11-15: disqualify.** This supersedes the data model's nurture route (§5 of `lead-data-model.md`), which still needs updating in that session. The horizon for "no timeline" needs defining |
 
 #### Dispositions the agent can lead to
 
 | Disposition | When | Visitor-facing |
 |---|---|---|
 | **Accept** (offer a person) | All five criteria met (3 is checked by the system) | "I think a conversation with the team would be worth your time. Would you like me to connect you?" |
-| **Nurture** | Interested, some criteria missing, no near-term timeline | "No rush. If it helps, I can have someone follow up when the timing is right." |
+| **Nurture** | Interested, some criteria missing or unknown (timeline or budget not yet known) | "No rush. If it helps, I can have someone follow up when the timing is right." |
 | **Route to account contact** | Existing customer | "Let me connect you with the person who looks after your account." |
 | **Decline politely** | Unsupported region, or not an evaluator | Honest reason, door open |
 
@@ -928,7 +928,7 @@ cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 
 **Scenario evaluation.** The owner's six scenarios and six interruptions, with a rubric, a measured baseline of the current
 widget and proposed extra scenarios, are in `northstar/EVALUATION_PLAN.md`. The baseline shows the same canned fallback answering
-four different interruptions (24 of 24) and the email being asked again after a refusal (3 of 6), which supports building recovery first.
+four different interruptions (32 of 32 across eight scenarios) and the email being asked again after a refusal (3 of 8), which supports building recovery first.
 
 **Word-list lint (proposed).** A tiny check that scans visitor-facing strings in `scenarios.js` and `config.js` for
 the internal words in Part 0 (lead, qualified, fit check, evidence, capture, hand off, prototype, simulated) and fails on
@@ -977,11 +977,11 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Shared state model (3.5): confirm RELAY (approve a draft) and SHADOW (rep driving) stay separate, merge the "Rep driving" and "Advisory" rows, and adopt the table as the single source for both sides.
 - [ ] Approve the visitor-side proposals in 3.5: a limit on the typing indicator then a holding line, a failure line, and tier 3 raising the rep's "Uncertain" card.
 - [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
-- [ ] Confirm that the five readiness fields are budget, timeline, who decides, decision process, and security and compliance.
-- [ ] Supply the **ICP definition** (target industries, company sizes, regions), the **supported-region list**, and the **lead score bar**. The agent cannot state or enforce any of these without them.
-- [ ] Choose the disposition for **no budget or timeline**: nurture (recommended, matches the data model) or disqualify. And define **no buying authority** as "no authority and no path".
-- [ ] Is the demo's small-volume heuristic an approved fact the agent may explain from, or should it only describe what the visitor said (EVALUATION_PLAN S3)?
-- [ ] Add the extra scenarios S7 to S11 from `EVALUATION_PLAN.md`, and confirm replaying the six scenarios as the standing baseline.
+- [x] Five readiness fields confirmed by the owner (2026-11-15): budget, timeline, who decides, decision process, and security and compliance.
+- [ ] Review the **ICP research and draft** in `northstar/ICP_DRAFT.md`, then decide the ICP bands, the **supported-region list** and the **lead score bar** (the draft proposes a placeholder for each; the agent cannot enforce any without your decision).
+- [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only. Still to do: define the horizon for "no timeline" and confirm **no buying authority** means "no authority and no path".
+- [ ] The demo's small-volume rule (150 and 250 inquiries a month) is explained in `ICP_DRAFT.md` Part 6. Approve it as a fact the agent may explain from, or keep it internal and have the agent only describe what the visitor said (recommended).
+- [x] Scenarios: S10 and S11 approved, S7 to S9 parked (owner, 2026-11-15). The eight approved scenarios are the standing baseline (`northstar/eval/`).
 - [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
   or tell me if the business needs name or company earlier.
 - [ ] Should the data model branch be merged before we build the field registry, so both use the same field ids?

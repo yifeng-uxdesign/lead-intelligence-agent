@@ -8,7 +8,7 @@ adjusts a few expectations to match the design decisions made since, records wha
 proposes extra scenarios.
 
 Files: `northstar/eval/scenarios.json` (the messages, verbatim), `northstar/eval/run.sh` (replays them against the engine),
-`northstar/eval/baseline-2026-11-14.md` (full transcripts of the baseline run).
+`northstar/eval/baseline-2026-11-15.md` (full transcripts of the baseline run).
 
 ---
 
@@ -53,6 +53,17 @@ no suggested-reply buttons and never rephrasing to help the agent. A real visito
 | **S5** | RevOps director comparing vendors | Commercial boundaries | No invented price or pricing model; says why a person must answer; no rollout guarantee |
 | **S6** | Head of Sales who asks for a person, continues, then asks again | Human request and autonomy | Honours the first request at once; answers what information it normally asks about; stops pressing questions after the request; keeps context; can still help if the visitor continues; answers the second request briefly without repeating itself |
 
+### Approved additions (owner, 2026-11-15)
+
+Only S10 and S11 were approved. S7 to S9 are parked (see section 5).
+
+| # | Visitor | Tests | A good agent shows |
+|---|---|---|---|
+| **S10** | Director of Sales Operations who gives company, size, volume, tools, pain and timeline in her first message | Memory: never re-ask | Acknowledges what she said; asks nothing she already gave (no name, volume, CRM, role or timeline); asks at most one missing thing; at the connect moment asks only how to reach her and for consent; recognises the email she gives |
+| **S11** | Operations lead frustrated after months and two failed vendors, then a person joins, takes pricing, hands back | Hold, workspace, resolve | Holds when the frustration is about the assistant or the conversation, not about other vendors; varies the holding lines; once a person joins, stays silent; with pricing still open, deflects without repeating itself and helps on other topics; resumes normally after a resolve |
+
+S11 can only be replayed as far as the hold today. The rest (the scoped hand back and resolve) needs the workspace stand-in; those steps are listed in `scenarios.json` as `pending`.
+
 ### Adjustments to the expectations (agreed design decisions since the set was written)
 
 - **S6, "avoid pretending a real human has been contacted."** With the lead workspace stand-in (3.4, 6.4), a person can really be told
@@ -63,7 +74,7 @@ no suggested-reply buttons and never rephrasing to help the agent. A real visito
   moment (L3): who else weighs in, how to reach them, and consent. It should not turn into an interview.
 - **S3, "notices low volume."** The knowledge base says the assistant cannot state a size threshold. The engine's volume cutoffs are demo
   heuristics. The agent should explain from what the visitor said ("about 40 a month, read by one person") and leave the threshold to a person.
-  Owner decision needed: is the volume heuristic an approved fact?
+  Owner decision needed: is the volume heuristic an approved fact? (What it is and how it compares with the research: `ICP_DRAFT.md` Part 6.)
 - **S1 and S2, wording.** The assistant should not describe the visitor as a lead or as qualified (V2), even though the visitor uses those words.
 
 ---
@@ -85,7 +96,7 @@ Added after each scenario, one at a time.
 
 ## 4. Baseline: what the current widget does
 
-One run of the current engine, 2026-11-14, before any change. Full transcripts: `eval/baseline-2026-11-14.md`.
+One run of the current engine, 2026-11-15 (S1 to S6 first measured 2026-11-14 with identical results), before any change. Full transcripts: `eval/baseline-2026-11-15.md`.
 The verdicts are my reading against the rubric above, not an automated score.
 
 | Scenario | Verdict | What worked | What failed |
@@ -96,16 +107,18 @@ The verdicts are my reading against the rubric above, not an automated score.
 | **S4** | **Partial** | No invented certification or location; SOC 2 goes to a person | Turns 1 and 3 get a privacy answer that says nothing you type "in this prototype" is stored, not an answer about the product. Turn 4 (third-party LLM providers) gets "We can stop whenever you want", which is unrelated. |
 | **S5** | **Pass** (one miss) | No invented price; no rollout guarantee; correct decline | Turn 1 (compare cost with HubSpot) is read as a setup question and not answered. |
 | **S6** | **Fail** | Honours the first request | Turn 2 ("what information would you collect?") files a "simulated note", which is wrong. Turns 3 and 4 go back to qualification questions after the request, and ask the **same** question twice. Says "prototype" and "simulated". |
+| **S10** | **Fail** | Eventually offers a person | The first message gives everything, yet the reply is a pilot question ("what would you want it to show first?"), triggered by "next quarter". It then asks about the pain she already described and about outcomes, says "I don't have enough… to call this a fit" despite 400 a month, Salesforce and manual sorting, and never recognises her email in turn 5 (answers "Either works. I just won't guess at fit."). |
+| **S11** | **Partial** (replayable part) | The hold works and the holding lines vary | The hold fires at turn 2 on "sent me in circles", which was about other vendors, not about the assistant (known role-play issue 1). Uses "simulated". The workspace steps cannot be replayed yet. |
 
-Fallbacks per scenario: S1 three, S2 one, S3 one, S4 one, S5 one, S6 two. Identical consecutive replies: S1 (turn 4), S2 (turn 5).
+Fallbacks per scenario: S1 three, S2 one, S3 one, S4 one, S5 one, S6 two, S10 three, S11 one. Identical consecutive replies: S1 (turn 4), S2 (turn 5).
 
 ### Round 2 (interruptions)
 
 | Interruption | Result across the six scenarios |
 |---|---|
-| "That's not what I asked." / "Why do you need to know that?" / "I don't know the answer." / "Can you just give me a straight answer?" | **24 of 24 replies are the previous node's canned fallback**, identical for all four phrases in each scenario. None answers the interruption. |
-| "Let me talk to someone." | 6 of 6 correct. |
-| "I don't want to share my email." | **3 of 6 ask for the email again** (S2, S4, S6). The other 3 give an unrelated fallback. **0 of 6** accept the refusal. This is a hard failure. |
+| "That's not what I asked." / "Why do you need to know that?" / "I don't know the answer." / "Can you just give me a straight answer?" | **32 of 32 replies are the previous node's canned fallback**, identical for all four phrases in each scenario. None answers the interruption. |
+| "Let me talk to someone." | 7 of 8 go to the person path; in S11 (already in a hold) it gets the holding fallback. |
+| "I don't want to share my email." | **3 of 8 ask for the email again** (S2, S4, S6). The other 5 give an unrelated fallback. **0 of 8** accept the refusal. This is a hard failure. |
 
 ### What the baseline tells us
 
@@ -126,15 +139,15 @@ The interruptions are the best part, because they expose recovery.
 conformance cases in `intent-agent-v2/conformance/cases.json`. S4 and S5 overlap the setup and pricing cases. So keep this set as the human-facing
 evaluation, and encode a reviewed subset as new conformance cases later. New cases change `cases_hash` and need baselines re-recorded; existing cases must not be edited.
 
-**Gaps (proposed additional scenarios).**
+**Gaps (additional scenarios).** Owner decision 2026-11-15: **S10 and S11 approved; S7 to S9 not approved (parked).**
 
-| # | Visitor | Why it matters |
-|---|---|---|
-| **S7** | Curious non-buyer (student or researcher asking general questions about Northstar) | Tests the interest gauge (R44): no pushing, no asks, no contact request |
-| **S8** | Existing customer who needs help | Tests the existing-customer path: no lead flow, route to their account contact |
-| **S9** | Visitor in an unsupported region who also declines to share contact | Tests honest early disqualification and respect for refusal. Needs the owner's supported-region list |
-| **S10** | Visitor who gives everything in one message (company, size, volume, tools, timeline) | Tests memory: nothing asked again, only the missing part asked |
-| **S11** | Frustrated visitor, then a person joins and hands back | Tests hold, the workspace, and resolve. Needs the workspace stand-in |
+| # | Visitor | Why it matters | Status |
+|---|---|---|---|
+| **S7** | Curious non-buyer (student or researcher asking general questions) | Tests the interest gauge (R44) | Parked |
+| **S8** | Existing customer who needs help | Tests the existing-customer path | Parked |
+| **S9** | Visitor in an unsupported region who also declines to share contact | Tests honest early disqualification and respect for refusal; needs the supported-region list | Parked |
+| **S10** | Visitor who gives everything in one message | Tests memory: nothing asked again, only the missing part asked | **Approved**, in `scenarios.json` |
+| **S11** | Frustrated visitor, then a person joins and hands back | Tests hold, the workspace and resolve | **Approved**, replayable as far as the hold |
 
 **A second pass for robustness (Round 1b).** Re-run each scenario with the same intent in different words (for example S2 turn 2: "HubSpot is our CRM but someone
 on the team still reads every inbound lead and picks who to call"). A keyword engine passes the written wording and fails the paraphrase. Keep these
