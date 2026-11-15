@@ -27,6 +27,27 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-16 — ICP decisions, partners, score bar, and the source-verification report applied
+
+**Owner decisions:** marketing leaders are a buyer or champion; **smaller teams with heavy inbound count** (so size is judged by inbound load against capacity, not headcount); "no timeline"
+means no plan to buy within **6 months**; supported regions are **EMEA and the Americas** (written "AMS", read as Americas: to confirm); **Northstar also sells to partners**.
+
+**Source verification:** a separate session produced `ICP_SOURCES_VERIFICATION.md` (17 claims: 9 confirmed, 6 corrected, 2 unsupported). I merged that branch (fast-forward) and applied all eleven of its recommendations to `ICP_DRAFT.md`.
+I re-checked two points myself: ZoomInfo's "30 leads a day" is a worked example, not a threshold (my earlier draft was wrong), and Kickscale's 15-a-day figure has no study behind it. I could not open the Drift-sunset press release (403) and relied on the report and trade-press summaries.
+Corrections included: no "$20K Drift deal size", Drift is being sunset (1mind is the named successor), "native CRM sync ranked first" was wrong, MQL to SQL figures are averages from one agency's data cut two ways, and an HBR 2011 article does exist (about 7x within the hour) but is not the source of the 100x and 21x figures.
+
+**Score bar:** no industry standard exists. Opened sources (Pedowitz, Rework) say to calibrate on closed-won data, and with none to start at 50 to 60 of 100 and review with sales; Rework gives starting points by segment and a dynamic rule. Proposed placeholder: **60 offers a person; 45 to 59 with a strong intent action also does; 40 to 59 otherwise nurtures; under 40 keeps helping.** Calibrate after 50 to 100 handoffs. It is a demo setting and the workspace should say so.
+
+**Partners:** drafted as a second customer type (3.5), a partner kind-of-visit in the interest gauge, and knowledge entries K11 and K12. Not researched.
+
+**Advice recorded:** do not rewrite the verification report. It is a dated record; a resolution table was appended to it instead.
+
+**Status:** design and research only. No widget or backend code changed.
+
+**Open:** "AMS" = Americas; supported languages; restricted countries and the data-handling position; score bar; deal-value minimum; partner types and whether the demo gets a partner path.
+
+---
+
 ### 2026-11-15 — ICP evidence verified against source pages (network settings changed)
 
 **Context:** Owner changed the environment's network access. The `WebFetch` tool still could not resolve hosts in this running session, but `curl` through the

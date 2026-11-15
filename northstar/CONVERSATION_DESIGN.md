@@ -595,6 +595,7 @@ deterministic and uses only what the visitor said and asked.
 | **Curious or researching** | General questions about what Northstar is or how it works; no mention of their own team | Answers well, asks nothing about their process, never asks for contact, keeps the door open |
 | **Existing customer** | Says they already use Northstar, or have an account or an open conversation | Does not run the lead flow. Offers to connect them with their account contact (R38: never reveal what the system knows) |
 | **Not a buyer** | Job seeker, press, student, vendor | Answers what it can, politely, no asks |
+| **Partner or reseller** *(owner: Northstar sells to partners)* | Consultancy, agency or software platform that wants to deploy or embed Northstar for clients | Does not run the buyer flow or a lead score. Asks different, light questions (how many clients run inbound, which CRMs, whether they would refer, resell or embed) and offers to connect them with the partner contact. Draft in `ICP_DRAFT.md` 3.5 |
 | **Unknown** | Not enough yet | Answers, and may use one light question: "Are you looking at this for your own team, or just curious how it works? Either is fine." |
 
 "Worth nurturing" means an evaluator who meets some but not all of the criteria below. Only then does the agent offer to
@@ -612,7 +613,7 @@ brings in a person.
 | Criterion | What it needs | Who gathers it | In the demo |
 |---|---|---|---|
 | **1. Data validity and reachability** | A real person, a working business email or phone, a deduplicated record | Agent asks (L3, cluster "Reaching you"). The system validates and dedupes | The demo can only check that an email is not a personal domain. It cannot verify that it works or dedupe, so the workspace stand-in shows these as fields the team checks |
-| **2. ICP fit** | Industry, size, region and role match the target profile | Agent asks kind of business (L1), company size, region and role (L2) | **Needs the owner's ICP definition** (target industries, sizes, regions). None exists yet |
+| **2. ICP fit** | Industry, size, region and role match the target profile | Agent asks kind of business (L1), company size, region and role (L2) | Draft ICP in `ICP_DRAFT.md` 3.1: B2B with heavy inbound, **smaller teams count if inbound outstrips capacity**, EMEA and the Americas. Still a proposal for industry and size bands |
 | **3. Lead score threshold** | Behavioral and firmographic scores cross the agreed handoff bar | System only. The agent never asks about it or mentions a score | The demo has illustrative fit heuristics only. **Needs the owner's bar** |
 | **4. Intent and timing** | Clear signs they are actively evaluating | Mostly derived (pricing, pilot, comparison questions); the agent asks for a timeline only if they raise it | Derived signals work today |
 | **5. Reachable decision-maker** | The contact can decide or has a path to a conversation with someone who can | Agent asks role (L2) and who else weighs in (L3) | Role and a path question; no verification |
@@ -623,11 +624,11 @@ None of these is ever said as a label (V2, V3, R45).
 
 | Disqualifier | Where it is found | What the agent does | Disposition to confirm |
 |---|---|---|---|
-| **Unsupported geography** | Region, asked at L2 **before** any contact ask | Says honestly and kindly that it cannot serve that region yet, before taking contact details | Polite decline, door open. **Needs the owner's supported-region list** |
+| **Unsupported geography** | Region, asked at L2 **before** any contact ask | Says honestly and kindly that it cannot serve that region yet, before taking contact details | Polite decline, door open. **Owner decision 2026-11-16: EMEA and the Americas are supported; Asia-Pacific and elsewhere are not, for now** (confirm "AMS" = Americas). Language and compliance claims are separate and still open |
 | **Invalid contact details** | Contact cluster at L3 | Re-ask once, gently ("That doesn't look like a work address. Would a different one work, or a phone number?"), then carry on without it. Never loops (R7, R39) | Cannot be accepted until reachable; the conversation continues |
 | **No buying authority** | Role and who else weighs in | Neutral reach, never a challenge ("who else usually weighs in?") | The criterion accepts someone with a **path** to a decision-maker, so define this one as "no authority **and** no path". Otherwise nurture |
 | **Active customer or open deal** | CRM lookup on the team's side, or the visitor says so | Never revealed to the visitor (R38). If the visitor says it, route to the existing account contact | Route to the account owner, not reject |
-| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Disqualifies **only on an explicit statement** ("we have no budget", "no plans to buy"). "Unknown", "not yet decided" and a skip are recorded as unknown, never "no" (R39), and keep the conversation going | **Owner decision 2026-11-15: disqualify.** This supersedes the data model's nurture route (§5 of `lead-data-model.md`), which still needs updating in that session. The horizon for "no timeline" needs defining |
+| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Disqualifies **only on an explicit statement** ("we have no budget", "no plans to buy within **6 months**"). "Unknown", "not yet decided" and a skip are recorded as unknown, never "no" (R39), and keep the conversation going | **Owner decision 2026-11-15: disqualify.** The horizon is **6 months** (owner, 2026-11-16). This supersedes the data model's nurture route (§5 of `lead-data-model.md`), which still needs updating in that session |
 
 #### Dispositions the agent can lead to
 
@@ -978,8 +979,9 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Approve the visitor-side proposals in 3.5: a limit on the typing indicator then a holding line, a failure line, and tier 3 raising the rep's "Uncertain" card.
 - [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
 - [x] Five readiness fields confirmed by the owner (2026-11-15): budget, timeline, who decides, decision process, and security and compliance.
-- [ ] Review the **ICP research and draft** in `northstar/ICP_DRAFT.md`, then decide the ICP bands, the **supported-region list** and the **lead score bar** (the draft proposes a placeholder for each; the agent cannot enforce any without your decision).
-- [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only. Still to do: define the horizon for "no timeline" and confirm **no buying authority** means "no authority and no path".
+- [x] Owner decisions 2026-11-16: marketing leaders are buyers or champions; smaller teams with heavy inbound count; "no timeline" = no plan within 6 months; regions = EMEA and the Americas; Northstar sells to partners.
+- [ ] Open from `ICP_DRAFT.md` Part 7: confirm "AMS" = Americas; supported languages; restricted countries and the data-handling position; accept or change the score bar (placeholder 60, or 45 with a strong intent action); deal-value minimum; the partner types and whether the demo gets a partner path.
+- [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only; horizon **6 months** (2026-11-16). Still to confirm: **no buying authority** means "no authority and no path".
 - [ ] The demo's small-volume rule (150 and 250 inquiries a month) is explained in `ICP_DRAFT.md` Part 6. Approve it as a fact the agent may explain from, or keep it internal and have the agent only describe what the visitor said (recommended).
 - [x] Scenarios: S10 and S11 approved, S7 to S9 parked (owner, 2026-11-15). The eight approved scenarios are the standing baseline (`northstar/eval/`).
 - [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
