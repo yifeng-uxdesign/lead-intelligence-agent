@@ -27,6 +27,77 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-15 — ICP evidence verified against source pages (network settings changed)
+
+**Context:** Owner changed the environment's network access. The `WebFetch` tool still could not resolve hosts in this running session, but `curl` through the
+session proxy worked, so I opened six sources directly and re-checked the ICP draft.
+
+**What changed in `northstar/ICP_DRAFT.md`:**
+- The 100x / 21x response-time figures are **confirmed in the primary document** (InsideSales.com / MIT, six companies, over 15,000 leads) but they measure **phone callbacks only**, were
+  vendor-run, and say nothing about chat or AI. Two claims in circulation are **wrong**: the "Harvard Business Review" attribution and a "400% from 5 to 10 minutes" figure (neither is in the study).
+- The Workato test of 114 B2B companies (March 2026) finds more than 99% do not respond within 5 minutes, so slow response is near-universal and is not a distinguishing ICP signal on its own.
+- The persona evidence (Rework) is for **AI sales ops**, a neighbouring category: 25 to 150 reps, ACV $15K to $150K, 30 to 90 day evaluations, fewer than 10 reps should wait. Qualified now sells to
+  **marketing leaders** as an "AI SDR agent". Added a marketing-leader persona, a sales-team-size row, a placeholder deal value, and a note that a 6-month horizon may suit "no timeline" better than 12.
+- Their stated objections ("reps won't trust it", "no bandwidth to implement") match scenarios S1 and S5. The RevOps Co-op ownership-lookup advice supports routing an existing customer to the account owner.
+
+**Still true:** no independent evidence; ICP bands, regions and score weights remain proposals.
+
+**Open:** unchanged from the previous entry, plus: include marketing leaders as buyers; the right sales-team-size band.
+
+---
+
+### 2026-11-15 — ICP research, no-budget decision, approved scenarios
+
+**Context / trigger:** Owner answered the open questions and asked for research on the ICP for the Northstar lead product, which is an
+**API product that integrates with any CRM**; the widget and the lead workspace are demos of the agent's behavior and its collaboration with humans.
+
+**Decisions (owner):**
+- **No budget or timeline = disqualify.** This supersedes my recommendation (nurture) and the data model's nurture route. Implemented in the design as: only on an
+  *explicit* statement; unknown or "not yet" stays unknown (R39). The horizon for "no timeline" still needs defining.
+- **Five readiness fields confirmed:** budget, timeline, who decides, decision process, security and compliance.
+- **Scenarios:** S10 and S11 approved; S7 to S9 parked.
+
+**Research (`northstar/ICP_DRAFT.md`):** a draft ICP (accounts, buying group, triggers, disqualifiers), a score sketch for the "lead score bar", what the widget can and
+cannot learn, and an explanation of the demo's small-volume rule (150 and 250 a month vs a rule of thumb of about 300 a month per inbound rep).
+**Limits:** no independent (A-grade) evidence; everything is vendor-authored or secondhand from search summaries; four primary pages could not be opened because the
+session's network allowlist blocks them (workato.com, www.mortech.com, www.qualified.com, revopscoop.com). The ICP bands, regions and weights are
+**proposals, not findings**.
+
+**Evaluation:** S10 and S11 added to the replay set. New baseline `northstar/eval/baseline-2026-11-15.md` (the 2026-11-14 file is replaced; S1 to S6 unchanged).
+S10 fails (the visitor gave everything in one message and was asked about it again; the email was not recognised). S11 holds one turn early on frustration about other vendors.
+Across eight scenarios, 32 of 32 replies to four interruptions are the same canned fallback and 3 of 8 re-ask the email after a refusal.
+
+**Status:** design, research and evaluation only. No widget or backend code changed; conformance and pytest unchanged.
+
+**Open:** ICP bands, supported regions, score bar, deal-value minimum, the "no timeline" horizon, customer types (direct vs embedding partners), and recording these
+decisions in the lead-workspace session's data model.
+
+---
+
+### 2026-11-15 — Shared agent state model (from the lead-workspace session): mapped to this plan
+
+**Context / trigger:** Owner shared that session's Step 0: one agent state model shared by the widget and the rep workspace
+(eight moments: answering, nudge, intervention, approval pending, rep driving, advisory, uncertain, failure), ten content
+rules, and a decisions log with current or superseded status.
+
+**Findings:**
+- The backend already separates the two modes Step 0 leaves undecided: RELAY is `PENDING_APPROVAL` ("rep must approve
+  before send"), SHADOW is `REP_SUGGESTION` ("rep owns the live conversation"). So "rep driving" is SHADOW, and the "Advisory" row is the same
+  mode seen from the rep's panel. Recommended: keep approval and driving separate; merge the two rows.
+- This plan's presence states (3.4) cover answering, nudge, intervention and rep driving. **Gaps:** approval pending (a typing indicator with no
+  limit looks broken), failure (the visitor must be told what was not sent), and a link from recovery tier 3 to the rep's "Uncertain" card.
+- Wording conflict: "a person is joining" implies a time; use "someone on the team has been told" (R32).
+- This plan needs Resolve, Hand back (topic still open) and Close as the rep actions, not one "Hand back".
+
+**Decision:** proposed only, added as 3.5 of `CONVERSATION_DESIGN.md`. Adopt the workspace session's table as the single spine; the visitor
+copy here becomes its customer column. Prefix workspace content rules WR-1 to WR-10 to avoid clashing with R1 to R45.
+
+**Status:** design only. No code changed.
+
+**Open:** confirm RELAY and SHADOW stay separate; approve the three visitor-side proposals; merge the two decisions logs when the branches merge.
+
+---
+
 ### 2026-11-14 — Lead data model decisions, accept criteria, and a measured evaluation baseline
 
 **Context / trigger:** Owner answered the open data-model questions and supplied six test scenarios and six interruptions

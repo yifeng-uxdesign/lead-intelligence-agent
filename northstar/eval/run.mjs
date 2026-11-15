@@ -37,6 +37,7 @@ for (const s of spec.scenarios) {
   });
   const same = rows.map((r, i) => (i && r.reply === rows[i - 1].reply ? i + 1 : null)).filter(Boolean);
   out.push(`*Fallbacks: ${rows.filter((r) => r.fb).length}. Identical to previous reply at turn(s): ${same.length ? same.join(", ") : "none"}.*`, "");
+  if (s.pending) out.push("**Not replayable yet (needs the workspace stand-in):**", "", ...s.pending.map((p, i) => `${i + 1}. ${p}`), "");
 }
 out.push("## Round 2: one interruption after each scenario", "");
 out.push("| Interruption | " + spec.scenarios.map((s) => s.id).join(" | ") + " |", "|---|" + spec.scenarios.map(() => "---").join("|") + "|");
