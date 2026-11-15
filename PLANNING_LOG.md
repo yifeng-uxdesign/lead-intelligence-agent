@@ -27,6 +27,30 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-15 — Shared agent state model (from the lead-workspace session): mapped to this plan
+
+**Context / trigger:** Owner shared that session's Step 0: one agent state model shared by the widget and the rep workspace
+(eight moments: answering, nudge, intervention, approval pending, rep driving, advisory, uncertain, failure), ten content
+rules, and a decisions log with current or superseded status.
+
+**Findings:**
+- The backend already separates the two modes Step 0 leaves undecided: RELAY is `PENDING_APPROVAL` ("rep must approve
+  before send"), SHADOW is `REP_SUGGESTION` ("rep owns the live conversation"). So "rep driving" is SHADOW, and the "Advisory" row is the same
+  mode seen from the rep's panel. Recommended: keep approval and driving separate; merge the two rows.
+- This plan's presence states (3.4) cover answering, nudge, intervention and rep driving. **Gaps:** approval pending (a typing indicator with no
+  limit looks broken), failure (the visitor must be told what was not sent), and a link from recovery tier 3 to the rep's "Uncertain" card.
+- Wording conflict: "a person is joining" implies a time; use "someone on the team has been told" (R32).
+- This plan needs Resolve, Hand back (topic still open) and Close as the rep actions, not one "Hand back".
+
+**Decision:** proposed only, added as 3.5 of `CONVERSATION_DESIGN.md`. Adopt the workspace session's table as the single spine; the visitor
+copy here becomes its customer column. Prefix workspace content rules WR-1 to WR-10 to avoid clashing with R1 to R45.
+
+**Status:** design only. No code changed.
+
+**Open:** confirm RELAY and SHADOW stay separate; approve the three visitor-side proposals; merge the two decisions logs when the branches merge.
+
+---
+
 ### 2026-11-14 — Lead data model decisions, accept criteria, and a measured evaluation baseline
 
 **Context / trigger:** Owner answered the open data-model questions and supplied six test scenarios and six interruptions

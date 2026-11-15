@@ -312,6 +312,45 @@ asks a light question, and the answer is a signal for the person, not a gate:
   the person is notified (R16, R17).
 - The open intervention remains until a person presses Resolve. Hand back is not resolution.
 
+### 3.5 The shared agent state model (from the lead-workspace session)
+
+The workspace session proposes, as its Step 0, one table shared by the widget and the rep workspace: for each moment, what the
+customer sees, what the rep sees, and the backend source. That is the right spine, and the presence states in 3.4 should be read as the
+visitor's side of it, not a parallel model. Here is how its eight moments map to this plan, with the gaps this plan has.
+
+| Moment | Customer sees (this plan) | Backend | Status here |
+|---|---|---|---|
+| Agent answering | Assistant replies, labeled AI | AUTONOMOUS | Covered (`agent`) |
+| Nudge (buying signal, competitor) | Still answered by the assistant | attention and context triggers | Covered (3.4 intro); nothing visible to the visitor |
+| Intervention opened | Holding message, **"someone on the team has been told"** | ALERT, or any open intervention | Covered (`waiting`, hold copy) |
+| Approval pending | Nothing sent yet | RELAY | **Gap.** See below |
+| Rep driving | Messages from a person, labeled | SHADOW ("rep owns the live conversation") | Covered (`rep`) |
+| Advisory | No assistant reply, the person writes | SHADOW | Same mode as "rep driving" in the code; see below |
+| Uncertain | A clarifying question or holding message | step 7 | Covered by recovery (Part 5), see below |
+| Failure | Told what was not sent | none yet | **Gap.** See below |
+
+**Answer to Step 0's first decision: "rep approves a draft" and "rep is typing" are different modes, and the backend already separates them.**
+`authorize_delivery` returns `PENDING_APPROVAL` for RELAY ("rep must approve before send") and `REP_SUGGESTION` for SHADOW ("rep owns the live
+conversation"). So "rep driving" is SHADOW, not RELAY, and the table's "Advisory" row is the same SHADOW mode seen from the rep's panel (the person drives;
+the assistant suggests). The visitor sees different things: a delayed assistant reply in one, messages from a person in the other. I recommend keeping them
+separate and merging the "Rep driving" and "Advisory" rows into one. Note that `CLAUDE.md` still lists "SHADOW withholds agent replies" as an open question.
+
+**Gaps and proposals for the visitor side**
+
+- **Approval pending (RELAY).** A typing indicator that runs for minutes while a person decides reads as a broken chat. Proposal: show the indicator up to a
+  limit (to be tuned, say 8 to 10 seconds), then replace it with an honest holding line that promises no time (R32): "I'm checking this with someone on the team before I reply."
+- **Failure.** The visitor must be told what was not sent. Proposal: "I wasn't able to send my last reply. You can try again, or ask for a person."
+  The exact claim depends on what the system really did, so the line should come from the failure type, not be guessed.
+- **Uncertain.** Visitor side is the recovery ladder (Part 5) and the knowledge-gap recovery. A natural rep-side link: **reaching tier 3 raises the "Uncertain" card**
+  for the person, so the visitor is offered a person and the team is told at the same time. Today this is deterministic; step 7 would add model-reported uncertainty.
+- **Wording.** "A person is joining" implies a time, so use "someone on the team has been told" (R32).
+- **Hand back.** The table has one "Hand back" action. This plan needs **Resolve**, **Hand back (topic still open)** and **Close** (3.4, D5), written as verb-first buttons.
+  Backend support today: `resolve` exists; the scoped hand back does not.
+
+**Housekeeping.** The workspace session's ten content rules govern the rep panel, and this plan's R1 to R45 govern what the visitor reads. Prefix the workspace rules
+(for example WR-1 to WR-10) so the two sets cannot collide. A single decisions log with a current or superseded status is a good idea; `PLANNING_LOG.md` already
+uses that convention and the two logs should merge when the branches do.
+
 ---
 
 ## 4. Evidence plan (what the widget is trying to learn)
@@ -935,6 +974,8 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
   open topic keeps the assistant restricted and fenced. Confirm, or tell me to keep it simpler (resolve-only, no scoped hand back).
 - [ ] The topic list for the fence (pricing and terms, contract or legal, dates and commitments, security and data, other): right set?
 - [ ] Review the nine draft entries and the checklist in `northstar/KNOWLEDGE_BASE.md`.
+- [ ] Shared state model (3.5): confirm RELAY (approve a draft) and SHADOW (rep driving) stay separate, merge the "Rep driving" and "Advisory" rows, and adopt the table as the single source for both sides.
+- [ ] Approve the visitor-side proposals in 3.5: a limit on the typing indicator then a holding line, a failure line, and tier 3 raising the rep's "Uncertain" card.
 - [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
 - [ ] Confirm that the five readiness fields are budget, timeline, who decides, decision process, and security and compliance.
 - [ ] Supply the **ICP definition** (target industries, company sizes, regions), the **supported-region list**, and the **lead score bar**. The agent cannot state or enforce any of these without them.
