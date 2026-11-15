@@ -1,6 +1,6 @@
 # Northstar conversation design plan
 
-Status: **design draft, not implemented.** Nothing in `scenarios.js`, `engine.js` or `widget.js` has changed.
+Status: **design draft, partly built.** Built and tested on 2026-11-16: the recovery ladder and repair intents (Part 5), the turn queue and length-aware pacing (6.1, 6.2). Everything else is still design. See `BUILD_PLAN.md` for the sequence, results and what is deferred.
 Written 2026-11-12. Companion to the proposal in `PLANNING_LOG.md`.
 
 How to read this: Part 0 is the vision and the language rules (what the visitor should feel, and the words we
@@ -595,7 +595,7 @@ deterministic and uses only what the visitor said and asked.
 | **Curious or researching** | General questions about what Northstar is or how it works; no mention of their own team | Answers well, asks nothing about their process, never asks for contact, keeps the door open |
 | **Existing customer** | Says they already use Northstar, or have an account or an open conversation | Does not run the lead flow. Offers to connect them with their account contact (R38: never reveal what the system knows) |
 | **Not a buyer** | Job seeker, press, student, vendor | Answers what it can, politely, no asks |
-| **Partner or reseller** *(owner: Northstar sells to partners)* | Consultancy, agency or software platform that wants to deploy or embed Northstar for clients | Does not run the buyer flow or a lead score. Asks different, light questions (how many clients run inbound, which CRMs, whether they would refer, resell or embed) and offers to connect them with the partner contact. Draft in `ICP_DRAFT.md` 3.5 |
+| **Partner or reseller** *(owner: Northstar sells to partners; **the demo has no partner path**, decided 2026-11-16)* | Consultancy, agency or software platform that wants to deploy or embed Northstar for clients | In the demo a partner is handled like any other visitor: answered honestly, and a person can be brought in. A real deployment would add a partner path (different light questions, no score, a partner contact). Draft in `ICP_DRAFT.md` 3.5 |
 | **Unknown** | Not enough yet | Answers, and may use one light question: "Are you looking at this for your own team, or just curious how it works? Either is fine." |
 
 "Worth nurturing" means an evaluator who meets some but not all of the criteria below. Only then does the agent offer to
@@ -964,7 +964,7 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 ## 10. Open questions for the owner
 
 - [ ] Review the drafted copy in 5.4. Mark lines that sound off. Those edits are the practice.
-- [ ] Approve pacing starting values (6.2), or ask for a "slower / faster" variant to compare.
+- [ ] Pacing (6.2) is built with the starting values (500 to 2,200 ms, in `config.js`). Try it and say "slower" or "faster".
 - [ ] Should tier 3 ever *close* the chat itself, or always leave the visitor a choice (current draft: always a choice)?
 - [x] Verified facts: owner confirmed that integrations, pricing, security and data handling, and setup timelines stay "a person can tell you" (4.3). Verified facts to add later come from the owner.
 - [x] Prototype wording: owner decision is to *show* a person joining (3.4, 6.4) rather than disclaim in the chat.

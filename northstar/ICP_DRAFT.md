@@ -8,7 +8,7 @@ corrected again on 2026-11-16 using the separate source-verification report (`IC
 small-volume rule. Part 7 lists owner decisions (made and still open). Part 8 lists sources.
 
 **Owner decisions recorded here (2026-11-16):** marketing leaders are a buyer or champion; smaller teams with heavy inbound count; "no timeline" means no plan to buy within **6 months**;
-supported regions are **EMEA and the Americas** (written "AMS", read as Americas: please confirm); Northstar **also sells to partners**.
+supported regions are **EMEA and the Americas** (written "AMS", read as Americas: please confirm); Northstar **also sells to partners**; **the score bar placeholder is accepted**; **the demo has no partner path**; **the deal-value placeholder (about $15K ACV) is accepted**.
 
 ---
 
@@ -169,7 +169,7 @@ In the widget, a partner is a different kind of visit from a buyer (4.5 of `CONV
 | **Under 40** | Keep helping, do not push | |
 
 Disqualifiers always override the score. Existing customers and partners do not use this bar (they route elsewhere). Calibrate after the first **50 to 100 handoffs**: move the bar until reps accept roughly **65 to 80%** and about **15 to 30%** of conversations pass.
-The bar is a demonstration setting and the workspace should say so. The visitor never sees a score (V2, R15).
+**Accepted by the owner, 2026-11-16.** The bar is a demonstration setting and the workspace should say so. The visitor never sees a score (V2, R15).
 
 **The sketch that feeds it (my guesses, to be replaced by outcome data):**
 
@@ -214,16 +214,16 @@ Because the owner has decided that **smaller teams with heavy inbound count**, a
 
 ## 7. Decisions
 
-**Made (2026-11-16):** marketing leaders included; smaller teams with heavy inbound count; "no timeline" = no plan within 6 months; regions = EMEA and the Americas; Northstar sells to partners; no budget or timeline disqualifies (explicit statements only).
+**Made (2026-11-16):** marketing leaders included; smaller teams with heavy inbound count; "no timeline" = no plan within 6 months; regions = EMEA and the Americas; Northstar sells to partners, with no partner path in the demo; score bar and deal-value placeholders accepted; no budget or timeline disqualifies (explicit statements only).
 
 **Still open**
 1. Confirm "AMS" means the **Americas**.
 2. **Languages:** which are supported inside those regions?
 3. **Restricted countries** inside the regions (a legal decision), and the **data-handling position** needed before saying anything about EMEA compliance.
-4. **Score bar:** accept the placeholder in Part 4 (60, or 45 with a strong intent action), or set another; supply real weights when there is outcome data.
+4. ~~Score bar~~ **accepted** (Part 4). Real weights come from outcome data later.
 5. **Volume rule:** adopt the per-rep reading, keep 150 and 250 internal and unstated, or set other numbers.
-6. **Deal value:** is there a minimum? My placeholder is about $15K ACV.
-7. **Partners:** confirm the three partner types in 3.5, whether the widget should have a partner path in the demo, and whether partners get their own score or none.
+6. ~~Deal value~~ **accepted**: placeholder about $15K ACV.
+7. **Partners:** **no partner path in the demo** (decided). The three partner types in 3.5 were not explicitly confirmed; they stay as drafted unless you say otherwise.
 8. Whether the **ICP bands** in 3.1 (size, industry) are the right starting point.
 
 ---

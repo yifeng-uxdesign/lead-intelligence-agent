@@ -27,6 +27,24 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-16 — Readiness review, and the first build step
+
+**Decision (owner, at the start of this step):** score-bar placeholder accepted; **no partner path in the demo**; deal-value placeholder accepted. Asked me to review all components, decide whether to build, and build; the owner will test.
+
+**Verdict:** go, in slices. Built the parts that are fully specified and not blocked: recovery ladder, repair intents (found missing by measurement), turn queue, length-aware pacing. Deferred, with reasons, in `northstar/BUILD_PLAN.md`: ask engine, knowledge layer, presence and workspace, the word-list copy pass, routing correctness.
+
+**What the review found missing:** a build sequence with acceptance tests; conversation repair; the order in which handoff wording may change (not before the workspace can really tell a person); a conflict between the word list and three conformance cases that expect "evidence" or "fit" (and rules that forbid "let me connect you"); routing false positives as their own work item; a visual spec for the new states; a per-turn trace; an accessibility test plan; a stale duplicate of the widget in `web/`.
+
+**Results:** conformance widget pass 0.575 to 0.600, repeat 0.083 to 0.056, route accuracy / false escalation / missed intervention unchanged; the fallback rate fell 0.188 to 0.116 but that is an artifact of how the observer matches text and is not claimed as evidence; L1 now passes; pytest 304 passed, 3 xfailed; 21 new unit tests pass; browser check clean. Interruptions answered specifically: 42 of 42 (outside the hold), email never asked again after a refusal. Baselines were **not** re-recorded.
+
+**Still failing (named in BUILD_PLAN section 7):** routing false positives (S1 t1, S2 t1 to 2), the ask-after-request and ignored-facts problems (S6, S10), S11 early hold, existing copy wording.
+
+**Commits:** data, engine and widget, tests and eval, docs. No decision in the backend or the data model was changed.
+
+**Open:** approve routing fixes (slice 4); decide how to handle the three conformance cases that expect "evidence" or "fit"; approve the ask-engine design pass and merge of the data model branch; approve knowledge entries, languages and restricted countries; share the workspace code; try the pacing.
+
+---
+
 ### 2026-11-16 — ICP decisions, partners, score bar, and the source-verification report applied
 
 **Owner decisions:** marketing leaders are a buyer or champion; **smaller teams with heavy inbound count** (so size is judged by inbound load against capacity, not headcount); "no timeline"

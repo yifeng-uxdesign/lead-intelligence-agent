@@ -130,6 +130,20 @@ Fallbacks per scenario: S1 three, S2 one, S3 one, S4 one, S5 one, S6 two, S10 th
 
 ---
 
+## 4b. After build step 1 (2026-11-16)
+
+Recovery ladder, repair intents, turn queue and pacing are built (`BUILD_PLAN.md`). Same replay set; full transcripts in `eval/after-slice1-2026-11-16.md`.
+
+| Measure | Before (2026-11-15) | After |
+|---|---|---|
+| Interruptions answered specifically (8 scenarios × 6; S11 excluded because it is in a hold, where the agent deliberately does not answer) | 0 of 42 for four of the six; "Let me talk to someone" 7 of 8 | **42 of 42** |
+| "I don't want to share my email" | asked again in 3 of 8; accepted in 0 | **accepted, never asked again** |
+| Identical consecutive replies | S1 (turn 4), S2 (turn 5) | S2 (turn 5) only |
+| Conformance, widget: pass / repeat / fallback | 0.575 / 0.083 / 0.188 | 0.600 / 0.056 / 0.116 (the fallback fall is an artifact of how the observer matches text, not evidence) |
+
+**Still failing, and why** (none of these were in scope for step 1): S1 turn 1 and S2 turns 1 and 2 (routing false positives); S2 turn 5 repeats turn 4 (a normal reply replaying; the repeat guard covers recovery only); S6 turns 3 to 5 keep asking questions after a person was requested, and S10 ignores what the visitor said (ask engine, slice 3); S11 holds one turn early; all copy still says "simulated", "prototype" and "fit".
+S1 also reads worse in one respect: once the visitor is wrongly escalated, the ladder's replies ("Which would you like?", "I'll leave a note") make that false escalation more visible. Fixing the routing, not the ladder, is the remedy.
+
 ## 5. Review of the scenario set
 
 **Strong.** The set covers distinct dimensions, uses realistic phrasing, states failure signals up front, and the "don't help the agent" protocol is the right one.
