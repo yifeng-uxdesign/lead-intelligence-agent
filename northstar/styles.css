@@ -340,3 +340,9 @@ h4 { font-size: 17px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* A message sent while a reply is on its way waits in order; it looks slightly quieter until it is answered. */
+.ns-msg--queued .ns-msg__text { opacity: 0.65; }
+.ns-msg--queued .ns-msg__meta { font-style: italic; }
+.ns-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.ns-send:disabled:hover { background: inherit; }

@@ -5,8 +5,12 @@
  * Behavior is data-driven (see scenarios.js). The engine adds light, local session memory:
  *   - fit evidence gathered from choices and free text (demo heuristics, not real scoring)
  *   - an "alert" hold: once a visitor is frustrated, the agent stops answering on its own
+ *   - a recovery ladder (see RECOVERY in scenarios.js): consecutive misses on one node escalate, never repeat
+ *   - a turn queue: the visitor can keep typing while a reply is on its way; messages are handled in order
+ *   - length-aware pacing: the typing indicator lasts longer for longer replies
+ * Decisions stay deterministic: every choice below is a pure function of the conversation state.
  */
-import { FIT, GLOBAL_ROUTES, NODES, PERSONAL_EMAIL_DOMAINS, SCENARIOS } from "./scenarios.js";
+import { FIT, GLOBAL_ROUTES, NODES, PERSONAL_EMAIL_DOMAINS, RECOVERY, REPAIR, SCENARIOS } from "./scenarios.js";
 
 const EMAIL_RE = /[^\s@]+@([^\s@]+\.[a-z]{2,})/i;
 
@@ -35,6 +39,35 @@ function includesAny(haystack, keywords) {
 function isMinimal(text) {
   const n = normalize(text);
   return /^[\s.\-–—…?!,;:]*$/.test(n) || ["ok", "okay", "k", "kk", "hmm", "hm", "mm", "mhm"].includes(n);
+}
+
+const MAX_QUEUE = 2; // messages a visitor can have waiting while a reply is on its way
+
+/** Typing delay in ms for a reply of `chars` characters. Pure. Values live in config.pacing. */
+export function paceMs(chars, pacing) {
+  const p = { minMs: 500, baseMs: 350, perCharMs: 8, maxMs: 2200, ...(pacing || {}) };
+  return Math.round(Math.min(p.maxMs, Math.max(p.minMs, p.baseMs + chars * p.perCharMs)));
+}
+
+/**
+ * The recovery reply for the idx-th consecutive miss on one node. Pure.
+ * Tiers play in order; past the last tier it cycles through the last tier and the alternates, and it never
+ * returns the text of the previous assistant message.
+ */
+export function pickRecovery(tiers, idx, lastText, alternates = []) {
+  const last = tiers.length - 1;
+  const tail = tiers[last];
+  let pick;
+  if (idx <= last) pick = tiers[idx];
+  else {
+    const cycle = [tail, ...alternates.map((text) => ({ text, choices: tail.choices }))];
+    pick = cycle[(idx - last) % cycle.length];
+  }
+  if (pick.text === lastText) {
+    const text = alternates.find((t) => t !== lastText);
+    if (text) pick = { text, choices: tail.choices };
+  }
+  return { ...pick, final: idx >= last };
 }
 
 function uid() {
@@ -81,7 +114,9 @@ function listPhrases(tags, fit) {
 export function createConversation({ config, onTypingDelay }) {
   let state = buildWelcomeState(config);
   let epoch = 0; // bumped on restart so in-flight replies from the old thread are dropped
+  let stage = null; // while set, replies are collected here and shown after the typing delay
   const listeners = new Set();
+  const put = (msg) => (stage || state.messages).push(msg);
 
   function emit() {
     const snapshot = getState();
@@ -95,9 +130,15 @@ export function createConversation({ config, onTypingDelay }) {
       nodeId: state.nodeId,
       messages: state.messages.map((m) => ({ ...m })),
       startersVisible: state.startersVisible,
-      choices: node?.choices ?? [],
+      choices: state.extraChoices ?? node?.choices ?? [],
       typing: state.typing,
+      queued: state.queue.length,
+      canSend: state.queue.length < MAX_QUEUE,
     };
+  }
+
+  function currentChoices() {
+    return getState().choices;
   }
 
   function setWelcome() {
@@ -106,9 +147,11 @@ export function createConversation({ config, onTypingDelay }) {
     emit();
   }
 
-  function pushUser(text) {
-    state.messages.push({ id: uid(), role: "user", text: text.trim(), at: Date.now() });
+  function pushUser(text, queued = false) {
+    const id = uid();
+    state.messages.push({ id, role: "user", text: text.trim(), at: Date.now(), ...(queued ? { queued: true } : {}) });
     state.startersVisible = false;
+    return id;
   }
 
   // `stated` = the visitor said it in their own words, so that question needn't be asked.
@@ -171,8 +214,9 @@ export function createConversation({ config, onTypingDelay }) {
     if (NODES[nodeId]?.repeat && state.seen.has(nodeId)) nodeId = NODES[nodeId].repeat;
     state.seen.add(nodeId);
     const node = NODES[nodeId];
+    state.extraChoices = null; // a node's own suggested replies come back when the thread moves on
     if (!node) {
-      state.messages.push({
+      put({
         id: uid(),
         role: "assistant",
         text: "I don’t have a scripted path for that yet. You can pick a suggested reply or restart the conversation.",
@@ -186,7 +230,7 @@ export function createConversation({ config, onTypingDelay }) {
       if (nodeId.startsWith(`${id}.`)) state.scenarioId = scenario.id;
     }
     for (const reply of node.replies) {
-      state.messages.push({
+      put({
         id: uid(),
         role: "assistant",
         text: fillTemplate(reply.text),
@@ -196,9 +240,37 @@ export function createConversation({ config, onTypingDelay }) {
     }
   }
 
-  async function delay() {
-    const ms = typeof onTypingDelay === "function" ? onTypingDelay() : config.typingDelayMs;
+  /**
+   * Run `produce` (which decides the replies and updates the state), show the typing indicator for a time
+   * that fits the length of what is coming, then show the replies. A restart in the meantime drops them.
+   */
+  async function deliver(produce) {
+    const myEpoch = epoch;
+    state.typing = true;
+    const staged = [];
+    stage = staged;
+    try {
+      produce();
+    } finally {
+      stage = null;
+    }
+    if (myEpoch !== epoch) return; // the thread was restarted while deciding
+    emit();
+    const chars = staged.reduce((n, m) => n + m.text.length, 0);
+    let ms = paceMs(chars, config.pacing);
+    if (typeof onTypingDelay === "function") {
+      const override = onTypingDelay({ chars, ms });
+      if (typeof override === "number") ms = override;
+    }
     await new Promise((r) => setTimeout(r, ms));
+    if (myEpoch !== epoch) return;
+    state.typing = false;
+    const now = Date.now();
+    for (const m of staged) {
+      m.at = now;
+      state.messages.push(m);
+    }
+    emit();
   }
 
   /** Show the typing indicator, then play `target` (unless the thread was restarted meanwhile). */
@@ -207,29 +279,42 @@ export function createConversation({ config, onTypingDelay }) {
       setWelcome();
       return;
     }
-    const myEpoch = epoch;
-    state.typing = true;
-    emit();
-    await delay();
-    if (myEpoch !== epoch) return;
-    state.typing = false;
-    for (const id of resolve(target)) applyNode(id);
-    emit();
+    state.missNode = null; // an understood reply ends any run of misses
+    state.missCount = 0;
+    state.repair = { intent: null, n: 0 };
+    await deliver(() => {
+      for (const id of resolve(target)) applyNode(id);
+    });
+  }
+
+  /** The tiers to use when nothing matched at `nodeId`: its recovery group, else its own single fallback. */
+  function tiersFor(nodeId, node) {
+    const groupId = RECOVERY.nodeGroup[nodeId];
+    if (groupId) return RECOVERY.groups[groupId].tiers;
+    if (node?.fallback) return [{ text: node.fallback.text, next: node.fallback.next }];
+    return null;
   }
 
   async function respondFallback(node) {
-    const fallback = node?.fallback;
-    const myEpoch = epoch;
-    state.typing = true;
-    emit();
-    await delay();
-    if (myEpoch !== epoch) return;
-    state.typing = false;
-    if (fallback?.text) {
-      state.messages.push({ id: uid(), role: "assistant", text: fallback.text, at: Date.now() });
-    }
-    if (fallback?.next) for (const id of resolve(fallback.next)) applyNode(id);
-    emit();
+    const nodeId = state.nodeId;
+    const tiers = tiersFor(nodeId, node);
+    const idx = state.missNode === nodeId ? state.missCount : 0; // consecutive misses on this node
+    state.missNode = nodeId;
+    state.missCount = idx + 1;
+    await deliver(() => {
+      if (!tiers) return;
+      const lastAssistant = [...state.messages].reverse().find((m) => m.role === "assistant");
+      const pick = pickRecovery(tiers, idx, lastAssistant?.text, RECOVERY.alternates);
+      // Releasing the visitor from a fit question counts as answering it (a refusal is an answer).
+      if (pick.final && RECOVERY.nodeGroup[nodeId] && FIT.questionNodes.includes(nodeId)) state.answered.add(nodeId);
+      state.extraChoices = pick.choices || null;
+      if (pick.text) put({ id: uid(), role: "assistant", text: pick.text, at: Date.now() });
+      if (pick.next) {
+        state.missNode = null;
+        state.missCount = 0;
+        for (const id of resolve(pick.next)) applyNode(id);
+      }
+    });
   }
 
   function matchGlobal(text) {
@@ -241,10 +326,44 @@ export function createConversation({ config, onTypingDelay }) {
     return null;
   }
 
+  /** Is the visitor talking about the conversation itself ("why do you need that", "I'd rather not say")? */
+  function matchRepair(text) {
+    const raw = straighten(text);
+    return REPAIR.order.find((intent) => REPAIR.patterns[intent].test(raw)) || null;
+  }
+
+  async function respondRepair(intent) {
+    const nodeId = state.nodeId;
+    const spec = REPAIR[intent];
+    const n = state.repair.intent === intent ? state.repair.n : 0; // the same repair again: escalate, never repeat
+    state.repair = { intent, n: n + 1 };
+    state.missNode = null; // the visitor is engaged, so this is not a miss
+    state.missCount = 0;
+    await deliver(() => {
+      let tiers = spec.tiers;
+      if (intent === "why" && REPAIR.why.byNode[nodeId]) tiers = [{ text: REPAIR.why.byNode[nodeId] }, ...spec.tiers.slice(1)];
+      const lastAssistant = [...state.messages].reverse().find((m) => m.role === "assistant");
+      const pick = pickRecovery(tiers, n, lastAssistant?.text, RECOVERY.alternates);
+      put({ id: uid(), role: "assistant", text: pick.text, at: Date.now() });
+      let next = null;
+      if (intent === "refusal" || intent === "unknown") {
+        // A refusal or "I don't know" is an answer: the question is closed and is not asked again.
+        if (FIT.questionNodes.includes(nodeId)) {
+          state.answered.add(nodeId);
+          next = "__fit_next__";
+        } else if (intent === "refusal") {
+          next = REPAIR.refusalNext[nodeId] || null;
+        }
+      }
+      if (pick.choices) state.extraChoices = pick.choices;
+      if (next) for (const id of resolve(next)) applyNode(id);
+    });
+  }
+
   function matchNode(node, text) {
     if (!node) return null;
     const n = normalize(text);
-    for (const choice of node.choices || []) {
+    for (const choice of [...(state.extraChoices || []), ...(node.choices || [])]) {
       if (n === normalize(choice.label) || n.includes(normalize(choice.label))) {
         return { next: choice.next, fit: choice.fit };
       }
@@ -268,10 +387,49 @@ export function createConversation({ config, onTypingDelay }) {
     return null;
   }
 
+  /**
+   * One visitor turn, then any messages that arrived while it was being answered, in order. Nothing is dropped,
+   * so a request for a person or a sign of frustration typed mid-reply is still handled (just after that reply).
+   */
+  async function turn(first) {
+    const myEpoch = epoch;
+    state.busy = true;
+    try {
+      await first();
+      while (myEpoch === epoch && state.queue.length) {
+        const next = state.queue.shift();
+        const shown = state.messages.find((m) => m.id === next.id);
+        if (shown) delete shown.queued;
+        await processTurn(next.text);
+      }
+    } finally {
+      if (myEpoch === epoch) state.busy = false;
+    }
+  }
+
+  function canSend() {
+    return state.queue.length < MAX_QUEUE;
+  }
+
+  /** Returns false when the message was not accepted (empty, or the queue is full). */
   async function send(raw) {
     const text = String(raw || "").trim();
-    if (!text || state.typing) return;
-    pushUser(text);
+    if (!text) return false;
+    if (state.busy) {
+      if (!canSend()) return false;
+      const id = pushUser(text, true);
+      state.queue.push({ id, text });
+      emit();
+      return true;
+    }
+    await turn(async () => {
+      pushUser(text);
+      await processTurn(text);
+    });
+    return true;
+  }
+
+  async function processTurn(text) {
 
     // Once frustrated, the agent does not keep answering on its own.
     if (state.alert) {
@@ -299,6 +457,13 @@ export function createConversation({ config, onTypingDelay }) {
     const route = matchGlobal(text);
     if (route && (Array.isArray(route.next) || route.next !== state.nodeId)) {
       await respond(route.next);
+      return;
+    }
+
+    // The visitor is talking about the conversation itself: why we ask, "that's not what I asked", "I'd rather not say".
+    const repair = matchRepair(text);
+    if (repair) {
+      await respondRepair(repair);
       return;
     }
 
@@ -344,27 +509,31 @@ export function createConversation({ config, onTypingDelay }) {
       return;
     }
 
-    if (FIT.questionNodes.includes(state.nodeId)) state.answered.add(state.nodeId);
+    // Grouped nodes mark the question answered only when the ladder releases the visitor (tier 3).
+    if (FIT.questionNodes.includes(state.nodeId) && !RECOVERY.nodeGroup[state.nodeId]) state.answered.add(state.nodeId);
     await respondFallback(node);
   }
 
   async function choose(choiceId) {
-    if (state.typing) return;
-    const node = NODES[state.nodeId];
-    const choice = node?.choices?.find((c) => c.id === choiceId);
+    if (state.busy) return;
+    const choice = currentChoices().find((c) => c.id === choiceId);
     if (!choice) return;
-    pushUser(choice.label);
-    if (FIT.questionNodes.includes(state.nodeId)) state.answered.add(state.nodeId);
-    addFit(choice.fit);
-    await respond(choice.next);
+    await turn(async () => {
+      pushUser(choice.label);
+      if (FIT.questionNodes.includes(state.nodeId)) state.answered.add(state.nodeId);
+      addFit(choice.fit);
+      await respond(choice.next);
+    });
   }
 
   async function startFrom(scenarioId) {
-    if (state.typing) return;
-    const starter = config.starters.find((s) => s.scenarioId === scenarioId);
-    const label = starter?.label || SCENARIOS[scenarioId]?.title || scenarioId;
-    pushUser(label);
-    await respond(SCENARIOS[scenarioId].entry);
+    if (state.busy) return;
+    await turn(async () => {
+      const starter = config.starters.find((s) => s.scenarioId === scenarioId);
+      const label = starter?.label || SCENARIOS[scenarioId]?.title || scenarioId;
+      pushUser(label);
+      await respond(SCENARIOS[scenarioId].entry);
+    });
   }
 
   function restart() {
@@ -377,7 +546,7 @@ export function createConversation({ config, onTypingDelay }) {
     return () => listeners.delete(fn);
   }
 
-  return { send, choose, startFrom, restart, subscribe, getState };
+  return { send, choose, startFrom, restart, subscribe, getState, canSend };
 }
 
 function buildWelcomeState(config) {
@@ -392,6 +561,12 @@ function buildWelcomeState(config) {
     seen: new Set(),
     newTags: [],
     fitChecks: 0,
+    missNode: null, // node where the visitor's words last matched nothing, and how many times in a row
+    missCount: 0,
+    repair: { intent: null, n: 0 }, // the repair the visitor last asked for, and how many times in a row
+    extraChoices: null, // suggested replies a recovery tier offers instead of the node's own
+    queue: [], // visitor messages waiting for the reply in progress
+    busy: false,
     messages: [{ id: "welcome", role: "assistant", text: config.welcomeMessage, at: Date.now() }],
   };
 }

@@ -16,7 +16,8 @@ function el(html) {
 export function mountWidget(root) {
   const conversation = createConversation({
     config: WIDGET_CONFIG,
-    onTypingDelay: () => (REDUCE_MOTION ? 80 : WIDGET_CONFIG.typingDelayMs),
+    // The engine works out how long a reply of this length should take; reduced motion shortens it.
+    onTypingDelay: ({ ms }) => (REDUCE_MOTION ? 80 : ms),
   });
 
   const launcher = el(`
@@ -65,6 +66,7 @@ export function mountWidget(root) {
   let announcedCount = 0;
   const form = panel.querySelector("[data-form]");
   const input = panel.querySelector("#ns-widget-input");
+  const sendButton = panel.querySelector(".ns-send");
   let open = false;
   let lastFocus = null;
 
@@ -109,9 +111,9 @@ export function mountWidget(root) {
 
     for (const msg of snapshot.messages) {
       const row = document.createElement("article");
-      row.className = `ns-msg ns-msg--${msg.role}${msg.tone === "cue" ? " ns-msg--cue" : ""}`;
+      row.className = `ns-msg ns-msg--${msg.role}${msg.tone === "cue" ? " ns-msg--cue" : ""}${msg.queued ? " ns-msg--queued" : ""}`;
       row.innerHTML = `
-        <p class="ns-msg__meta">${msg.role === "assistant" ? WIDGET_CONFIG.assistantName : "You"} · ${formatTime(msg.at)}</p>
+        <p class="ns-msg__meta">${msg.role === "assistant" ? WIDGET_CONFIG.assistantName : "You"} · ${msg.queued ? "waiting" : formatTime(msg.at)}</p>
         <p class="ns-msg__text"></p>
       `;
       row.querySelector(".ns-msg__text").textContent = msg.text;
@@ -168,23 +170,17 @@ export function mountWidget(root) {
       }
     }
 
-    input.disabled = snapshot.typing;
+    // The visitor can keep typing while a reply is on its way; messages wait in order. Only a full queue holds the button.
+    sendButton.disabled = !snapshot.canSend;
     scrollThread();
     announce(snapshot.messages);
 
-    // The nodes that held focus (a chip, or the input while disabled) are gone or inert.
-    // Keep focus inside the dialog instead of dropping to <body>.
+    // The chip that held focus is gone after a re-render. Keep focus inside the dialog instead of dropping to <body>.
+    // The input is never disabled now, so focus can always return to it.
     if (open) {
       const active = document.activeElement;
-      const lost =
-        active === document.body ||
-        !panel.contains(active) ||
-        active === thread ||
-        (active === input && input.disabled);
-      if (lost) {
-        if (!input.disabled) input.focus();
-        else thread.focus({ preventScroll: true });
-      }
+      const lost = active === document.body || !panel.contains(active) || active === thread;
+      if (lost) input.focus();
     }
   }
 
@@ -201,7 +197,7 @@ export function mountWidget(root) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const value = input.value.trim();
-    if (!value) return;
+    if (!value || !conversation.canSend()) return;
     input.value = "";
     resizeInput();
     conversation.send(value);

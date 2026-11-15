@@ -24,6 +24,7 @@ export const WIDGET_CONFIG = {
       scenarioId: "hesitant",
     },
   ],
-  typingDelayMs: 720,
+  // Typing indicator length in ms: minMs..maxMs, growing with the length of the reply. Reduced motion uses 80.
+  pacing: { minMs: 500, baseMs: 350, perCharMs: 8, maxMs: 2200 },
   placeholder: "Write a message…",
 };
