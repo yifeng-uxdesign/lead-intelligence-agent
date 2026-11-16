@@ -3,8 +3,9 @@
  * Presentation code imports this data; it never hardcodes replies.
  *
  * Node shape:
- *   replies:  [{ text, tone?: "cue" | "message" }]   // text may use {fit_positive} / {fit_negative}
- *   choices:  [{ id, label, next, fit?: [tag] }]      // suggested replies (fit = evidence this answer implies)
+ *   replies:  [{ text }]                              // each reply is its own bubble; text may use {fit_positive} / {fit_negative}
+ *   choices:  [{ id, label, next, fit?: [tag], kind? }] // suggested replies (fit = evidence this answer implies);
+ *             // kind "ask" = shown under "Ask me things like:", "action" = a button; default: a label ending in ? is "ask"
  *   routes:   [{ keywords, next, fit? }]              // free text inside this node
  *   fallback: { text, next? }                         // next omitted = stay on node
  *   captureEmail?: { company, personal }              // node that accepts a typed work email
@@ -171,8 +172,7 @@ export const NODES = {
   "curious.business": {
     replies: [
       { text: "Good place to start. In one line: Northstar’s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in." },
-      { tone: "cue", text: "I’ll ask about you first so what I say is relevant, not generic." },
-      { text: "What kind of company are you evaluating this for?" },
+      { text: "I’ll ask about you first so what I say is relevant, not generic. What kind of company are you evaluating this for?" },
     ],
     choices: [
       { id: "saas", label: "B2B software", next: "curious.process" },
@@ -201,7 +201,6 @@ export const NODES = {
   },
   "curious.contact": {
     replies: [
-      { tone: "cue", text: "I’m not asking for this to close a deal. It only matters if you want a human follow-up later." },
       { text: "Would you like to share a work email for a specialist to follow up, or keep exploring here without leaving contact details?" },
     ],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
@@ -238,7 +237,6 @@ export const NODES = {
   "hesitant.ack": {
     replies: [
       { text: "That’s a fair concern, and you don’t have to share anything you’re not comfortable with. I’m an AI assistant for this Northstar demo — not a person, and not a hidden script pretending to be your sales team." },
-      { tone: "cue", text: "I’m naming that clearly because trust starts with knowing who you’re talking to." },
       { text: "What about AI speaking with prospects worries you most?" },
     ],
     choices: [
@@ -296,7 +294,6 @@ export const NODES = {
   "trust.identity": {
     replies: [
       { text: "I’m an AI. There is no person typing these replies. I’m the Northstar AI assistant, and in this prototype I follow a scripted flow." },
-      { tone: "cue", text: "I’m telling you directly because you should always know who you’re talking to." },
       { text: "If you’d rather deal with a person, I can set that up. Otherwise I’m glad to keep going." },
     ],
     choices: [
@@ -430,13 +427,14 @@ export const NODES = {
     replies: [
       { text: "In practice it works like this. The agent starts by listening: what the person is trying to do and why now. Along the way it gathers the evidence a sales team cares about — the size of the problem, the tools and process around it, who else is involved, and timing." },
       { text: "It keeps what it knows separate from what it’s guessing. Anything it can’t verify, or that needs a person’s judgment — pricing, contracts, commitments — goes to a human." },
-      { tone: "cue", text: "I’m explaining this before asking you anything, so you know what the questions are for." },
-      { text: "If you like, I can ask about your sales process the way the agent would with a prospect." },
+      { text: "If you like, I can ask a few questions about how your team handles inquiries today, the way the agent would." },
     ],
     choices: [
-      { id: "ask", label: "Ask me about our sales process", next: "__fit_next__" },
-      { id: "cant", label: "What can’t it do?", next: "hesitant.boundaries" },
-      { id: "concern", label: "I have a concern", next: "hesitant.ack" },
+      { id: "cant", label: "What can’t it do?", next: "hesitant.boundaries", kind: "ask" },
+      { id: "real", label: "Are you a real person?", next: "trust.identity", kind: "ask" },
+      { id: "diff", label: "How is this different from other tools?", next: "eval.compare", kind: "ask" },
+      { id: "ask", label: "Ask me about our sales process", next: "__fit_next__", kind: "action" },
+      { id: "concern", label: "I have a concern", next: "hesitant.ack", kind: "action" },
     ],
     routes: [
       { keywords: ["ask", "process", "go ahead", "sure", "yes"], next: "__fit_next__" },
@@ -450,9 +448,10 @@ export const NODES = {
       { text: "It isn’t built to pressure anyone or to promise results it can’t back up. What would you most like to understand?" },
     ],
     choices: [
-      { id: "qualify", label: "How it qualifies someone", next: "qualify.explain" },
-      { id: "cant", label: "What it won’t do", next: "hesitant.boundaries" },
-      { id: "fit", label: "Whether it fits my team", next: "__fit_next__" },
+      { id: "qualify", label: "How does a conversation work?", next: "qualify.explain", kind: "ask" },
+      { id: "cant", label: "What won’t it do?", next: "hesitant.boundaries", kind: "ask" },
+      { id: "fit", label: "Would it suit my team?", next: "__fit_next__", kind: "ask" },
+      { id: "person", label: "Talk to a person", next: "intervention.explain", kind: "action" },
     ],
     routes: [
       { keywords: ["qualif", "how"], next: "qualify.explain" },
@@ -463,8 +462,7 @@ export const NODES = {
   },
   "promising.scale": {
     replies: [
-      { tone: "cue", text: "Volume tells me whether a conversation like this is worth your time, so I’m asking early." },
-      { text: "Roughly how many inbound inquiries do you get in a typical month?" },
+      { text: "Volume tells me whether a conversation like this is likely to be worth your time. Roughly how many inbound inquiries do you get in a typical month?" },
     ],
     choices: [
       { id: "few", label: "A few dozen or fewer", next: "__fit_next__", fit: ["low_volume"] },
@@ -480,7 +478,6 @@ export const NODES = {
   },
   "promising.process": {
     replies: [
-      { tone: "cue", text: "I’ll ask one useful question at a time so this stays a conversation, not a form." },
       { text: "When a new inbound inquiry comes in, what happens first on your team?" },
     ],
     choices: [
@@ -531,15 +528,13 @@ export const NODES = {
   },
   "buyer.grounded": {
     replies: [
-      { text: "Thank you. I’d rather understand your situation than assume it, so I’ll ask a few questions before we talk about anything else." },
-      { tone: "cue", text: "Asking first protects you from committing to something that doesn’t fit." },
+      { text: "Thank you. I’d rather understand your situation than assume it, so I’ll ask a few questions before we talk about anything else. Asking first protects you from committing to something that wouldn’t suit you." },
     ],
     choices: [],
     routes: [],
   },
   "buyer.fitcheck": {
     replies: [
-      { tone: "cue", text: "I’m not slowing you down for its own sake. I only suggest a next step once there’s evidence it fits." },
       { text: "I don’t have enough yet to say Northstar fits your situation, so I’d rather ask than assume." },
     ],
     choices: [],
@@ -552,7 +547,6 @@ export const NODES = {
   },
   "buyer.handoff": {
     replies: [
-      { tone: "cue", text: "I’m suggesting a person now because the evidence supports it, not because I’m trying to close." },
       { text: "Here’s what I’ve heard: {fit_positive}. That’s enough for me to say a conversation with the Northstar team makes sense." },
       { text: "Pricing, contract terms, and timelines are theirs to answer, and I won’t quote any. I can pass this along — in this prototype that’s simulated, so no one will actually be contacted." },
     ],
@@ -570,8 +564,7 @@ export const NODES = {
   },
   "buyer.mismatch": {
     replies: [
-      { tone: "cue", text: "I’d rather say this now than after you’ve put time into it." },
-      { text: "From what you’ve told me — {fit_negative} — Northstar probably isn’t the right fit yet. At that scale a person answering each inquiry is likely better than software, and I don’t want you paying for something you wouldn’t use. That isn’t a judgment of your company; it’s about timing." },
+      { text: "I’d rather say this now than after you’ve put time into it. From what you’ve told me — {fit_negative} — Northstar probably isn’t the right fit yet. At that scale a person answering each inquiry is likely better than software, and I don’t want you paying for something you wouldn’t use. That isn’t a judgment of your company; it’s about timing." },
       { text: "I can’t give you a verified volume where it starts to make sense. A person on the team could. If your inbound grows, it’s worth revisiting." },
     ],
     choices: [
@@ -603,7 +596,6 @@ export const NODES = {
   },
   "buyer.urgency": {
     replies: [
-      { tone: "cue", text: "I’m separating your timeline from what I can promise." },
       { text: "A deadline like that is useful to know, and I’ll treat it as your target. Go-live timing depends on things I can’t see from here — your tools, your process, who needs to approve — and I don’t have verified implementation details. A person should answer timing with you." },
     ],
     choices: [
@@ -625,7 +617,6 @@ export const NODES = {
   "unsupported.honest": {
     replies: [
       { text: "I can’t agree to that. I don’t have evidence for guarantees, conversion promises, or technical commitments that haven’t been verified for your environment." },
-      { tone: "cue", text: "If I invented a number or an SLA here, that would be a claim — not qualification." },
       { text: "What I can do is explain how the agent is supposed to behave, and connect you with a person when a commitment needs to be real. What would be most useful?" },
     ],
     choices: [
@@ -642,7 +633,6 @@ export const NODES = {
   "unsupported.timeline": {
     replies: [
       { text: "I can’t guarantee that timeline. Go-live depends on your tools, your process, and who needs to approve it, and I don’t have verified implementation details for your environment." },
-      { tone: "cue", text: "Saying yes here would be a claim, not an answer." },
       { text: "I can note your target date and have a person review whether it’s realistic. What would you like?" },
     ],
     choices: [
@@ -681,7 +671,6 @@ export const NODES = {
     repeat: "intervention.again",
     replies: [
       { text: "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat." },
-      { tone: "cue", text: "I’m flagging that so you aren’t left talking to an assistant about something that needs a human." },
       { text: "I can describe a handoff path. In this prototype, that path is simulated — I will not contact a real sales representative." },
     ],
     choices: [
@@ -713,8 +702,7 @@ export const NODES = {
   // ---- Contact capture: only after real interest, company email only ----
   "contact.ask": {
     replies: [
-      { tone: "cue", text: "I’m asking for a work email only so a person can follow up. This prototype does not store or send it." },
-      { text: "Type a work email, or skip for now." },
+      { text: "Only so a person can follow up. This prototype does not store or send it. Type a work email, or skip for now." },
     ],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
     choices: [{ id: "skip", label: "Skip for now", next: "intervention.noted" }],
@@ -739,7 +727,6 @@ export const NODES = {
   "alert.handoff": {
     replies: [
       { text: "I’m sorry. Going in circles isn’t acceptable, and you shouldn’t have to keep repeating yourself." },
-      { tone: "cue", text: "I’m stepping back because a person can do something I can’t: take responsibility for solving this with you." },
       { text: "I’m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated — no one has actually been contacted." },
     ],
     choices: [{ id: "note", label: "Leave a simulated note for the team", next: "alert.noted" }, RESTART],
@@ -772,7 +759,6 @@ export const NODES = {
   "pricing.person": {
     replies: [
       { text: "I don’t have verified pricing, and I won’t guess. Pricing and terms are something a person on the team should give you directly." },
-      { tone: "cue", text: "Anything about money or contract terms is a commitment, so it shouldn’t come from me." },
     ],
     choices: [
       { id: "person", label: "I want to talk to a person", next: "intervention.explain" },
