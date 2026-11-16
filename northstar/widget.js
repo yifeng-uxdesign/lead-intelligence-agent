@@ -69,6 +69,11 @@ export function mountWidget(root) {
   const sendButton = panel.querySelector(".ns-send");
   let open = false;
   let lastFocus = null;
+  let asksHiddenAt = -1; // the message count at which the visitor hid "Ask me things like:"
+
+  // A suggested reply is a question to ask ("ask") or a button to press ("action"). Unless the
+  // scenario data says which, a label that ends in a question mark is a question.
+  const kindOf = (choice) => choice.kind || (/\?\s*$/.test(choice.label) ? "ask" : "action");
 
   function setOpen(next) {
     if (next === open) return; // re-opening must not overwrite the focus-return target
@@ -111,7 +116,7 @@ export function mountWidget(root) {
 
     for (const msg of snapshot.messages) {
       const row = document.createElement("article");
-      row.className = `ns-msg ns-msg--${msg.role}${msg.tone === "cue" ? " ns-msg--cue" : ""}${msg.queued ? " ns-msg--queued" : ""}`;
+      row.className = `ns-msg ns-msg--${msg.role}${msg.queued ? " ns-msg--queued" : ""}`;
       row.innerHTML = `
         <p class="ns-msg__meta">${msg.role === "assistant" ? WIDGET_CONFIG.assistantName : "You"} · ${msg.queued ? "waiting" : formatTime(msg.at)}</p>
         <p class="ns-msg__text"></p>
@@ -145,12 +150,48 @@ export function mountWidget(root) {
     } else if (!snapshot.typing) {
       const nodeChoices = snapshot.choices.filter((c) => c.next !== "__restart__");
       const restartChoice = snapshot.choices.find((c) => c.next === "__restart__");
-      if (nodeChoices.length) {
+      const asks = nodeChoices.filter((c) => kindOf(c) === "ask");
+      const actions = nodeChoices.filter((c) => kindOf(c) !== "ask");
+
+      // "Ask me things like:" is a short list of questions the visitor might want to put next.
+      if (asks.length && asksHiddenAt !== snapshot.messages.length) {
+        const box = document.createElement("div");
+        box.className = "ns-asks";
+        box.setAttribute("role", "group");
+        box.setAttribute("aria-label", "Suggested questions");
+        const head = document.createElement("div");
+        head.className = "ns-asks__head";
+        const label = document.createElement("span");
+        label.textContent = "Ask me things like:";
+        const close = document.createElement("button");
+        close.type = "button";
+        close.className = "ns-asks__close";
+        close.setAttribute("aria-label", "Hide suggested questions");
+        close.textContent = "×";
+        close.addEventListener("click", () => {
+          asksHiddenAt = snapshot.messages.length;
+          render(conversation.getState());
+        });
+        head.append(label, close);
+        box.append(head);
+        for (const choice of asks) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ns-ask";
+          btn.textContent = choice.label;
+          btn.addEventListener("click", () => conversation.choose(choice.id));
+          box.append(btn);
+        }
+        thread.append(box);
+      }
+
+      // Actions are next steps the visitor can take with one tap.
+      if (actions.length || restartChoice) {
         const wrap = document.createElement("div");
         wrap.className = "ns-starters";
         wrap.setAttribute("role", "group");
-        wrap.setAttribute("aria-label", "Suggested replies");
-        for (const choice of nodeChoices) {
+        wrap.setAttribute("aria-label", "Suggested actions");
+        for (const choice of actions) {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "ns-chip";
