@@ -44,9 +44,9 @@ The design covers conversation behavior well. These are the gaps the review foun
 
 | Slice | Content | Status |
 |---|---|---|
-| **0. Safety net** | `northstar/test/` (21 unit tests, no dependencies), the replay set in `northstar/eval/`, a browser check | **Done** |
+| **0. Safety net** | `northstar/test/` (26 unit tests, no dependencies), the replay set in `northstar/eval/`, a browser check | **Done** |
 | **1. Recovery and repair** | Three-tier ladder for 23 node groups, no verbatim repeats, tier 3 can offer its own suggested replies; five repair intents; varied holding lines | **Done** |
-| **2. Turn-taking and pacing** | Input stays enabled; up to two messages wait in order; nothing dropped; restart clears them; typing delay grows with reply length | **Done** |
+| **2. Turn-taking and pacing** | Input stays enabled; up to two messages wait in order; nothing dropped; restart clears them; replies appear **one bubble at a time**, each after a typing pause that fits its length | **Done** |
 | **3. Ask engine v1** | Field registry replacing the fixed four questions; ladder levels; interest gauge; memory with provenance (never re-ask what was said); clusters and consent; a per-turn trace. Fixes S10 and the post-request questions in S6 | Next. Needs a short design pass first, because the data model and the registry need to agree on field ids |
 | **4. Routing correctness** | Target-aware frustration, the "sales rep" keyword, the "review" pattern. Measured on the existing conformance cases (A1 to A4, C8, H4 fail today) | Needs your approval, because pattern changes are the easiest way to overfit |
 | **5. Knowledge layer and copy pass** | Approved facts, knowledge-gap recovery, the word-list rewrite of all existing copy | Needs approvals and gap 4 |
@@ -56,10 +56,20 @@ The design covers conversation behavior well. These are the gaps the review foun
 
 - `scenarios.js`: `RECOVERY` (23 groups, alternates, node mapping) and `REPAIR` (five intents, reasons for each question). Each grouped node's own `fallback` is kept equal to tier 1 so the conformance observer keeps counting the first reply to an unmatched input as a fallback.
 - `engine.js`: the ladder (`pickRecovery`), repair recognition, the turn queue, length-aware pacing (`paceMs`), staging of replies so the typing time can depend on their length.
-- `widget.js`, `styles.css`, `config.js`: the input is never disabled; queued messages show as "waiting"; the Send button is disabled only when two are waiting; pacing values moved to `config.pacing` (500 to 2,200 ms).
-- `test/`: 21 tests, including that no recovery text contains an internal word or claims a person has been told.
+- `widget.js`, `styles.css`, `config.js`: the input is never disabled; queued messages show as "waiting"; the Send button is disabled only when two are waiting; pacing values moved to `config.pacing` (a pause of 600 to 1,800 ms before **each** bubble).
+- `test/`: 26 tests, including that no recovery text contains an internal word or claims a person has been told.
 
 **Not changed:** the existing node copy (still has "simulated", "prototype", "fit"), routing patterns, the fit questions, the welcome flow. Behavior a visitor sees before any miss or interruption is unchanged.
+
+### 5b. Changes after the owner's first test (2026-11-16)
+
+The owner tried the demo, starting from "How does your agent qualify leads?", and raised two issues. Both were fixed on the same branch (PR #9).
+
+1. **The reply loaded all at once.** All bubbles of one reply appeared together after a single short pause. Now each bubble appears on its own, with the typing indicator between them and a pause that fits that bubble's length. In a browser, the three bubbles of that reply arrived at about 1.8, 3.2 and 4.3 seconds after the click, where before they all arrived at about 0.7 seconds. The pause per bubble is `config.pacing` (minimum 600 ms, maximum 1,800 ms); reduced motion uses 80 ms. Tune it by editing that line.
+2. **The highlighted line ("I'm explaining this before asking you anything, so you know what the questions are for").** This was a "cue" from the original scripted flow, shown in italics with an orange bar. It narrated the agent's own process, which helps no one and which the design rules also rule out. All 18 cue lines were handled: 13 were removed because the message beside them already said it, and 5 were folded into the question they explain (for example, "Volume tells me whether a conversation like this is likely to be worth your time. Roughly how many inbound inquiries do you get in a typical month?"). The highlight style is gone.
+3. **Pigment-style suggestions.** Following the Pigment example, suggested replies are now two groups: **"Ask me things like:"** (a short list of questions, with a × to hide it) and **action buttons** below. Each suggestion can say which it is (`kind: "ask"` or `"action"` in `scenarios.js`); if it does not, a label ending in a question mark is a question. The two main explanation nodes (`qualify.explain` and `product.intro`) have three questions each; every other node uses the same rule on its existing suggestions, so most nodes show a mix of one or two questions and one or two buttons. **Writing good suggestions for every node is still to do** (slice 5).
+
+Also changed along the way: "prospect" no longer appears in the sentence that offers to ask about the visitor's sales process.
 
 ## 6. Measured results
 
@@ -71,7 +81,7 @@ The design covers conversation behavior well. These are the gaps the review foun
 | Conformance, widget, fallback rate | 0.188 | 0.116 (**a measurement artifact, not an improvement**: the observer only counts a reply as a fallback if it matches the node's own fallback text, so the later rungs of the ladder are no longer counted) |
 | L1 (same reply five times in a row) | failing | **passing** |
 | `pytest` | 304 passed, 3 xfailed | 304 passed, 3 xfailed |
-| Unit tests (`northstar/test/run.sh`) | none | 21 passed |
+| Unit tests (`northstar/test/run.sh`) | none | 26 passed |
 | Interruptions answered specifically (outside the frustrated hold) | 0 of 42 for four of the six; email asked again 3 of 8 | **42 of 42**; the email is never asked again |
 | Browser check (Chromium) | n/a | input enabled and focused mid-reply, 2 waiting bubbles, Send disabled when full, third message kept in the input, clean restart, no console errors, reduced motion about 200 ms |
 

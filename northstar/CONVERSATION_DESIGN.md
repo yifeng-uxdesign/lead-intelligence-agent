@@ -97,7 +97,7 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   purpose and are natural to answer in one sentence (for example, a name and how to reach you). A cluster has at
   most three items, every item is optional, and it never mixes topics. If the visitor answers only part of it,
   ask only for what is missing (R4). See 4.2.
-- R3. **Say why you are asking**, in one short clause, the first time the question type appears. (Existing `tone: "cue"` messages do this.)
+- R3. **Say why you are asking**, in one short clause, the first time the question type appears, **inside the question itself** ("Volume tells me whether this is likely to be worth your time. Roughly how many…?"). Never as a separate highlighted aside about the agent's own process (see R46).
 - R4. **Never re-ask what you already know.** A fact the visitor stated, or a question they declined, is marked answered. (`state.answered`; step 5 formalises it.)
 - R5. **Make the cheapest answer easy.** Offer suggested replies for every question. Free text always works too.
 - R6. **A refusal is an answer.** "I'd rather not say" closes that question, with no penalty and no second attempt.
@@ -179,6 +179,11 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   bring the person back (R17).
 - R35. **Hand back is not resolution.** After a hand back with an open topic, the assistant is fenced off that topic
   and can never make a commitment, until a person resolves.
+
+**Presentation**
+- R46. **Do not narrate your own process.** No highlighted or separate lines such as "I'm explaining this before asking you anything". The message does the thing; the reason for a question sits inside the question (R3). *(Added after the owner's first test, 2026-11-16; it removed 13 such lines and folded 5 into their questions.)*
+- R47. **Replies arrive one bubble at a time**, each after a pause that fits its length, with the typing indicator between them. Suggested replies appear only after the last bubble.
+- R48. **Offer two kinds of next step** (the Pigment pattern): **"Ask me things like:"**, a short list of questions the visitor might put next (about three, hideable), and **action buttons** for things to do (talk to a person, share an email, restart). Suggestions are written per step, and are never used to steer.
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -905,7 +910,7 @@ The voice: **calm, plain, transparent, never pushy.** Written for a busy sales o
 | Vary wording by tier | The same stock phrase everywhere | "Sounds scripted" is a trust problem |
 
 **Scripted-sounding audit** (use when reviewing any reply): Would a person say it this way? Does it repeat a
-phrase used in the last three turns? Does it say the same thing as the node's cue line? Does it apologise more
+phrase used in the last three turns? Does it narrate the agent's own process ("I'm explaining this before…")? Does it apologise more
 than once? Does it end on a clear next step?
 
 ---
@@ -964,7 +969,7 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 ## 10. Open questions for the owner
 
 - [ ] Review the drafted copy in 5.4. Mark lines that sound off. Those edits are the practice.
-- [ ] Pacing (6.2) is built with the starting values (500 to 2,200 ms, in `config.js`). Try it and say "slower" or "faster".
+- [ ] Pacing (6.2) is built: each bubble appears after its own pause of 600 to 1,800 ms (`config.pacing`). The owner's first test found the earlier single pause too fast. Try it and say "slower" or "faster".
 - [ ] Should tier 3 ever *close* the chat itself, or always leave the visitor a choice (current draft: always a choice)?
 - [x] Verified facts: owner confirmed that integrations, pricing, security and data handling, and setup timelines stay "a person can tell you" (4.3). Verified facts to add later come from the owner.
 - [x] Prototype wording: owner decision is to *show* a person joining (3.4, 6.4) rather than disclaim in the chat.

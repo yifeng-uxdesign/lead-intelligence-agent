@@ -27,6 +27,22 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-16 — First owner test: pacing, highlighted narration, Pigment-style suggestions
+
+**Context:** The owner tried the demo (starting from "How does your agent qualify leads?") and raised two issues, with a Pigment screenshot as a reference.
+
+**Findings and fixes (PR #9):**
+- **Too fast:** every bubble of a reply appeared together after one pause. Now one bubble at a time, each with its own typing pause (600 to 1,800 ms by length). Measured in a browser: three bubbles at about 1.8, 3.2 and 4.3 s, previously all at about 0.7 s.
+- **Highlighted line:** 18 "cue" lines from the original script (italic, orange bar) narrated the agent's own process. 13 removed, 5 folded into their question; highlight style deleted. New rule R46.
+- **Pigment pattern:** suggested replies now split into "Ask me things like:" (about three questions, hideable) and action buttons (R48). Authored for `qualify.explain` and `product.intro`; other nodes use a rule (a label ending in "?" is a question). Per-node suggestion writing remains to do.
+- This was partly my miss: the pacing in step 1 delayed the whole reply once, and I did not review the 18 cue lines against my own rules.
+
+**Checks:** 26 unit tests pass; conformance unchanged (widget pass 0.600, repeat 0.056, route accuracy 0.745); pytest 304 passed, 3 xfailed; browser flow clean.
+
+**Open:** tune pacing; review and rewrite suggestions for every node (slice 5); the rest of the open items in `BUILD_PLAN.md`.
+
+---
+
 ### 2026-11-16 — Readiness review, and the first build step
 
 **Decision (owner, at the start of this step):** score-bar placeholder accepted; **no partner path in the demo**; deal-value placeholder accepted. Asked me to review all components, decide whether to build, and build; the owner will test.
