@@ -252,3 +252,53 @@ test("frustration and a request for a person still win over a repair phrase", as
   await d.send("That's not what I asked. Let me talk to someone.");
   assert.ok(d.getState().nodeId.startsWith("intervention."));
 });
+
+// ---- one bubble at a time; no highlighted narration; suggestion groups ----
+test("a multi-part reply appears one bubble at a time, with the typing indicator between", async () => {
+  const c = createConversation({ config: WIDGET_CONFIG, onTypingDelay: () => 15 });
+  const shots = [];
+  c.subscribe((st) => shots.push({ n: st.messages.filter((m) => m.role === "assistant").length, typing: st.typing }));
+  await c.startFrom("promising"); // qualify.explain has several bubbles
+  const bubbles = NODES["qualify.explain"].replies.length;
+  assert.ok(bubbles >= 3);
+  const counts = [...new Set(shots.map((x) => x.n))];
+  assert.deepEqual(counts, Array.from({ length: bubbles + 1 }, (_, i) => counts[0] + i)); // 1,2,3,... never a jump
+  assert.equal(shots.at(-1).typing, false);
+  assert.ok(shots.slice(0, -1).filter((x) => x.n > counts[0]).every((x) => x.typing)); // still typing until the last bubble
+});
+
+test("each bubble gets its own typing pause that fits its length", async () => {
+  const seen = [];
+  const c = createConversation({ config: WIDGET_CONFIG, onTypingDelay: (i) => (seen.push(i), 1) });
+  await c.startFrom("promising");
+  const lens = NODES["qualify.explain"].replies.map((r) => r.text.length);
+  assert.deepEqual(seen.map((x) => x.chars), lens);
+  assert.deepEqual(seen.map((x) => x.index), lens.map((_, i) => i));
+  assert.ok(seen.every((x) => x.total === lens.length));
+});
+
+test("no reply is highlighted narration of the agent's own process", () => {
+  for (const [id, node] of Object.entries(NODES)) {
+    for (const r of node.replies) {
+      assert.notEqual(r.tone, "cue", `${id} still has a cue`);
+      assert.doesNotMatch(r.text, /^I’m (explaining|naming|telling you|flagging|separating|stepping back)/, `${id}: narration`);
+    }
+  }
+});
+
+test("every suggested reply leads somewhere that exists", () => {
+  const special = new Set(["__restart__", "__fit_next__", "__fit_gate__"]);
+  const ok = (t) => (Array.isArray(t) ? t : [t]).every((x) => x == null || special.has(x) || NODES[x]);
+  for (const [id, node] of Object.entries(NODES)) for (const ch of node.choices || []) assert.ok(ok(ch.next), `${id}: ${ch.id} -> ${ch.next}`);
+  for (const g of Object.values(RECOVERY.groups)) for (const t of g.tiers) for (const ch of t.choices || []) assert.ok(ok(ch.next), `recovery ${ch.id}`);
+  for (const t of REPAIR.misunderstood.tiers) for (const ch of t.choices || []) assert.ok(ok(ch.next), `repair ${ch.id}`);
+});
+
+test("the main explanation nodes offer questions to ask and actions to take", () => {
+  const kindOf = (c) => c.kind || (/\?\s*$/.test(c.label) ? "ask" : "action");
+  for (const id of ["qualify.explain", "product.intro"]) {
+    const kinds = NODES[id].choices.map(kindOf);
+    assert.ok(kinds.filter((k) => k === "ask").length >= 3, `${id} needs three suggested questions`);
+    assert.ok(kinds.includes("action"), `${id} needs an action`);
+  }
+});
