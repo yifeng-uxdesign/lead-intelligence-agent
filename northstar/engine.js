@@ -7,7 +7,7 @@
  *   - an "alert" hold: once a visitor is frustrated, the agent stops answering on its own
  *   - a recovery ladder (see RECOVERY in scenarios.js): consecutive misses on one node escalate, never repeat
  *   - a turn queue: the visitor can keep typing while a reply is on its way; messages are handled in order
- *   - length-aware pacing: the typing indicator lasts longer for longer replies
+ *   - length-aware pacing: replies appear one bubble at a time, each after a typing pause that fits its length
  * Decisions stay deterministic: every choice below is a pure function of the conversation state.
  */
 import { FIT, GLOBAL_ROUTES, NODES, PERSONAL_EMAIL_DOMAINS, RECOVERY, REPAIR, SCENARIOS } from "./scenarios.js";
@@ -43,9 +43,9 @@ function isMinimal(text) {
 
 const MAX_QUEUE = 2; // messages a visitor can have waiting while a reply is on its way
 
-/** Typing delay in ms for a reply of `chars` characters. Pure. Values live in config.pacing. */
+/** Typing delay in ms before one bubble of `chars` characters. Pure. Values live in config.pacing. */
 export function paceMs(chars, pacing) {
-  const p = { minMs: 500, baseMs: 350, perCharMs: 8, maxMs: 2200, ...(pacing || {}) };
+  const p = { minMs: 600, baseMs: 400, perCharMs: 6, maxMs: 1800, ...(pacing || {}) };
   return Math.round(Math.min(p.maxMs, Math.max(p.minMs, p.baseMs + chars * p.perCharMs)));
 }
 
@@ -241,8 +241,8 @@ export function createConversation({ config, onTypingDelay }) {
   }
 
   /**
-   * Run `produce` (which decides the replies and updates the state), show the typing indicator for a time
-   * that fits the length of what is coming, then show the replies. A restart in the meantime drops them.
+   * Run `produce` (which decides the replies and updates the state), then show the replies one bubble at a time,
+   * each after a typing pause that fits its own length. A restart in the meantime drops what is left.
    */
   async function deliver(produce) {
     const myEpoch = epoch;
@@ -255,22 +255,25 @@ export function createConversation({ config, onTypingDelay }) {
       stage = null;
     }
     if (myEpoch !== epoch) return; // the thread was restarted while deciding
-    emit();
-    const chars = staged.reduce((n, m) => n + m.text.length, 0);
-    let ms = paceMs(chars, config.pacing);
-    if (typeof onTypingDelay === "function") {
-      const override = onTypingDelay({ chars, ms });
-      if (typeof override === "number") ms = override;
-    }
-    await new Promise((r) => setTimeout(r, ms));
-    if (myEpoch !== epoch) return;
-    state.typing = false;
-    const now = Date.now();
-    for (const m of staged) {
-      m.at = now;
+    emit(); // the typing indicator appears
+    for (let i = 0; i < staged.length; i++) {
+      const m = staged[i];
+      let ms = paceMs(m.text.length, config.pacing);
+      if (typeof onTypingDelay === "function") {
+        const override = onTypingDelay({ chars: m.text.length, ms, index: i, total: staged.length });
+        if (typeof override === "number") ms = override;
+      }
+      await new Promise((r) => setTimeout(r, ms));
+      if (myEpoch !== epoch) return;
+      m.at = Date.now();
       state.messages.push(m);
+      if (i === staged.length - 1) state.typing = false; // between bubbles the indicator stays
+      emit();
     }
-    emit();
+    if (!staged.length) {
+      state.typing = false;
+      emit();
+    }
   }
 
   /** Show the typing indicator, then play `target` (unless the thread was restarted meanwhile). */

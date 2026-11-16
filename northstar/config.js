@@ -24,7 +24,7 @@ export const WIDGET_CONFIG = {
       scenarioId: "hesitant",
     },
   ],
-  // Typing indicator length in ms: minMs..maxMs, growing with the length of the reply. Reduced motion uses 80.
-  pacing: { minMs: 500, baseMs: 350, perCharMs: 8, maxMs: 2200 },
+  // Typing pause in ms before each bubble: minMs..maxMs, growing with the bubble's length. Reduced motion uses 80.
+  pacing: { minMs: 600, baseMs: 400, perCharMs: 6, maxMs: 1800 },
   placeholder: "Write a message…",
 };
