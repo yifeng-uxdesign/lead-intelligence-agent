@@ -8,9 +8,14 @@
  *   - a recovery ladder (see RECOVERY in scenarios.js): consecutive misses on one node escalate, never repeat
  *   - a turn queue: the visitor can keep typing while a reply is on its way; messages are handled in order
  *   - length-aware pacing: replies appear one bubble at a time, each after a typing pause that fits its length
+ *   - questions first: a visitor's question is answered (or honestly not) before the agent returns to its own question
+ *   - handoff: a conversation that reaches a person is saved to a lead store, and the person's actions arrive from it
  * Decisions stay deterministic: every choice below is a pure function of the conversation state.
  */
-import { FIT, GLOBAL_ROUTES, NODES, PERSONAL_EMAIL_DOMAINS, RECOVERY, REPAIR, SCENARIOS } from "./scenarios.js";
+import {
+  FIT, GLOBAL_ROUTES, HANDOFF, KNOWLEDGE, NODES, PERSONAL_EMAIL_DOMAINS, RECOVERY, REPAIR, RESUME_PREFIX, SCENARIOS, isQuestion,
+} from "./scenarios.js";
+import { createNullStore } from "./store.js";
 
 const EMAIL_RE = /[^\s@]+@([^\s@]+\.[a-z]{2,})/i;
 
@@ -111,14 +116,17 @@ function listPhrases(tags, fit) {
   return `${phrases.slice(0, -1).join(", ")} and ${phrases[phrases.length - 1]}`;
 }
 
-export function createConversation({ config, onTypingDelay }) {
+export function createConversation({ config, onTypingDelay, store: givenStore }) {
+  const store = givenStore || createNullStore(); // where a handoff is saved and a person's actions arrive
   let state = buildWelcomeState(config);
+  let syncing = false; // true while this conversation writes to the store, so its own write is not read back as news
   let epoch = 0; // bumped on restart so in-flight replies from the old thread are dropped
   let stage = null; // while set, replies are collected here and shown after the typing delay
   const listeners = new Set();
   const put = (msg) => (stage || state.messages).push(msg);
 
   function emit() {
+    if (state.lead) syncLead();
     const snapshot = getState();
     listeners.forEach((fn) => fn(snapshot));
   }
@@ -130,7 +138,9 @@ export function createConversation({ config, onTypingDelay }) {
       nodeId: state.nodeId,
       messages: state.messages.map((m) => ({ ...m })),
       startersVisible: state.startersVisible,
-      choices: state.extraChoices ?? node?.choices ?? [],
+      choices: choicesNow(node),
+      mode: state.mode,
+      rep: state.rep ? { ...state.rep } : null,
       typing: state.typing,
       queued: state.queue.length,
       canSend: state.queue.length < MAX_QUEUE,
@@ -141,7 +151,19 @@ export function createConversation({ config, onTypingDelay }) {
     return getState().choices;
   }
 
+  // After an interruption the visitor can pick up the question they were on.
+  function choicesNow(node) {
+    const base = state.extraChoices ?? node?.choices ?? [];
+    if (state.offerResume && state.resumeNode) return [...base, { id: "resume", label: "Carry on where we left off", next: "__resume__", kind: "action" }];
+    return base;
+  }
+
   function setWelcome() {
+    if (state.lead && state.lead.state === "open") {
+      state.lead.state = "closed"; // the visitor started over: the person sees the conversation ended
+      state.lead.endedBy = "visitor";
+      syncLead();
+    }
     epoch += 1;
     state = buildWelcomeState(config);
     emit();
@@ -210,6 +232,18 @@ export function createConversation({ config, onTypingDelay }) {
       setWelcome();
       return;
     }
+    if (nodeId === "__resume__") {
+      // Pick the earlier question back up, in one short bubble.
+      const back = state.resumeNode;
+      state.resumeNode = null;
+      state.offerResume = false;
+      const question = back && NODES[back]?.replies.at(-1);
+      if (!question) return;
+      state.nodeId = back;
+      state.extraChoices = null;
+      put({ id: uid(), role: "assistant", text: RESUME_PREFIX + fillTemplate(question.text), tone: "message", at: Date.now() });
+      return;
+    }
     // A node already shown once can offer a shorter variant instead of repeating itself.
     if (NODES[nodeId]?.repeat && state.seen.has(nodeId)) nodeId = NODES[nodeId].repeat;
     state.seen.add(nodeId);
@@ -225,7 +259,12 @@ export function createConversation({ config, onTypingDelay }) {
       return;
     }
     state.nodeId = nodeId;
+    if (!nodeId.startsWith("kb.")) {
+      state.resumeNode = null; // the visitor moved on, so there is nothing to carry on from
+      state.offerResume = false;
+    }
     if (nodeId.startsWith("alert.")) state.alert = true;
+    openLead(nodeId);
     for (const [id, scenario] of Object.entries(SCENARIOS)) {
       if (nodeId.startsWith(`${id}.`)) state.scenarioId = scenario.id;
     }
@@ -276,6 +315,147 @@ export function createConversation({ config, onTypingDelay }) {
     }
   }
 
+  // ---- handoff: saving the conversation for a person, and what the person does ----
+  function openLead(nodeId) {
+    const h = HANDOFF.nodes[nodeId];
+    if (!h) return;
+    const reason = { code: h.code, label: h.label };
+    if (!state.lead) state.lead = { id: uid(), reason, level: h.level, state: "open" };
+    else if (state.lead.state !== "open") state.lead = { ...state.lead, reason, level: h.level, state: "open" }; // asked again after a resolve
+    else if (HANDOFF.rank[h.level] > HANDOFF.rank[state.lead.level]) Object.assign(state.lead, { reason, level: h.level });
+    if (h.level === "intervention" && state.mode === "agent") state.mode = "waiting";
+  }
+
+  function leadStatus() {
+    const l = state.lead;
+    if (l.state !== "open") return l.state; // "resolved" or "closed"
+    if (state.mode === "rep") return "with_rep";
+    return l.level === "intervention" ? "needs_rep" : "attention";
+  }
+
+  const sentence = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+  /** Plain lines for the person: what the visitor told us and what they wanted to know. */
+  function summaryLines() {
+    const out = [];
+    for (const tag of [...FIT.positive, ...FIT.negative, "mid_volume"]) if (state.fit.has(tag)) out.push(sentence(FIT.phrases[tag]));
+    for (const id of state.seen) if (HANDOFF.topics[id]) out.push(HANDOFF.topics[id]);
+    if (state.contact?.email) out.push("Shared a work email");
+    return [...new Set(out)];
+  }
+
+  function syncLead() {
+    const l = state.lead;
+    if (!l) return;
+    const snapshot = {
+      id: l.id,
+      status: leadStatus(),
+      level: l.level,
+      reason: l.reason,
+      contact: state.contact ? { ...state.contact } : {},
+      summary: summaryLines(),
+      endedBy: l.endedBy || null,
+      transcript: state.messages.map((m) => ({ role: m.role, text: m.text, at: m.at, ...(m.name ? { name: m.name } : {}) })),
+    };
+    const key = JSON.stringify(snapshot);
+    if (key === state.lastSynced) return;
+    state.lastSynced = key;
+    syncing = true;
+    try {
+      store.upsertLead(snapshot);
+    } finally {
+      syncing = false;
+    }
+  }
+
+  const eventLine = (text) => state.messages.push({ id: uid(), role: "event", text, at: Date.now() });
+
+  /** One thing the person did. Returns a node to play afterwards, if any. */
+  function applyRepAction(a) {
+    const name = a.name || state.rep?.name || "Someone from the team";
+    switch (a.type) {
+      case "join":
+        state.mode = "rep";
+        state.rep = { name };
+        eventLine(`${name} from the Northstar team has joined the conversation.`);
+        return null;
+      case "message":
+        state.messages.push({ id: uid(), role: "rep", name, text: a.text, at: Date.now() });
+        return null;
+      case "handback":
+        Object.assign(state, { mode: "agent", rep: null, alert: false });
+        eventLine(`${name} has handed the conversation back to the assistant.`);
+        return null;
+      case "resolve":
+        Object.assign(state, { mode: "agent", rep: null, alert: false });
+        state.lead.state = "resolved";
+        eventLine(`${name} has finished helping with this. I’m back if you need anything else, and you can ask for ${name} or someone on the team again anytime.`);
+        return "rep.checkin"; // the assistant asks; only the visitor can say it is not resolved
+      case "close":
+        Object.assign(state, { mode: "agent", rep: null, alert: false });
+        state.lead.state = "closed";
+        eventLine(`${name} has ended the conversation. You can restart whenever you like.`);
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  function applyRepActions() {
+    if (!state.lead) return;
+    if (state.busy || state.typing) {
+      state.repPending = true; // handled as soon as the reply in progress is done
+      return;
+    }
+    const actions = store.getActions(state.lead.id);
+    let followUp = null;
+    while (state.repSeen < actions.length) followUp = applyRepAction(actions[state.repSeen++]) || followUp;
+    state.repPending = false;
+    emit();
+    if (followUp) turn(async () => respond(followUp));
+  }
+  store.subscribe(() => {
+    if (!syncing) applyRepActions();
+  });
+
+  // ---- questions first: a visitor's question outranks the agent's own pending question ----
+  function canResume(nodeId) {
+    const n = NODES[nodeId];
+    if (!n || nodeId.startsWith("kb.") || nodeId.startsWith("alert.") || nodeId.startsWith("rep.")) return false;
+    return /\?\s*$/.test(n.replies?.at(-1)?.text || "") || !!n.captureEmail;
+  }
+
+  function matchKnowledge(text) {
+    const raw = straighten(text);
+    return KNOWLEDGE.find((k) => k.pattern.test(raw))?.node || null;
+  }
+
+  async function answerFromKnowledge(target) {
+    if (!state.resumeNode && canResume(state.nodeId)) state.resumeNode = state.nodeId;
+    state.offerResume = !!state.resumeNode;
+    state.missNode = null;
+    state.missCount = 0;
+    state.gapCount = 0;
+    state.repair = { intent: null, n: 0 };
+    await deliver(() => applyNode(target));
+  }
+
+  /** A question nothing covers: say so plainly, offer what can be answered, and never repeat. */
+  async function respondGap() {
+    if (!state.resumeNode && canResume(state.nodeId)) state.resumeNode = state.nodeId;
+    const idx = state.gapCount;
+    state.gapCount = idx + 1;
+    state.missNode = null;
+    state.missCount = 0;
+    await deliver(() => {
+      const lastAssistant = [...state.messages].reverse().find((m) => m.role === "assistant");
+      const pick = pickRecovery(RECOVERY.gap.tiers, idx, lastAssistant?.text, RECOVERY.alternates);
+      state.extraChoices = pick.choices || null;
+      state.offerResume = !!state.resumeNode;
+      put({ id: uid(), role: "assistant", text: pick.text, at: Date.now() });
+    });
+  }
+
   /** Show the typing indicator, then play `target` (unless the thread was restarted meanwhile). */
   async function respond(target) {
     if (target === "__restart__") {
@@ -285,6 +465,7 @@ export function createConversation({ config, onTypingDelay }) {
     state.missNode = null; // an understood reply ends any run of misses
     state.missCount = 0;
     state.repair = { intent: null, n: 0 };
+    state.gapCount = 0;
     await deliver(() => {
       for (const id of resolve(target)) applyNode(id);
     });
@@ -406,7 +587,10 @@ export function createConversation({ config, onTypingDelay }) {
         await processTurn(next.text);
       }
     } finally {
-      if (myEpoch === epoch) state.busy = false;
+      if (myEpoch === epoch) {
+        state.busy = false;
+        if (state.repPending) applyRepActions();
+      }
     }
   }
 
@@ -433,6 +617,19 @@ export function createConversation({ config, onTypingDelay }) {
   }
 
   async function processTurn(text) {
+    // While a person is in the conversation the assistant stays silent; the message goes to them (the lead's transcript).
+    if (state.mode === "rep") {
+      emit();
+      return;
+    }
+
+    // The visitor was shown an answer to an interruption and is now answering the question they left: go back to it.
+    if (state.nodeId.startsWith("kb.") && state.resumeNode && !isQuestion(text)) {
+      state.nodeId = state.resumeNode;
+      state.resumeNode = null;
+      state.offerResume = false;
+      state.extraChoices = null;
+    }
 
     // Once frustrated, the agent does not keep answering on its own.
     if (state.alert) {
@@ -448,6 +645,7 @@ export function createConversation({ config, onTypingDelay }) {
       const m = text.match(EMAIL_RE);
       if (m) {
         const personal = PERSONAL_EMAIL_DOMAINS.includes(m[1].toLowerCase());
+        if (!personal) state.contact = { email: m[0].replace(/[.,;:!?)]+$/, "") }; // saved with the lead
         await respond(personal ? node.captureEmail.personal : node.captureEmail.company);
         return;
       }
@@ -470,7 +668,14 @@ export function createConversation({ config, onTypingDelay }) {
       return;
     }
 
+    const asked = isQuestion(text);
+    const known = asked ? matchKnowledge(text) : null;
+
     if (state.nodeId === "welcome") {
+      if (known) {
+        await answerFromKnowledge(known);
+        return;
+      }
       if (tags.length) {
         state.newTags = tags;
         await respond(["fit.ack", "__fit_next__"]);
@@ -495,6 +700,16 @@ export function createConversation({ config, onTypingDelay }) {
       } else {
         await respond(hit.next);
       }
+      return;
+    }
+
+    // A question the node did not expect: answer it first (or say honestly that there is no reliable answer).
+    if (known) {
+      await answerFromKnowledge(known);
+      return;
+    }
+    if (asked) {
+      await respondGap();
       return;
     }
 
@@ -570,6 +785,16 @@ function buildWelcomeState(config) {
     extraChoices: null, // suggested replies a recovery tier offers instead of the node's own
     queue: [], // visitor messages waiting for the reply in progress
     busy: false,
+    mode: "agent", // "agent" | "waiting" (a person has been told) | "rep" (a person is in the conversation)
+    rep: null, // the person who joined: { name }
+    lead: null, // set once the conversation reaches a person: { id, reason, level, state }
+    contact: null, // a work email the visitor shared
+    repSeen: 0, // how many of the person's actions have been applied
+    repPending: false,
+    lastSynced: "",
+    gapCount: 0, // consecutive questions nothing covered
+    resumeNode: null, // the question the visitor was on before an interruption
+    offerResume: false,
     messages: [{ id: "welcome", role: "assistant", text: config.welcomeMessage, at: Date.now() }],
   };
 }
