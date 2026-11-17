@@ -82,9 +82,11 @@ export const GLOBAL_ROUTES = [
     patterns: [
       /(speak|talk|chat|connect|get me|put me|transfer|escalate|hand (me )?off|pass me).{0,30}(person|human|someone|somebody|\brep\b|representative|salesperson|sales team|team member)/i,
       /\bi (want|need|would like|'d like|'d rather|would rather)\b.{0,25}\b(human|real person|a person|someone|a rep)\b/i,
+      // Asking for a sales rep is a request. Mentioning "our sales reps" is not, so it is no longer a bare keyword.
+      /\b(i|we) (want|need|would like|'d like|'d love)\b.{0,30}\b(sales rep(resentative)?s?|representative|salesperson|account (exec|executive|manager))\b/i,
     ],
     keywords: [
-      "sales rep", "representative", "legal", "lawyer", "counsel", "security questionnaire",
+      "legal", "lawyer", "counsel", "security questionnaire",
       "infosec", "soc 2", "soc2", "hipaa", "custom contract", "procurement", "authorize", "handoff",
     ],
   },
@@ -140,7 +142,7 @@ export const GLOBAL_ROUTES = [
   { id: "accountability", next: "trust.accountability", patterns: [/who('s| is| are) (responsible|accountable)|accountab|gets? it wrong|doesn'?t deliver|pay for a year|refund|liable/i] },
   { id: "incentive", next: "trust.incentive", patterns: [/(make money|how .{0,20}(earn|profit)|incentiv|commission|paid to|push(ing)? me|trying to (sell|get me)|say whatever)/i] },
   { id: "nosell", next: "trust.nosell", patterns: [/(not (looking|here) (for|to be)|don'?t want).{0,20}(sales? pitch|sold|pitched)|just (want|need|looking for) (some |the )?(info|information|facts)|no sales pitch|just (researching|looking)/i] },
-  { id: "reviews", next: "trust.reviews", patterns: [/(reviews?|testimonials?|references?|case stud(y|ies)|customers who)/i] },
+  { id: "reviews", next: "trust.reviews", patterns: [/(\b(customer|product|online|peer|g2|user) reviews?\b|\breviews? (from|by|of|on)\b|\b(any|read|see|share|show|your) reviews\b|testimonials?|references?|case stud(y|ies)|customers who)/i] },
   { id: "burned", next: "trust.burned", patterns: [/(burn(ed|t)|disaster|nightmare|didn'?t work|waste of (time|money)|\b(we|i)('ve| have)? (already )?tried\b)/i] },
   { id: "skeptical", next: "trust.skeptic", patterns: [/(skeptic|sceptic|not convinced|don'?t trust|take your word|prove it|how do i know)/i] },
   { id: "privacy", next: "hesitant.privacy", patterns: [/(my data|our data|what happens to (my|our|the) data|data (is )?(stored|kept|retained|shared)|privacy|gdpr)/i] },
@@ -227,7 +229,7 @@ export const NODES = {
     fallback: { text: "Whenever you’re ready, say what you’d like to look at next.", next: null },
   },
   "curious.close": {
-    replies: [{ text: "Thank you for sharing that context. A sensible next step is a short conversation with someone on the Northstar team who can map this to your inbound flow — this prototype does not book that meeting automatically. You can restart this chat anytime, or keep asking questions here." }],
+    replies: [{ text: "Thank you for sharing that context. A sensible next step is a short conversation with someone on the Northstar team who can map this to your inbound flow. If you’d like that, just say so and I’ll pass this conversation along. You can restart this chat anytime, or keep asking questions here." }],
     choices: [RESTART, { id: "more", label: "I have another question", next: "curious.keep" }],
     routes: [{ keywords: ["question", "more", "how"], next: "curious.keep" }],
     fallback: { text: "I’m here if you have another question, or you can restart the chat from the header.", next: null },
@@ -252,7 +254,7 @@ export const NODES = {
   },
   "hesitant.privacy": {
     replies: [
-      { text: "You can explore this product without leaving a name or email. In a real deployment, contact details would only be requested after the conversation has a clear reason — and you can decline. Nothing you type in this prototype is stored on a server." },
+      { text: "You can explore this product without leaving a name or email. Contact details are only asked for once the conversation has a clear reason, and you can always decline." },
       { text: "Specifics such as where data is kept, how long, or how it is secured are questions a person should answer. I won’t state them from memory." },
       { text: "Would you like to keep talking about how the agent behaves, or pause here?" },
     ],
@@ -281,7 +283,7 @@ export const NODES = {
       { keywords: ["helps", "ok", "good", "thanks"], next: "hesitant.close" },
       { keywords: ["human", "person", "rep"], next: "intervention.explain" },
     ],
-    fallback: { text: "If you’d rather a person handle this, I can explain a handoff path. This demo will not contact anyone on your behalf.", next: "intervention.explain" },
+    fallback: { text: "If you’d rather a person handle this, I can bring one in.", next: "intervention.explain" },
   },
   "hesitant.close": {
     replies: [{ text: "Understood. You’re in control of what you share. If you want to look at qualification later, open this chat again — there’s no urgency from me." }],
@@ -293,7 +295,7 @@ export const NODES = {
   // ---- Skeptic nodes: validate first, answer plainly, never defend ----
   "trust.identity": {
     replies: [
-      { text: "I’m an AI. There is no person typing these replies. I’m the Northstar AI assistant, and in this prototype I follow a scripted flow." },
+      { text: "I’m an AI. There is no person typing these replies. I’m the Northstar AI assistant." },
       { text: "If you’d rather deal with a person, I can set that up. Otherwise I’m glad to keep going." },
     ],
     choices: [
@@ -548,7 +550,7 @@ export const NODES = {
   "buyer.handoff": {
     replies: [
       { text: "Here’s what I’ve heard: {fit_positive}. That’s enough for me to say a conversation with the Northstar team makes sense." },
-      { text: "Pricing, contract terms, and timelines are theirs to answer, and I won’t quote any. I can pass this along — in this prototype that’s simulated, so no one will actually be contacted." },
+      { text: "Pricing, contract terms, and timelines are theirs to answer, and I won’t quote any. If you’d like, I can pass this conversation to the team so you don’t have to repeat yourself." },
     ],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
     choices: [
@@ -654,7 +656,7 @@ export const NODES = {
   "intervention.again": {
     replies: [
       { text: "Understood. A person is the right next step." },
-      { text: "In this prototype the handoff is simulated, so no one has actually been contacted. You can share a work email, leave a note, or stop here." },
+      { text: "I’ve shared this conversation with the team again. I can’t say exactly when someone will join, so I’ll stay here until they do. You can share a work email so they can follow up, leave a note, or stop here." },
     ],
     choices: [
       { id: "email", label: "Share a work email", next: "contact.ask" },
@@ -665,13 +667,13 @@ export const NODES = {
       { keywords: ["email", "contact"], next: "contact.ask" },
       { keywords: ["note", "handoff", "leave"], next: "intervention.noted" },
     ],
-    fallback: { text: "A person should take this from here. I can leave a simulated note so you can see the pattern.", next: "intervention.noted" },
+    fallback: { text: "A person should take this from here. The team has this conversation, and you can leave a note for them.", next: "intervention.noted" },
   },
   "intervention.explain": {
     repeat: "intervention.again",
     replies: [
       { text: "Of course. A person should help with this: legal review, security questionnaires, authorization, live commercial commitments, or simply wanting to talk with someone are all outside what I should settle in chat." },
-      { text: "I can describe a handoff path. In this prototype, that path is simulated — I will not contact a real sales representative." },
+      { text: "I’ve let the team know you’d like to talk, and shared this conversation so you won’t need to repeat yourself. I can’t say exactly when someone will join, so I’ll stay here with you until they do." },
     ],
     choices: [
       { id: "email", label: "Share a work email", next: "contact.ask" },
@@ -684,13 +686,13 @@ export const NODES = {
       { keywords: ["note", "handoff", "leave"], next: "intervention.noted" },
       { keywords: ["continue", "explore", "product"], next: "product.intro" },
     ],
-    fallback: { text: "If you want a human involved for real, that would happen outside this demo. I can still leave a simulated note so you can see the pattern.", next: "intervention.noted" },
+    fallback: { text: "The team has been told. I can keep answering questions meanwhile, or you can leave a note for them.", next: "intervention.noted" },
   },
   "intervention.noted": {
-    replies: [{ text: "Simulated note filed: a specialist should review this thread before any commitment. No one has been contacted. You can restart, keep exploring, or close the widget." }],
+    replies: [{ text: "Noted. The team can see this conversation and your note, so nothing is lost. I’ll stay here with you until someone joins. You can keep exploring, restart, or close the widget." }],
     choices: [RESTART, { id: "explore", label: "Keep exploring", next: "product.intro" }],
     routes: [{ keywords: ["explore", "more"], next: "product.intro" }],
-    fallback: { text: "The simulated note is the end of this handoff path. Restart anytime.", next: null },
+    fallback: { text: "The team has your note. I’m here if you have another question.", next: null },
   },
   "intervention.close": {
     replies: [{ text: "That’s a reasonable place to stop. A human should own the next step when you’re ready — not this chat." }],
@@ -702,7 +704,7 @@ export const NODES = {
   // ---- Contact capture: only after real interest, company email only ----
   "contact.ask": {
     replies: [
-      { text: "Only so a person can follow up. This prototype does not store or send it. Type a work email, or skip for now." },
+      { text: "Only so a person can follow up with you at that address. Type a work email, or skip for now." },
     ],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
     choices: [{ id: "skip", label: "Skip for now", next: "intervention.noted" }],
@@ -717,30 +719,30 @@ export const NODES = {
     fallback: { text: "Just a work address, or skip. Either is fine.", next: null },
   },
   "contact.saved": {
-    replies: [{ text: "Simulated: a specialist would receive this thread and your work email, so you wouldn’t have to repeat yourself. In this prototype nothing was stored or sent, and no one has been contacted." }],
+    replies: [{ text: "Thank you. I’ve saved that address and shared this conversation with the team, so you won’t have to repeat yourself, and someone can follow up with you there. I can’t say exactly when, so I’ll stay here until someone joins." }],
     choices: [RESTART, { id: "more", label: "Keep exploring", next: "product.intro" }],
     routes: [],
-    fallback: { text: "That’s the end of the simulated handoff. Restart anytime.", next: null },
+    fallback: { text: "Your details are with the team. I’m here if you have another question.", next: null },
   },
 
   // ============ Frustrated: ALERT. The agent stops answering on its own ============
   "alert.handoff": {
     replies: [
       { text: "I’m sorry. Going in circles isn’t acceptable, and you shouldn’t have to keep repeating yourself." },
-      { text: "I’m going to stop trying to handle this myself and ask a person on the team to take it from here. In this prototype that handoff is simulated — no one has actually been contacted." },
+      { text: "I’m going to stop trying to handle this myself and ask a person on the team to take it from here. I’ve shared this conversation with them, so you won’t have to repeat yourself. I can’t say exactly when someone will join." },
     ],
-    choices: [{ id: "note", label: "Leave a simulated note for the team", next: "alert.noted" }, RESTART],
+    choices: [{ id: "note", label: "Leave a note for the team", next: "alert.noted" }, RESTART],
     routes: [],
   },
   "alert.noted": {
-    replies: [{ text: "Simulated note filed for a person to pick up: you’re frustrated, you’ve been going in circles, and the agent should not carry on alone. No one has been contacted." }],
+    replies: [{ text: "Your note is with the team, along with this conversation. A person, not this chat, will pick it up from here." }],
     choices: [RESTART],
     routes: [],
-    fallback: { text: "That’s the end of the simulated handoff. A person, not this chat, should pick up from here.", next: null },
+    fallback: { text: "Your note is with the team. A person will pick this up from here.", next: null },
   },
   "alert.hold": {
     replies: [{ text: "I’m holding here so a person can take this over. I won’t keep answering on my own, because that isn’t what would help." }],
-    choices: [{ id: "note", label: "Leave a simulated note for the team", next: "alert.noted" }, RESTART],
+    choices: [{ id: "note", label: "Leave a note for the team", next: "alert.noted" }, RESTART],
     routes: [],
     fallback: { text: "Still holding for a person. I’m not going to answer product questions in the meantime.", next: null },
   },
@@ -791,7 +793,7 @@ export const NODES = {
     fallback: { text: "No need to answer now. It’s a useful question to carry with you.", next: null },
   },
   "eval.pilot_next": {
-    replies: [{ text: "That’s a clear way to frame it. A person on the team can help define what a pilot would involve and what “working” would look like. I can’t scope or schedule it myself, and this prototype won’t book anything." }],
+    replies: [{ text: "That’s a clear way to frame it. A person on the team can help define what a pilot would involve and what “working” would look like. I can’t scope or schedule it myself, but I can pass this conversation to the team." }],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
     choices: [
       { id: "email", label: "Share a work email", next: "contact.ask" },
@@ -853,7 +855,6 @@ export const NODES = {
     replies: [
       { text: "Here’s a version you can pass along:" },
       { text: "Northstar’s Lead Intelligence Agent is an AI that holds the first conversation with people interested in your product. It asks one question at a time to understand their need, gathers qualification evidence, and is clear that it’s an AI. It doesn’t invent guarantees or pressure people, and it hands conversations to a person when a decision, commitment, or sensitive question comes up. Pricing, contract terms, and timelines come from the Northstar team, not the AI." },
-      { text: "This chat itself is a scripted prototype." },
     ],
     choices: [{ id: "thanks", label: "Thanks", next: "quiet.later" }, RESTART],
     routes: [],
@@ -1099,3 +1100,194 @@ export const REPAIR = {
     ],
   },
 };
+
+// ============ Questions that interrupt: answer first, then offer to carry on ============
+//
+// A visitor's question outranks the agent's own pending question. If the question is covered here the agent answers it;
+// if not, it says plainly that it does not have a reliable answer (and never answers a different question).
+// These entries are drafts from the product's own design documents: see KNOWLEDGE_BASE.md. Anything not verified says
+// "a person can tell you". Patterns are deliberately narrow and only run on messages that are questions.
+const ACTION_PERSON = { id: "person", label: "Talk to a person", next: "intervention.explain", kind: "action" };
+const ask = (id, label, next) => ({ id, label, next, kind: "ask" });
+
+Object.assign(NODES, {
+  "kb.diff": {
+    replies: [
+      { text: "I can only speak to what Northstar is designed to do, not how other products behave. What it’s built around is showing its work, so you’re never asked to trust a bare score." },
+      { text: "The agent keeps what it was told separate from what it’s guessing, and a person sees both: what was said, what the agent concluded, and what it couldn’t verify. That way your team can check the reasoning." },
+    ],
+    choices: [ask("evidence", "Can I see what it bases a decision on?", "kb.evidence"), ask("wrong", "What if it gets someone wrong?", "kb.wrong"), ask("person", "When does a person step in?", "kb.person"), ACTION_PERSON],
+  },
+  "kb.evidence": {
+    replies: [
+      { text: "Yes. For each conversation, a person on your team sees what the visitor actually said, what the agent concluded from it, and anything it couldn’t verify." },
+      { text: "Nothing is hidden behind a score: each conclusion points back to the words that led to it, so a person can agree with it or correct it." },
+    ],
+    choices: [ask("wrong", "What if it gets someone wrong?", "kb.wrong"), ask("how", "How does a conversation work?", "qualify.explain"), ask("cant", "What can’t it do?", "hesitant.boundaries"), ACTION_PERSON],
+  },
+  "kb.wrong": {
+    replies: [
+      { text: "The agent doesn’t decide on its own that someone is a buyer. It collects what the person says about budget, timing and who decides, and anything it hasn’t confirmed stays marked as unconfirmed rather than assumed." },
+      { text: "A person reviews before any commitment is made, so a wrong first impression gets corrected by someone who can stand behind the decision." },
+    ],
+    choices: [ask("evidence", "Can I see what it bases a decision on?", "kb.evidence"), ask("acct", "Who is accountable?", "trust.accountability"), ask("person", "When does a person step in?", "kb.person"), ACTION_PERSON],
+  },
+  "kb.person": {
+    replies: [
+      { text: "A person steps in when you ask for one, when a conversation is getting frustrating, or when a question needs a commitment, like pricing terms, contract or legal questions, or dates." },
+      { text: "When someone shows strong interest, the team is also told, so they can step in sooner. You can ask for a person at any point." },
+    ],
+    choices: [ask("sees", "What does the team see?", "kb.team_sees"), ask("how", "How does a conversation work?", "qualify.explain"), ACTION_PERSON],
+  },
+  "kb.team_sees": {
+    replies: [
+      { text: "When a person joins, they can read the conversation and a short summary, so you shouldn’t have to repeat yourself." },
+      { text: "The summary is meant to be honest: it doesn’t make things sound better or worse than you said." },
+    ],
+    choices: [ask("person", "When does a person step in?", "kb.person"), ask("evidence", "Can I see what it bases a decision on?", "kb.evidence"), ACTION_PERSON],
+  },
+  "kb.team": {
+    replies: [
+      { text: "It works alongside people on the sales team; it doesn’t replace them." },
+      { text: "A team can let the assistant reply on its own, have a person approve replies before they’re sent, or have a person lead live while the assistant helps." },
+    ],
+    choices: [ask("person", "When does a person step in?", "kb.person"), ask("cant", "What can’t it do?", "hesitant.boundaries"), ACTION_PERSON],
+  },
+  "kb.collect": {
+    replies: [
+      { text: "Mostly how you handle inquiries today, like roughly how many come in, what tools you use, and what’s been hard." },
+      { text: "If you’d like someone from the team to follow up, I’d ask for your name and how to reach you. You can skip anything, and I’ll say why I’m asking." },
+    ],
+    choices: [ask("data", "What happens to what I share?", "kb.data"), ask("how", "How does a conversation work?", "qualify.explain"), ACTION_PERSON],
+  },
+  "kb.data": {
+    replies: [
+      { text: "What you share is used to help you, for example so you aren’t asked the same thing twice. It isn’t used to pressure you." },
+      { text: "For specifics about where information is kept and for how long, a person on the team should answer, so you get it right." },
+    ],
+    choices: [ask("collect", "What will you ask me?", "kb.collect"), ask("sees", "What does the team see?", "kb.team_sees"), ACTION_PERSON],
+  },
+  "kb.pace": {
+    replies: [{ text: "You’re in control. You can ask questions, skip anything you’d rather not answer, pause, or stop whenever you like." }],
+    choices: [ask("how", "How does a conversation work?", "qualify.explain"), ask("collect", "What will you ask me?", "kb.collect"), ACTION_PERSON],
+  },
+  "kb.partners": {
+    replies: [{ text: "Yes. Northstar works with partners as well as directly with sales teams. A person on the partner team can tell you how it works." }],
+    choices: [ACTION_PERSON, ask("how", "How does a conversation work?", "qualify.explain")],
+  },
+  "kb.regions": {
+    replies: [{ text: "Right now Northstar supports teams in Europe, the Middle East and Africa, and in the Americas. For a specific country, or for language and data questions, a person can tell you." }],
+    choices: [ACTION_PERSON, ask("how", "How does a conversation work?", "qualify.explain")],
+  },
+  "kb.integrations": {
+    replies: [{ text: "I don’t have a reliable list of what Northstar connects to, and I won’t guess. A person on the team can tell you whether it works with your tools." }],
+    choices: [ACTION_PERSON, ask("how", "How does a conversation work?", "qualify.explain"), ask("cant", "What can’t it do?", "hesitant.boundaries")],
+  },
+  "kb.llm": {
+    replies: [{ text: "That’s a question about how data is handled behind the scenes, and a person should answer it so you get it right. I can’t say from here, and I won’t guess." }],
+    choices: [ACTION_PERSON, ask("data", "What happens to what I share?", "kb.data"), ask("cant", "What can’t it do?", "hesitant.boundaries")],
+  },
+  "kb.results": {
+    replies: [{ text: "I don’t have verified results to share, and I won’t offer any I can’t back up. A person on the team can talk about what to expect in your situation." }],
+    choices: [ACTION_PERSON, ask("how", "How does a conversation work?", "qualify.explain"), ask("cant", "What can’t it do?", "hesitant.boundaries")],
+  },
+  // After a person has finished helping, the assistant checks in; it never decides that on its own.
+  "rep.checkin": {
+    replies: [{ text: "Did that cover what you needed, or is there anything still open?" }],
+    choices: [
+      { id: "covers", label: "That covers it", next: "rep.thanks", kind: "action" },
+      { id: "open", label: "I still need something", next: "intervention.again", kind: "action" },
+      { id: "again", label: "I’d like a person again", next: "intervention.again", kind: "action" },
+    ],
+  },
+  "rep.thanks": {
+    replies: [{ text: "Glad that helped. I’m here if anything else comes up." }],
+    choices: [{ id: "more", label: "I have another question", next: "curious.keep", kind: "action" }, RESTART],
+  },
+});
+
+/** Narrow patterns, in order (most specific first). Only questions are checked. `node` may be an existing node. */
+export const KNOWLEDGE = [
+  { node: "kb.diff", pattern: /\b(how|why)\b.{0,25}\b(different|differs?|better|unlike)\b|\bblack.?box\b|\bwhy (should|would) (i|we) (choose|pick|use|trust) (you|northstar|this|it)\b|\bwhat makes (you|northstar|this|it)\b/i },
+  { node: "kb.evidence", pattern: /\b(see|show|view|know|understand|check)\b.{0,40}\b(evidence|reasoning|basis|why|how (it|the agent) (decides?|concludes?|judges?))\b|\bwhat evidence\b|\bhow (does|do|did) (it|the agent|you) (decide|conclude|judge|know)\b|\bexplain\b.{0,25}\b(decision|reasoning|score)\b/i },
+  { node: "kb.wrong", pattern: /\b(what|how)\b.{0,15}\b(if|when)\b.{0,50}\b(wrong|mistake|mistaken|bad (call|lead|recommendation)|no (budget|authority)|turns? out|misjudg\w*|qualif\w+ (someone|the wrong))\b|\bhow (accurate|reliable|trustworthy)\b|\bcan (it|the agent) (be|get) (wrong|it wrong)\b/i },
+  { node: "kb.person", pattern: /\bwhen (does|do|would|will) (a|the) (person|human|rep|team)\b|\bwho (steps|takes over|jumps) in\b|\bhow (does|do) (the )?(handoff|hand.?off|escalation)\b/i },
+  { node: "kb.team_sees", pattern: /\bwhat (does|do|will) (the|my|our) (team|rep|reps|sales team|person)\b.{0,20}\b(see|get|receive|know)\b|\bhave to repeat (myself|everything)\b/i },
+  { node: "kb.collect", pattern: /\bwhat (information|info|details|questions|data)\b.{0,40}\b(collect|ask(ed)?|need|want|gather|capture)\b|\bwhat (will|would|do) you (normally |usually |typically )?(ask|collect|need|gather)\b/i },
+  { node: "kb.data", pattern: /\bwhat (happens|do you do|will you do)\b.{0,30}\b(my|our|the)\b.{0,15}\b(info|information|data|details)\b|\b(are|do) you (tracking|recording|storing|saving|keeping)\b/i },
+  { node: "kb.pace", pattern: /\bdo (i|we) have to (share|give|answer|provide)\b|\bcan (i|we) (just )?(look around|browse|skip|stop|pause)\b/i },
+  { node: "kb.team", pattern: /\b(replace|take over|instead of)\b.{0,20}\b(our|the|my)\b.{0,15}\b(reps?|sdrs?|sales team|team)\b|\bdo (i|we) still need (reps?|sdrs?|people)\b/i },
+  { node: "kb.partners", pattern: /\b(partner|partners|agency|agencies|reseller|resell|white.?label|embed(ded)?|consultanc\w+)\b/i },
+  { node: "kb.regions", pattern: /\b(countries|country|region|regions|europe|emea|americas?|apac|asia|available in|supported in|where (are|is) (you|it|northstar) (available|based|offered))\b/i },
+  { node: "kb.llm", pattern: /\b(third.?party|llm|language model|openai|anthropic|sub.?processors?|model providers?|trained? on|train on)\b/i },
+  { node: "kb.integrations", pattern: /\b(integrat\w*|connects? (to|with)|\bapi\b|work(s)? with (our|my|the)|salesforce|hubspot|pipedrive|zoho|\bcrm\b)\b/i },
+  { node: "kb.results", pattern: /\b(results?|roi|conversion (rate|lift)|how much (more|better|faster)|improvements?|success rate|track record)\b/i },
+  { node: "qualify.explain", pattern: /\bhow (does|do|did) (it|this|the agent|northstar|you|a conversation)\b.{0,15}\b(work|qualif\w+|decide|talk|operate)\b/i },
+  { node: "hesitant.boundaries", pattern: /\b(what|which)\b.{0,25}\b(can'?t|cannot|won'?t|will not|not able|limits?|limitations?)\b/i },
+];
+
+/** True when the visitor is asking something (not just answering or acknowledging). */
+export function isQuestion(text) {
+  const t = String(text || "").replace(/[’‘]/g, "'").trim();
+  if (t.split(/\s+/).length < 3) return false;
+  return /\?\s*$/.test(t) || /^(how|what|why|who|where|when|which|can|could|do|does|did|is|are|will|would|should|may)\b/i.test(t);
+}
+
+/** Said when a question is not covered. Never answers a different question; escalates to a person, never repeats. */
+RECOVERY.gap = {
+  tiers: [
+    { text: "I don’t have a reliable answer to that, and I’d rather not guess. I can speak to what the agent does, how a conversation works, and what it won’t do.",
+      choices: [ask("cant", "What can’t it do?", "hesitant.boundaries"), ask("how", "How does a conversation work?", "qualify.explain"), ask("person", "When does a person step in?", "kb.person"), ACTION_PERSON] },
+    { text: "That one is best answered by a person. I can bring one in, or you can ask me something about how it works.",
+      choices: [ACTION_PERSON, ask("how", "How does a conversation work?", "qualify.explain"), ask("cant", "What can’t it do?", "hesitant.boundaries")] },
+    { text: "I’m not the right source for that. A person can answer it directly, and I can bring one in whenever you like.",
+      choices: [ACTION_PERSON] },
+  ],
+};
+
+/** Where the conversation picks up again after an interruption. */
+export const RESUME_PREFIX = "Back to where we were: ";
+
+// ============ Handoff: when the lead workspace is told, and what the rep sees ============
+//
+// `intervention` puts the conversation with a person (the assistant keeps helping until they join, or holds if frustrated);
+// `attention` tells the team but the assistant carries on. The first of these a visitor reaches opens a lead in the workspace.
+export const HANDOFF = {
+  nodes: {
+    "intervention.explain": { code: "asked_for_person", label: "Asked for a person", level: "intervention" },
+    "intervention.again": { code: "asked_for_person", label: "Asked for a person", level: "intervention" },
+    "alert.handoff": { code: "frustrated", label: "Frustrated: the assistant stopped answering", level: "intervention" },
+    "contact.saved": { code: "shared_email", label: "Shared a work email and wants a follow-up", level: "intervention" },
+    "buyer.handoff": { code: "ready", label: "Strong interest: ready to talk about next steps", level: "attention" },
+    "pricing.person": { code: "pricing", label: "Asked about pricing", level: "attention" },
+    "setup.person": { code: "setup", label: "Asked about setup and timing", level: "attention" },
+    "eval.pilot_next": { code: "pilot", label: "Interested in a pilot", level: "attention" },
+  },
+  rank: { attention: 1, intervention: 2 },
+  // Plain-language lines for the rep's summary, from the steps the visitor went through.
+  topics: {
+    "trust.burned": "Has been burned by a similar tool before",
+    "trust.skeptic": "Wants to test the agent’s honesty",
+    "trust.morework": "Worried it will create more work for their team",
+    "trust.accountability": "Asked who is accountable if it gets something wrong",
+    "trust.reviews": "Asked for reviews or references",
+    "trust.incentive": "Asked how Northstar makes money",
+    "hesitant.privacy": "Asked what happens to their data",
+    "pricing.person": "Asked about pricing",
+    "setup.person": "Asked about setup effort and timing",
+    "eval.compare": "Is comparing options",
+    "eval.pilot": "Mentioned starting small or a pilot",
+    "stakeholder.open": "Needs buy-in from others",
+    "unsupported.honest": "Asked for a guarantee",
+    "unsupported.timeline": "Asked for a guaranteed timeline",
+    "buyer.urgency": "Has a deadline",
+    "kb.llm": "Asked about third-party model providers",
+    "kb.regions": "Asked where it is available",
+    "kb.partners": "Asked about partnering",
+  },
+};
+
+// A node with no fallback of its own (the answers above) asks what else the visitor wants to know.
+for (const [id, node] of Object.entries(NODES)) {
+  if (id.startsWith("kb.") && !node.fallback) node.fallback = { text: "Is there anything else you’d like to know? You can ask me, or I can bring in a person." };
+}
