@@ -1,5 +1,6 @@
 import { WIDGET_CONFIG } from "./config.js";
 import { createConversation } from "./engine.js";
+import { createBrowserStore } from "./store.js";
 
 const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -16,6 +17,8 @@ function el(html) {
 export function mountWidget(root) {
   const conversation = createConversation({
     config: WIDGET_CONFIG,
+    // A conversation that reaches a person is saved here; the lead workspace (workspace.html) reads it and writes back.
+    store: createBrowserStore(),
     // The engine works out how long a reply of this length should take; reduced motion shortens it.
     onTypingDelay: ({ ms }) => (REDUCE_MOTION ? 80 : ms),
   });
@@ -39,7 +42,7 @@ export function mountWidget(root) {
           <span class="ns-panel__mark" aria-hidden="true"></span>
           <div>
             <h2 id="ns-widget-title" class="ns-panel__name">${WIDGET_CONFIG.assistantName}</h2>
-            <p class="ns-panel__status"><span class="ns-panel__dot"></span>${WIDGET_CONFIG.statusLabel}</p>
+            <p class="ns-panel__status"><span class="ns-panel__dot"></span><span data-status-label>${WIDGET_CONFIG.statusLabel}</span></p>
           </div>
         </div>
         <div class="ns-panel__actions">
@@ -67,6 +70,7 @@ export function mountWidget(root) {
   const form = panel.querySelector("[data-form]");
   const input = panel.querySelector("#ns-widget-input");
   const sendButton = panel.querySelector(".ns-send");
+  const statusLabel = panel.querySelector("[data-status-label]");
   let open = false;
   let lastFocus = null;
   let asksHiddenAt = -1; // the message count at which the visitor hid "Ask me things like:"
@@ -103,7 +107,7 @@ export function mountWidget(root) {
       announcedCount = messages.length; // restart or no change
       return;
     }
-    const fresh = messages.slice(announcedCount).filter((m) => m.role === "assistant");
+    const fresh = messages.slice(announcedCount).filter((m) => m.role !== "user"); // assistant, a person, and join/leave lines
     announcedCount = messages.length;
     if (open && fresh.length) {
       announcer.textContent = "";
@@ -115,12 +119,22 @@ export function mountWidget(root) {
     thread.replaceChildren();
 
     for (const msg of snapshot.messages) {
+      if (msg.role === "event") {
+        // "Maya has joined the conversation": a quiet line, not a bubble.
+        const line = document.createElement("p");
+        line.className = "ns-event";
+        line.textContent = msg.text;
+        thread.append(line);
+        continue;
+      }
       const row = document.createElement("article");
       row.className = `ns-msg ns-msg--${msg.role}${msg.queued ? " ns-msg--queued" : ""}`;
       row.innerHTML = `
-        <p class="ns-msg__meta">${msg.role === "assistant" ? WIDGET_CONFIG.assistantName : "You"} · ${msg.queued ? "waiting" : formatTime(msg.at)}</p>
+        <p class="ns-msg__meta"><span data-who></span> · ${msg.queued ? "waiting" : formatTime(msg.at)}</p>
         <p class="ns-msg__text"></p>
       `;
+      row.querySelector("[data-who]").textContent =
+        msg.role === "assistant" ? WIDGET_CONFIG.assistantName : msg.role === "rep" ? `${msg.name} · Northstar team` : "You";
       row.querySelector(".ns-msg__text").textContent = msg.text;
       thread.append(row);
     }
@@ -147,7 +161,8 @@ export function mountWidget(root) {
         wrap.append(btn);
       }
       thread.append(wrap);
-    } else if (!snapshot.typing) {
+    } else if (!snapshot.typing && !snapshot.rep) {
+      // (no suggestions while a person is in the conversation: they are talking, not the script)
       const nodeChoices = snapshot.choices.filter((c) => c.next !== "__restart__");
       const restartChoice = snapshot.choices.find((c) => c.next === "__restart__");
       const asks = nodeChoices.filter((c) => kindOf(c) === "ask");
@@ -213,6 +228,12 @@ export function mountWidget(root) {
 
     // The visitor can keep typing while a reply is on its way; messages wait in order. Only a full queue holds the button.
     sendButton.disabled = !snapshot.canSend;
+    input.placeholder = snapshot.rep ? `Message ${snapshot.rep.name}…` : WIDGET_CONFIG.placeholder;
+    statusLabel.textContent = snapshot.rep
+      ? `${snapshot.rep.name} from the team is with you`
+      : snapshot.mode === "waiting"
+        ? "The team has been told"
+        : WIDGET_CONFIG.statusLabel;
     scrollThread();
     announce(snapshot.messages);
 

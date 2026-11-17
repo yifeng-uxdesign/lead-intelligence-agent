@@ -351,3 +351,11 @@ h4 { font-size: 17px; font-weight: 600; }
 }
 .ns-ask:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .ns-ask:focus-visible, .ns-asks__close:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+/* A person from the team: a distinct bubble, and quiet lines for joining and leaving. */
+.ns-msg--rep .ns-msg__meta { font-weight: 600; color: var(--blue); }
+.ns-msg--rep .ns-msg__text { background: var(--blue-soft); border: 1px solid #c5d3e6; }
+.ns-event {
+  align-self: center; margin: 6px 0; padding: 4px 12px; max-width: 92%; text-align: center;
+  font-size: 13px; line-height: 1.4; color: var(--muted); background: rgba(0, 0, 0, 0.04); border-radius: 999px;
+}
