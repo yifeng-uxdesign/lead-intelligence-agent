@@ -91,6 +91,20 @@ the assistant does not know, and says a person can answer.
 - *Note:* it must not imply any language support or compliance claim (both open), and some countries inside those regions may be restricted (a legal decision).
 
 
+### Drafts now live in the widget (for testing; approval still needed)
+
+Fourteen answers are wired into the demo (`kb.*` in `northstar/scenarios.js`) so a question that interrupts is answered, not ignored. They reuse K01 to K12 and add three more, all from the repository's own documents (`soul.md`, `CLAUDE.md`, `docs/lead-data-model.md`).
+
+| Node | Answers | From |
+|---|---|---|
+| `kb.diff` | "How is it different? I don't want a black-box score" | **New (K13).** `soul.md` values 5 and 7; the decision trace |
+| `kb.evidence` | "Can I see what evidence it uses?" | **New (K14).** The data model's rule that every value carries its source |
+| `kb.wrong` | "What if it qualifies someone who has no budget or authority?" | **New (K15).** Unknown is first-class; a person reviews before any commitment |
+| `kb.person`, `kb.team_sees`, `kb.team`, `kb.collect`, `kb.data`, `kb.pace`, `kb.partners`, `kb.regions` | K05, K06, K07, K10, K09, K08, K11, K12 | as listed above |
+| `kb.integrations`, `kb.llm`, `kb.results` | Unverified topics: "I don't have a reliable list, and I won't guess; a person can tell you" | the confirmed unknowns table below |
+
+K13 to K15 make product claims ("a person sees what the visitor said, what the agent concluded, and what it couldn't verify"; "each conclusion points back to the words that led to it"). They describe design intent and need your confirmation.
+
 ---
 
 ## Known unknowns: the assistant says "a person can tell you"

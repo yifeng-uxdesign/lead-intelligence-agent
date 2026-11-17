@@ -27,6 +27,23 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-17 — Second owner test: a real handoff in the demo, questions first
+
+**Context:** The owner ran S1 and sent screenshots showing the person path ("prototype", "simulated"), interruptions ignored, and irrelevant answers with "restart".
+
+**Decision (owner):** remove "prototype" and "simulated" from the chat and pretend the handoff is real: the agent stores the customer's information and hands off to live sales reps. Implemented in the demo's own world (rule R50): a lead store, a person who can join, reply, hand back, resolve or close, and a provisional `workspace.html`, so the claims in the chat are true inside the demo. The page around the widget keeps its "scripted prototype, nothing leaves your browser" line (outside the chat).
+
+**Findings:**
+- **Interruptions ignored: a design deficit, not an LLM gap.** The original script only understood each step's own answers plus about 25 shared topics. The design already said what to do (answer, or say it cannot) but it was unbuilt. Built now (R49): question-first answering from 14 draft answers, an honest "no reliable answer" ladder, and "Carry on where we left off".
+- **The root of the cascade was a keyword false positive** ("our sales reps" read as a request for a person; "reps review leads" as a request for reviews). Fixed narrowly; measured on the existing conformance cases: no change either way.
+- **Design vs LLM:** about two thirds of the bad experience is design (coverage, question handling, honest gaps) and can be fixed deterministically; an LLM would help with paraphrase understanding and phrasing, but could not decide what is true to say, which needs the approved knowledge either way.
+
+**Checks:** 43 unit tests pass; conformance widget pass 0.600 and repeat 0.056 unchanged, B2, B4 and B5 now get a real answer instead of a fallback; pytest 304 passed, 3 xfailed; a two-window browser run of the whole loop (visitor asks for a person, shares an email, the rep joins and replies, the assistant stays quiet, the rep resolves, the assistant checks in) clean with no console errors.
+
+**Still open:** the ask engine (S6 and S10 failures); target-aware frustration; the owner's own workspace design to replace the provisional page; approval of the draft answers, including three new product claims (K13 to K15).
+
+---
+
 ### 2026-11-16 — First owner test: pacing, highlighted narration, Pigment-style suggestions
 
 **Context:** The owner tried the demo (starting from "How does your agent qualify leads?") and raised two issues, with a Pigment screenshot as a reference.

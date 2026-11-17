@@ -144,6 +144,21 @@ Recovery ladder, repair intents, turn queue and pacing are built (`BUILD_PLAN.md
 **Still failing, and why** (none of these were in scope for step 1): S1 turn 1 and S2 turns 1 and 2 (routing false positives); S2 turn 5 repeats turn 4 (a normal reply replaying; the repeat guard covers recovery only); S6 turns 3 to 5 keep asking questions after a person was requested, and S10 ignores what the visitor said (ask engine, slice 3); S11 holds one turn early; all copy still says "simulated", "prototype" and "fit".
 S1 also reads worse in one respect: once the visitor is wrongly escalated, the ladder's replies ("Which would you like?", "I'll leave a note") make that false escalation more visible. Fixing the routing, not the ladder, is the remedy.
 
+## 4c. After build step 2 (2026-11-17): questions first, a real handoff
+
+Full transcripts: `eval/after-step2-2026-11-17.md`.
+
+| Where | Before | After |
+|---|---|---|
+| S1 turn 1 ("our sales reps ended up ignoring…") | sent straight to a person | handled as a past bad experience; no escalation |
+| S1 turns 2 to 4 (different from a black-box score? what if it qualifies someone with no budget? what evidence?) | a note was "filed", then "restart anytime" | each answered (`kb.diff`, `kb.wrong`, `kb.evidence`) |
+| S4 turn 4 (third-party LLM providers?) | an unrelated "we can stop whenever you want" | answered honestly: a person should answer; no guess |
+| S6 turn 2 (what information do you collect?) | filed a note | answered (`kb.collect`) |
+| "prototype" or "simulated" anywhere in a transcript | many | none |
+| The handoff | text only | the lead is saved, a person can join and reply, hand back, resolve or close (`workspace.html`); S11's second half can now be played by hand |
+
+**Still failing:** S6 turns 3 to 5 keep asking qualification questions after a person was requested, and a question about whether the process suits them gets the honest "no reliable answer" (needs the ask engine); S10 ignores what the visitor said in the first message (ask engine); S11 holds one turn early on frustration about other vendors; S2 turn 5 still repeats turn 4; S4 turns 1 and 3 get the same privacy reply.
+
 ## 5. Review of the scenario set
 
 **Strong.** The set covers distinct dimensions, uses realistic phrasing, states failure signals up front, and the "don't help the agent" protocol is the right one.

@@ -1,6 +1,6 @@
 # Northstar conversation design plan
 
-Status: **design draft, partly built.** Built and tested on 2026-11-16: the recovery ladder and repair intents (Part 5), the turn queue and length-aware pacing (6.1, 6.2). Everything else is still design. See `BUILD_PLAN.md` for the sequence, results and what is deferred.
+Status: **design draft, partly built.** Built and tested: the recovery ladder and repair intents (Part 5), the turn queue and bubble-by-bubble pacing (6.1, 6.2), question-first answering with an honest "no reliable answer" (R49), and the handoff with a provisional lead workspace (3.4, 6.4; R50). Everything else is still design. See `BUILD_PLAN.md`.
 Written 2026-11-12. Companion to the proposal in `PLANNING_LOG.md`.
 
 How to read this: Part 0 is the vision and the language rules (what the visitor should feel, and the words we
@@ -184,6 +184,9 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
 - R46. **Do not narrate your own process.** No highlighted or separate lines such as "I'm explaining this before asking you anything". The message does the thing; the reason for a question sits inside the question (R3). *(Added after the owner's first test, 2026-11-16; it removed 13 such lines and folded 5 into their questions.)*
 - R47. **Replies arrive one bubble at a time**, each after a pause that fits its length, with the typing indicator between them. Suggested replies appear only after the last bubble.
 - R48. **Offer two kinds of next step** (the Pigment pattern): **"Ask me things like:"**, a short list of questions the visitor might put next (about three, hideable), and **action buttons** for things to do (talk to a person, share an email, restart). Suggestions are written per step, and are never used to steer.
+
+- R49. **A visitor's question outranks the agent's own pending question.** Answer it from approved knowledge; if nothing covers it, say plainly that there is no reliable answer and offer what can be answered or a person. Never reply to a question with a different question, never send the visitor to start over, and let them carry on where they left off. *(Added after the owner's second test: the script ignored interruptions.)*
+- R50. **In the demo the handoff is real in the demo's world.** The conversation and anything the visitor chooses to share are saved to the lead workspace; a person can join, reply, hand back, resolve or close; the chat never says "prototype" or "simulated". The page around the widget says it is a scripted demo and that nothing leaves the browser, so that disclosure stays out of the chat. Time promises stay out (R32).
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -867,6 +870,8 @@ while decisions stay deterministic.
 | Tier 3 release | Offering to transfer to a person |
 
 ### 6.4 Demo mechanics: the lead workspace stand-in
+
+**Built on 2026-11-17 (provisional):** `store.js` (leads and the rep's actions, saved in the browser and shared between two windows), the engine's handoff and presence states, the widget's person and join/leave lines, and `workspace.html`. The text below is the original plan; the owner's own workspace design will replace the page.
 
 The real lead workspace is not in this repository (the backend only exposes the rep-side data endpoints). For the
 demo we build a small **in-page stand-in**: no network, no login, deterministic, local state.

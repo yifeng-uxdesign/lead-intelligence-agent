@@ -48,16 +48,16 @@ The design covers conversation behavior well. These are the gaps the review foun
 | **1. Recovery and repair** | Three-tier ladder for 23 node groups, no verbatim repeats, tier 3 can offer its own suggested replies; five repair intents; varied holding lines | **Done** |
 | **2. Turn-taking and pacing** | Input stays enabled; up to two messages wait in order; nothing dropped; restart clears them; replies appear **one bubble at a time**, each after a typing pause that fits its length | **Done** |
 | **3. Ask engine v1** | Field registry replacing the fixed four questions; ladder levels; interest gauge; memory with provenance (never re-ask what was said); clusters and consent; a per-turn trace. Fixes S10 and the post-request questions in S6 | Next. Needs a short design pass first, because the data model and the registry need to agree on field ids |
-| **4. Routing correctness** | Target-aware frustration, the "sales rep" keyword, the "review" pattern. Measured on the existing conformance cases (A1 to A4, C8, H4 fail today) | Needs your approval, because pattern changes are the easiest way to overfit |
-| **5. Knowledge layer and copy pass** | Approved facts, knowledge-gap recovery, the word-list rewrite of all existing copy | Needs approvals and gap 4 |
-| **6. Presence and the lead workspace stand-in** | Person joins, hand back, resolve, the visitor-side states | Needs the workspace session; the copy changes here, together |
+| **4. Routing correctness** | Two keyword false positives fixed narrowly ("our sales reps…" no longer reads as a request for a person; "reps review leads" no longer reads as a request for reviews), measured on the existing conformance cases (no change). **Target-aware frustration is still open** ("sent me in circles" about other vendors still holds) | **Partly done** |
+| **5. Knowledge layer and copy pass** | **Started:** 14 draft answers (from the design documents) and an honest "no reliable answer" ladder, so a question that interrupts is answered or declined plainly. Still to do: your approval of the drafts, suggestions written per node, the word-list rewrite of the rest of the copy | **Started** |
+| **6. Presence and the lead workspace stand-in** | **Built (provisional):** a lead store, a person can join, reply, hand back, resolve or close, and the widget shows it; `workspace.html` is the rep's side. Your own workspace design replaces the page later | **Done, provisional** |
 
 ## 5. What was built in this pass
 
 - `scenarios.js`: `RECOVERY` (23 groups, alternates, node mapping) and `REPAIR` (five intents, reasons for each question). Each grouped node's own `fallback` is kept equal to tier 1 so the conformance observer keeps counting the first reply to an unmatched input as a fallback.
 - `engine.js`: the ladder (`pickRecovery`), repair recognition, the turn queue, length-aware pacing (`paceMs`), staging of replies so the typing time can depend on their length.
 - `widget.js`, `styles.css`, `config.js`: the input is never disabled; queued messages show as "waiting"; the Send button is disabled only when two are waiting; pacing values moved to `config.pacing` (a pause of 600 to 1,800 ms before **each** bubble).
-- `test/`: 26 tests, including that no recovery text contains an internal word or claims a person has been told.
+- `test/`: 43 tests, including that no recovery text contains an internal word or claims a person has been told.
 
 **Not changed:** the existing node copy (still has "simulated", "prototype", "fit"), routing patterns, the fit questions, the welcome flow. Behavior a visitor sees before any miss or interruption is unchanged.
 
@@ -71,6 +71,16 @@ The owner tried the demo, starting from "How does your agent qualify leads?", an
 
 Also changed along the way: "prospect" no longer appears in the sentence that offers to ask about the visitor's sales process.
 
+### 5c. Changes after the owner's second test (2026-11-17)
+
+The owner ran the S1 scenario and raised three things. All three were worked on the same branch (PR #9).
+
+1. **"Remove prototype and simulated; pretend it is real, store the customer's information and hand off to live reps."** Done, in the demo's own world. Every "prototype", "simulated" and "no one has been contacted" line is gone from the chat. So the claims are true inside the demo, a lead store (`store.js`) now saves the conversation and any work email the visitor shares, and a **lead workspace page** (`workspace.html`) is the sales rep's side: it shows who needs a person and why, what is known, the contact, and the conversation, and the rep can **join, reply, hand back, resolve or close**. The widget shows the person's name and messages, the assistant goes quiet while they are in, and after a resolve the assistant asks whether it is really resolved. Both pages share one browser, so the demo is run in two windows. The page around the widget still says it is a scripted prototype and that nothing leaves the browser; that disclosure stays outside the chat. Messages go only to the other window, never over a network.
+2. **"When I interrupt with another question, the agent ignores it and returns to its last question. Is that on purpose?"** No. The original script only understood the current step's own answers plus about 25 shared topics; anything else counted as "no match" for the current step. My recovery ladder made that less repetitive but did not make it understand. The design already said what should happen (decision table, 3.3: answer the question, or say it cannot), but it was not built. It is now: a question outranks the agent's own pending question; it is answered from the drafted knowledge or declined plainly ("I don't have a reliable answer to that, and I'd rather not guess"), and the visitor can pick the earlier question back up with **"Carry on where we left off"**. Answering the earlier question after an interruption also works.
+3. **"Can the agent only handle predefined questions? Is it a design flaw or missing LLM integration?"** Both, in different proportions. See the reply to the owner and rule R49.
+
+Also fixed on the way: the two keyword false positives that started the S1 cascade (see slice 4).
+
 ## 6. Measured results
 
 | Check | Before | After |
@@ -81,7 +91,7 @@ Also changed along the way: "prospect" no longer appears in the sentence that of
 | Conformance, widget, fallback rate | 0.188 | 0.116 (**a measurement artifact, not an improvement**: the observer only counts a reply as a fallback if it matches the node's own fallback text, so the later rungs of the ladder are no longer counted) |
 | L1 (same reply five times in a row) | failing | **passing** |
 | `pytest` | 304 passed, 3 xfailed | 304 passed, 3 xfailed |
-| Unit tests (`northstar/test/run.sh`) | none | 26 passed |
+| Unit tests (`northstar/test/run.sh`) | none | 43 passed |
 | Interruptions answered specifically (outside the frustrated hold) | 0 of 42 for four of the six; email asked again 3 of 8 | **42 of 42**; the email is never asked again |
 | Browser check (Chromium) | n/a | input enabled and focused mid-reply, 2 waiting bubbles, Send disabled when full, third message kept in the input, clean restart, no console errors, reduced motion about 200 ms |
 
