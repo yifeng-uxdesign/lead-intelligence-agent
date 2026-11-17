@@ -2,7 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createConversation, paceMs, pickRecovery } from "../engine.js";
 import { WIDGET_CONFIG } from "../config.js";
-import { NODES, RECOVERY, REPAIR } from "../scenarios.js";
+import { NODES, RECOVERY, REPAIR, RESUME_PREFIX, HANDOFF, KNOWLEDGE, isQuestion } from "../scenarios.js";
+import { createMemoryStore } from "../store.js";
 
 const fast = (ms = 5) => createConversation({ config: WIDGET_CONFIG, onTypingDelay: () => ms });
 const assistantTexts = (conv) => conv.getState().messages.filter((m) => m.role === "assistant").map((m) => m.text);
@@ -301,4 +302,213 @@ test("the main explanation nodes offer questions to ask and actions to take", ()
     assert.ok(kinds.filter((k) => k === "ask").length >= 3, `${id} needs three suggested questions`);
     assert.ok(kinds.includes("action"), `${id} needs an action`);
   }
+});
+
+// ---- questions first, and the honest "no reliable answer" ----
+const withStore = (ms = 5) => { const store = createMemoryStore(); return { store, c: createConversation({ config: WIDGET_CONFIG, store, onTypingDelay: () => ms }) }; };
+const settle = (ms = 120) => new Promise((r) => setTimeout(r, ms));
+
+test("isQuestion tells a question from an answer", () => {
+  for (const q of ["How is your agent different?", "What can't it do", "Can you send me the docs", "Is it priced per seat?"]) assert.equal(isQuestion(q), true, q);
+  for (const a of ["about 300 a month", "We use HubSpot.", "ok", "Reps triage everything", "Thanks, that helps"]) assert.equal(isQuestion(a), false, a);
+});
+
+test("questions that used to get an irrelevant reply now reach an answer", async () => {
+  const cases = [
+    ["How is your agent different? I don't want another black-box score that nobody understands.", "kb.diff"],
+    ["What happens if it qualifies someone as a good lead but the person turns out to have no budget or decision-making authority?", "kb.wrong"],
+    ["Can I see what evidence the agent actually uses to make that decision?", "kb.evidence"],
+    ["Does your system send prospect information to third-party LLM providers?", "kb.llm"],
+    ["What information would you normally collect?", "kb.collect"],
+    ["When does a person step in?", "kb.person"],
+    ["Do you work with agencies?", "kb.partners"],
+  ];
+  for (const [q, node] of cases) {
+    const c = fast();
+    await c.send(q);
+    assert.equal(c.getState().nodeId, node, q);
+  }
+  for (const k of KNOWLEDGE) assert.ok(NODES[k.node], k.node);
+});
+
+test("an interrupting question is answered, the earlier question can be picked back up, and nothing is lost", async () => {
+  const c = fast();
+  await c.startFrom("promising");
+  await c.choose("ask");
+  const q = c.getState().nodeId; // a fit question
+  await c.send("How is your agent different? I don't want another black-box score.");
+  assert.equal(c.getState().nodeId, "kb.diff");
+  assert.ok(c.getState().choices.some((x) => x.id === "resume"), "offers to carry on");
+  assert.ok(c.getState().choices.filter((x) => (x.kind || "") === "ask").length >= 2);
+  await c.choose("resume");
+  const said = assistantTexts(c).at(-1);
+  assert.ok(said.startsWith(RESUME_PREFIX));
+  assert.equal(c.getState().nodeId, q); // back on the question, not marked answered
+});
+
+test("answering the earlier question after an interruption goes back to it (no dead end)", async () => {
+  const c = fast();
+  await c.startFrom("promising");
+  await c.choose("ask");
+  const q = c.getState().nodeId;
+  await c.send("Can I see what evidence the agent actually uses?");
+  assert.equal(c.getState().nodeId, "kb.evidence");
+  await c.send("a few hundred a month");
+  assert.notEqual(c.getState().nodeId, "kb.evidence");
+  assert.notEqual(c.getState().nodeId, q); // the answer was understood and the conversation moved on
+});
+
+test("a question nothing covers gets an honest gap reply that escalates, offers a person and never repeats", async () => {
+  const c = fast();
+  await c.startFrom("promising");
+  await c.choose("ask");
+  const q = c.getState().nodeId;
+  const seen = [];
+  for (const m of ["Do you have a mobile app for iOS?", "What colour is your logo exactly?", "Does it work on weekends and holidays too?", "Is there a free tier of any kind available?"]) {
+    await c.send(m);
+    seen.push(assistantTexts(c).at(-1));
+    assert.equal(c.getState().nodeId, q); // still on the question the visitor left
+  }
+  assert.match(seen[0], /I don’t have a reliable answer/);
+  assert.deepEqual(adjacentRepeats(seen), []);
+  assert.ok(c.getState().choices.some((x) => x.id === "person"));
+  assert.ok(c.getState().choices.some((x) => x.id === "resume"));
+  assert.doesNotMatch(seen.join(" "), /Restart|start over/i);
+});
+
+test("a non-question that matches nothing is still handled by the ladder, not the gap", async () => {
+  const c = fast();
+  await c.startFrom("curious");
+  await c.send("zzz qqq xxx");
+  assert.doesNotMatch(assistantTexts(c).at(-1), /I don’t have a reliable answer/);
+});
+
+// ---- handoff: the conversation is saved for a person, and the person's actions come back ----
+test("handoff copy never says prototype or simulated, and never promises a time", () => {
+  const all = [...Object.values(NODES).flatMap((n) => [...n.replies.map((r) => r.text), n.fallback?.text || "", ...(n.choices || []).map((c) => c.label)]),
+    ...Object.values(RECOVERY.groups).flatMap((g) => g.tiers.map((t) => t.text))];
+  for (const t of all) {
+    assert.doesNotMatch(t, /prototype|simulated|no one has (actually )?been contacted|this demo/i, t);
+    assert.doesNotMatch(t, /\b(within|in|under) (\d+|one|two|three|a few) (minutes?|hours?|days?)\b/i, `a time promise: ${t}`);
+  }
+});
+
+test("asking for a person saves a lead with the reason, a summary and the transcript", async () => {
+  const { store, c } = withStore();
+  await c.send("We get about 800 inbound leads a month and we use HubSpot");
+  await c.send("I want to speak to a real person please");
+  const [lead] = store.listLeads();
+  assert.ok(lead, "a lead was saved");
+  assert.equal(lead.reason.code, "asked_for_person");
+  assert.equal(lead.status, "needs_rep");
+  assert.equal(c.getState().mode, "waiting");
+  assert.ok(lead.transcript.some((m) => m.role === "user" && /real person/.test(m.text)));
+  assert.ok(lead.summary.some((l) => /inbound inquiries/i.test(l)), JSON.stringify(lead.summary));
+});
+
+test("a work email is saved with the lead; a personal one is not", async () => {
+  const { store, c } = withStore();
+  await c.send("I want to speak to a real person please");
+  await c.choose("email");
+  await c.send("my address is sam@gmail.com");
+  assert.equal(store.listLeads()[0].contact.email, undefined);
+  await c.send("sam@brightpath-software.com.");
+  assert.equal(store.listLeads()[0].contact.email, "sam@brightpath-software.com");
+  assert.equal(c.getState().nodeId, "contact.saved");
+});
+
+test("a person joins: their name shows, the assistant goes quiet, messages travel both ways", async () => {
+  const { store, c } = withStore();
+  await c.send("I want to speak to a real person please");
+  const id = store.listLeads()[0].id;
+  store.postRepAction(id, { type: "join", name: "Maya" });
+  let s = c.getState();
+  assert.equal(s.mode, "rep");
+  assert.equal(s.rep.name, "Maya");
+  assert.ok(s.messages.some((m) => m.role === "event" && /Maya from the Northstar team has joined/.test(m.text)));
+  const before = s.messages.filter((m) => m.role === "assistant").length;
+  await c.send("Hi Maya, thanks for joining");
+  assert.equal(c.getState().messages.filter((m) => m.role === "assistant").length, before); // the assistant stayed silent
+  assert.ok(store.getLead(id).transcript.some((m) => m.role === "user" && /thanks for joining/.test(m.text)));
+  assert.equal(store.getLead(id).status, "with_rep");
+  store.postRepAction(id, { type: "message", name: "Maya", text: "Happy to help. What brought you here?" });
+  assert.ok(c.getState().messages.some((m) => m.role === "rep" && m.name === "Maya" && /Happy to help/.test(m.text)));
+});
+
+test("handing back returns the conversation to the assistant", async () => {
+  const { store, c } = withStore();
+  await c.send("I want to speak to a real person please");
+  const id = store.listLeads()[0].id;
+  store.postRepAction(id, { type: "join", name: "Maya" });
+  store.postRepAction(id, { type: "handback", name: "Maya" });
+  assert.equal(c.getState().mode, "agent");
+  assert.ok(c.getState().messages.some((m) => m.role === "event" && /handed the conversation back/.test(m.text)));
+  const n = assistantTexts(c).length;
+  await c.send("What can't it do?");
+  assert.ok(assistantTexts(c).length > n); // the assistant answers again
+});
+
+test("resolving ends a hold, and the assistant asks whether it is really resolved", async () => {
+  const { store, c } = withStore();
+  await c.send("This is useless, I'm fed up");
+  const id = store.listLeads()[0].id;
+  assert.equal(store.getLead(id).reason.code, "frustrated");
+  store.postRepAction(id, { type: "join", name: "Maya" });
+  store.postRepAction(id, { type: "resolve", name: "Maya" });
+  await settle();
+  assert.equal(store.getLead(id).status, "resolved");
+  assert.equal(c.getState().nodeId, "rep.checkin");
+  assert.deepEqual(c.getState().choices.map((x) => x.id), ["covers", "open", "again"]);
+  await c.choose("again"); // the visitor can reopen it at once
+  assert.equal(store.getLead(id).status, "needs_rep");
+  assert.equal(c.getState().mode, "waiting");
+});
+
+test("a person's action that arrives while a reply is on its way is applied right after it", async () => {
+  const { store, c } = withStore(40);
+  await c.send("I want to speak to a real person please");
+  const id = store.listLeads()[0].id;
+  const p = c.send("Tell me more about how Northstar works");
+  store.postRepAction(id, { type: "join", name: "Maya" }); // mid-reply
+  assert.notEqual(c.getState().mode, "rep"); // not yet: the reply finishes first
+  await p;
+  await settle(60);
+  assert.equal(c.getState().mode, "rep");
+});
+
+test("starting over ends the open lead for the person", async () => {
+  const { store, c } = withStore();
+  await c.send("I want to speak to a real person please");
+  const id = store.listLeads()[0].id;
+  c.restart();
+  assert.equal(store.getLead(id).status, "closed");
+  assert.equal(store.getLead(id).endedBy, "visitor");
+});
+
+test("without a store nothing is saved and nothing breaks (the conformance suite runs this way)", async () => {
+  const c = fast();
+  await c.send("I want to speak to a real person please");
+  assert.equal(c.getState().mode, "waiting");
+});
+
+test("the lead store keeps what each writer owns and tells subscribers", () => {
+  const a = createMemoryStore();
+  let pings = 0;
+  a.subscribe(() => pings++);
+  a.upsertLead({ id: "x", status: "needs_rep", transcript: [{ role: "user", text: "hi", at: 1 }] });
+  a.upsertLead({ id: "x", status: "with_rep" });
+  a.postRepAction("x", { type: "join", name: "Maya" });
+  a.postRepAction("x", { type: "message", name: "Maya", text: "hello" });
+  assert.equal(pings, 4);
+  assert.equal(a.getLead("x").status, "with_rep");
+  assert.equal(a.getLead("x").transcript.length, 1); // fields merge
+  assert.deepEqual(a.getActions("x").map((t) => t.type), ["join", "message"]);
+  assert.equal(createMemoryStore().listLeads().length, 0); // stores are independent
+  a.clear();
+  assert.equal(a.listLeads().length, 0);
+});
+
+test("every handoff trigger points at a real node", () => {
+  for (const id of Object.keys(HANDOFF.nodes)) assert.ok(NODES[id], id);
+  for (const id of Object.keys(HANDOFF.topics)) assert.ok(NODES[id], id);
 });
