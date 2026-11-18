@@ -27,6 +27,16 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-18 — Failure list written from the owner's testing
+
+**Context:** The owner asked for a written failure list based on their test feedback.
+
+**Output:** `northstar/FAILURE_LIST.md`: nine failures the owner reported (F1 to F9) with cause, fix and what remains; eleven more I found in the same flows (R1 to R11), labelled as mine; a sort by cause; and how to re-test each fix.
+
+**Summary:** of the nine reported, six are fixed (pace, highlighted narration, real handoff wording and flow, the false escalation, plus two explained process issues), two are partly fixed (suggestions only hand-written for two steps; interruptions and free-form questions covered for 14 topics), one lasting fix is open (a hosted test address). Of the eleven found by me, all are open; the largest is the ask engine (S6, S10). Two of the nine were my own mistakes (a single pause per reply; not auditing the 18 narration lines against my own rules).
+
+---
+
 ### 2026-11-17 — Second owner test: a real handoff in the demo, questions first
 
 **Context:** The owner ran S1 and sent screenshots showing the person path ("prototype", "simulated"), interruptions ignored, and irrelevant answers with "restart".
