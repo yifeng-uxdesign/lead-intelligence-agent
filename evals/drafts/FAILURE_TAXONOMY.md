@@ -2,6 +2,8 @@
 
 **Rule followed:** categories come **only** from your failure list so far (`northstar/FAILURE_LIST.md` Part 1, F1–F9, **[failures]**). I did not add categories from R1–R11 (found by me) or from my own guesses. The list is incomplete; the empty slots below are for you. Label: **[failures]** = from your list; **[proposed]** = my placement of it (layer, turn type) only.
 
+**Status (your reply, 2026-11-18): F1–F9 are NOT the whole list.** Your manual test is unfinished; the list will be updated. This taxonomy is a snapshot against `evals/inputs/FAILURE_LIST_2026-11-18.md` and must be revised when your list is final.
+
 Caveat: F1–F9 were observed on the Northstar widget (scripted demo, not the primary target). They are used here as input patterns; whether each also applies to the backend is **not asserted** (Q3).
 
 | ID | Category | Definition (from your report) | Source | Likely layer [proposed] | Single / multi-turn [proposed] |

@@ -55,6 +55,18 @@ Purpose: one record per customer turn, with the same field names that golden/tes
 ## Cross-cutting
 `invariant_checks[]` = {id, passed, detail} (INVARIANTS ids) **[proposed]**; `explanation[]` **[code]** (`DecisionTrace.explain()`).
 
+## Session terminal record  (`terminal.*`, once per session) **[proposed; gaps vs code in SUCCESS_METRICS M0]**
+| Field | Values / type |
+|---|---|
+| `terminal.outcome` | `qualified_handed_to_rep` \| `disqualified` \| `human_handoff_on_trigger` \| `informational_only` \| `none` (not reached) |
+| `terminal.reached_at_turn` | int (→ `turns_to_outcome`) |
+| `terminal.disqualifier` | D-1…D-5 id or null (QUALIFICATION_CRITERIA) |
+| `terminal.contact.captured`, `terminal.contact.domain_type` | bool; `company` \| `freemail` \| `none` |
+| `terminal.unneeded_handoff` | bool |
+| `session.fallback_count` | int (one definition across configs) |
+| `ground_truth.outcome`, `ground_truth.labels` | from the case file, joined at scoring time, never read by the agent |
+Note **[code]**: trust-FSM signal key is `strong_buying_signal` while `LeadSignals` field is `buying_signal` (`extractor.py:387`); trace field names must pick one (Open Question).
+
 ## Case-file field mapping [proposed]
 Existing `cases.json` expect keys **[code]** → trace fields: `route`→`route`; `escalation`→`primary_class`/`intervention.action`; `not_fallback`→`extraction.status`; `rep_notified`→`rep_notified`; `trust_state`→`trust.to`; `intervention_open`→`intervention.action`; `must_include_any`/`must_not`→`reply.text`; `customer_facing`→(payload scan, INV-04).
 

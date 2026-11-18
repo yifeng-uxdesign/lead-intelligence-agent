@@ -8,9 +8,17 @@ Repo root `/home/user/lead-intelligence-agent`; backend `intent-agent-v2/` (cite
 
 ---
 
+## Update 2026-11-18 (your answers to Q1, Q2, Q4, Q6, Q13)
+- **Q1 resolved:** canonical inputs fixed; docs and failure-list snapshot copied to `evals/inputs/` (see `INDEX.md`). Widget JS and old demo files ignored.
+- **Q2 resolved:** F1–F9 are not the whole list; taxonomy marked a snapshot.
+- **Q4 resolved in principle:** criteria drafted in `QUALIFICATION_CRITERIA.md`; ambiguities listed there and below.
+- **Q6 resolved:** terminal outcomes and pass rule in `SUCCESS_METRICS.md` M0; code gaps below.
+- **Q13 resolved:** committed and pushed (PR #9 receives it).
+- **Q5 narrowed:** rep acceptance/opportunity conversion are deferred, not eval inputs.
+
 ## 0. Where the material actually is
 
-- **[code]** `evals/` and `evals/inputs/` did not exist before this task. The "existing eval material is in evals/inputs/" list was an unfilled placeholder, so nothing was read from there. (Open Question Q1.)
+- **[code]** `evals/` and `evals/inputs/` did not exist before this task (placeholder list); `evals/inputs/` now holds copies per `INDEX.md`.
 - **[code]** Eval-like material lives in four places: `v2/conformance/` (harness, 66 cases, taxonomy, known gaps, held-out set, baselines), `v2/tests/` (pytest suite, 307 tests collected; plus `.md` test docs), `northstar/` (`EVALUATION_PLAN.md`, `eval/scenarios.json`, `FAILURE_LIST.md`), and `v2/CLAUDE.md` / `v2/src/core/soul.md` (rules).
 - **[docs]** Your failure list: the only failure list in the repo is `northstar/FAILURE_LIST.md`. Part 1 (F1–F9) records your feedback from two Northstar widget test rounds; Part 2 (R1–R11) was found by me, not you. I treat F1–F9 as your input and R1–R11 as unconfirmed. (Q2.)
 
@@ -76,18 +84,29 @@ See `LAYER_MAP.md`.
 
 ---
 
-## Open Questions (for you to answer)
+## Doc conflicts (listed, not resolved — per your instruction)
+- **C1.** `PLANNING_LOG.md` 2026-11-14: "no budget or timeline" → data model sends it to nurture, I recommended nurture. 2026-11-15: you decided **disqualify**; `ICP_DRAFT.md` 3.4 agrees. Later entry appears to supersede; confirm (also QUALIFICATION_CRITERIA F).
+- **C2.** `PERSONA_SCRIPTS.md` and `PROMPT_BANK.md` are titled "Lead Agent Terminal Testing — Sierra AI" while your current ICP/docs are Northstar. Which product do these personas evaluate?
+- **C3.** Five hard disqualifiers in your docs (geography, contact, authority, active customer, no budget/timeline; PLANNING_LOG 2026-11-14) vs the backend's hard disqualifiers (`no_api_access`, `no_knowledge_base`, `crisis_or_sensitive_only`, `regulatory_prohibition`, `orchestrator.py:105–116`, all hard-wired False) **[code]**. Different lists; no mapping.
+- **C4.** `ICP_DRAFT.md` says inbound ≥~300/month is primary and the demo rule uses 150/250 (ICP_DRAFT 6; "illustrative"). Labels need one.
+- **C5.** `soul.md:197` vs `trust_state_machine.py:56–60` (see 1c-1), `fit_criteria.py:407` vs `476`, and `behavior_engine.py:34–37` vs `cases.json` `must_not` (see 1c-9) — code/doc conflicts unchanged.
 
-- **Q1.** `evals/inputs/` does not exist and the file list was blank. Which files are the canonical inputs? Should I copy/index them into `evals/inputs/` (copy only, originals untouched)?
-- **Q2.** Is `northstar/FAILURE_LIST.md` F1–F9 the whole of "my failure list", or is there another list (e.g. for the backend)? R1–R11 are mine: may they be used as taxonomy input, or must they be excluded?
-- **Q3.** Is the Northstar rubric (7 dimensions, 6 hard failures) to be reused for the backend's generated text in config B, or replaced?
-- **Q4.** What is a "qualified lead" for the backend: Sierra `fit_criteria.py`, the Northstar ICP/accept criteria (budget, timeline, five readiness fields, five hard disqualifiers), or something else? Who labels ground truth?
-- **Q5.** What pipeline-impact data exists or will exist (meetings booked, rep acceptance, opportunity created, win)? Without it those metrics can only be proxies.
-- **Q6.** What is the session-level success event: handoff accepted by a rep, a meeting booked, a correct "not a fit" exit, or a combination? (`SUCCESS_METRICS.md` M0 is my proposal.)
-- **Q7.** For config B, which per-state response contracts are approved (message_schema types, chips, banned phrases)? Who approves the contract text?
-- **Q8.** Does any caller guarantee a positive buying signal before DECISION_READY→COMMITMENT (trust_state_machine.py:56–60)? Should soul.md:197 or the code be treated as the truth?
-- **Q9.** Is the fit threshold `>` or `>=` (fit_criteria.py:407 vs 476)?
-- **Q10.** For cases with `"let me connect you"` in `must_not`, is the bridge template meant to be excluded there, or are those cases wrong?
-- **Q11.** Which LLM(s), temperature and call budget should configs B and C use? Needed for reproducibility and cost metrics.
-- **Q12.** Are thresholds in `SUCCESS_METRICS.md` allowed to be set from the baselines (backend pass 0.35) or do you want to supply them?
-- **Q13.** May I commit and push `evals/` to the session branch (PR #9 would receive it), or leave it uncommitted?
+## Open Questions (for you to answer)
+Resolved above: Q1, Q2, Q6, Q13 (and Q4 in principle). Still open:
+- **Q3.** Reuse the Northstar 7-dimension rubric for backend generated text (config B), or replace it?
+- **Q5.** Pipeline-impact data model is deferred; confirm nothing should be proposed for it now beyond the Group 4 stub.
+- **Q7.** Which per-state response contracts are approved for config B, and who approves their text?
+- **Q8.** Does any caller guarantee a buying signal before DECISION_READY→COMMITMENT? Trust `soul.md:197` or the code?
+- **Q9.** Fit threshold `>` or `>=` (`fit_criteria.py:407` vs 476)? (Only matters if fit stays in the pipeline; labels no longer use the score.)
+- **Q10.** Cases with "let me connect you" in `must_not`: is the bridge template meant to be excluded there?
+- **Q11.** LLM model, temperature and call budget for configs B and C.
+- **Q12.** Thresholds in SUCCESS_METRICS: set by you, or from baselines?
+- **Q14.** Terminal outcomes missing from code: there is no session-terminal state, disqualified state, or company-domain contact capture; confirm the proposed fields (`terminal.*`) or point me to where these should live. Is "terminal" a session-end event or the first turn it is reached?
+- **Q15.** "Unneeded handoff": define precisely. Proposed: a handoff created with no firing trigger and no qualified ground truth. How should a handoff on a *correct* attention trigger (strong buying signal, pricing discussion) in AUTONOMOUS mode count?
+- **Q16.** Overlap of terminal outcomes (qualified + human trigger; informational + rep notified by an attention trigger): single label or allowed set? (QUALIFICATION_CRITERIA A.)
+- **Q17.** Is the `informational_only` terminal required to have zero triggers, or may context-class triggers (competitor mention) fire?
+- **Q18.** Pick `strong_buying_signal` or `buying_signal` as the canonical field name (trust FSM vs `LeadSignals`).
+- **Q19.** Which of the QUALIFICATION_CRITERIA items not observable from conversation (D-4, score threshold, deliverability, security/compliance) get a scenario fixture field vs exclusion?
+- **Q20.** Should conformance docs, KNOWLEDGE_BASE.md or CONVERSATION_DESIGN.md be added to `evals/inputs/`? Also confirm I may keep `ICP_DRAFT.md` there (I added it as the only written criteria source).
+- **Q21.** Re-engagement after disqualification: expected agent behavior is undefined (QUALIFICATION_CRITERIA E).
+- **Q22.** Second annotator identity and agreement threshold (QUALIFICATION_CRITERIA D).

@@ -31,6 +31,9 @@ Keep existing keys (`id, group, layer, rep, turns[{u, expect{route, escalation, 
 - `expect.trace`: field-level assertions using TRACE_SCHEMA names.
 Never weaken existing cases (project rule from earlier phase, [docs] CLAUDE/PLANNING_LOG).
 
+### Ground truth and annotation **[docs: your instruction; see QUALIFICATION_CRITERIA.md]**
+Three separate labels (qualified, disqualified, needs_human_handoff) plus case type `reengagement_after_disqualification`. Labelled by you before any run, frozen with a timestamp; second annotator on 20–30 cases for agreement; LLM output never ground truth. Terminal outcome set and pass rule: SUCCESS_METRICS M0.
+
 ## 5. Runs **[proposed]**
 - Per case × config; B and C repeated N times (N=5 proposed) with recorded model, temperature, seed; A once (deterministic).
 - Report per config: metrics from SUCCESS_METRICS, invariant violations (hard gate), failure-category counts.
