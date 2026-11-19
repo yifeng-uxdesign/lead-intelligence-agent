@@ -251,13 +251,6 @@ h4 { font-size: 17px; font-weight: 600; }
 .ns-msg--user { align-self: flex-end; align-items: flex-end; }
 .ns-msg--user .ns-msg__text { background: var(--blue); color: #fff; border-top-right-radius: 5px; }
 
-/* Customer-facing "why I'm asking" cue: quieter than a normal reply */
-.ns-msg--cue .ns-msg__meta { display: none; }
-.ns-msg--cue { margin-bottom: -6px; }
-.ns-msg--cue .ns-msg__text {
-  background: transparent; border: 0; border-left: 2px solid var(--accent-bright); border-radius: 0;
-  padding: 2px 0 2px 12px; font-size: 13.5px; font-style: italic; color: var(--muted);
-}
 
 .ns-typing { align-self: flex-start; display: inline-flex; gap: 5px; padding: 13px 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; border-top-left-radius: 5px; }
 .ns-typing span { width: 6px; height: 6px; border-radius: 50%; background: #8d8576; animation: ns-bounce 1.1s infinite ease-in-out; }
@@ -339,4 +332,30 @@ h4 { font-size: 17px; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* A message sent while a reply is on its way waits in order; it looks slightly quieter until it is answered. */
+.ns-msg--queued .ns-msg__text { opacity: 0.65; }
+.ns-msg--queued .ns-msg__meta { font-style: italic; }
+.ns-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.ns-send:disabled:hover { background: inherit; }
+
+/* "Ask me things like:" a short list of questions the visitor might put next. */
+.ns-asks { margin: 4px 0 2px; padding-top: 2px; }
+.ns-asks__head { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--muted); padding: 0 2px; }
+.ns-asks__close { border: 0; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; padding: 2px 8px; cursor: pointer; border-radius: 6px; }
+.ns-asks__close:hover { color: var(--ink); background: rgba(0, 0, 0, 0.05); }
+.ns-ask {
+  display: block; width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer;
+  font: inherit; font-size: 15px; line-height: 1.35; color: var(--muted); padding: 7px 2px; border-radius: 6px;
+}
+.ns-ask:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.ns-ask:focus-visible, .ns-asks__close:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+/* A person from the team: a distinct bubble, and quiet lines for joining and leaving. */
+.ns-msg--rep .ns-msg__meta { font-weight: 600; color: var(--blue); }
+.ns-msg--rep .ns-msg__text { background: var(--blue-soft); border: 1px solid #c5d3e6; }
+.ns-event {
+  align-self: center; margin: 6px 0; padding: 4px 12px; max-width: 92%; text-align: center;
+  font-size: 13px; line-height: 1.4; color: var(--muted); background: rgba(0, 0, 0, 0.04); border-radius: 999px;
 }

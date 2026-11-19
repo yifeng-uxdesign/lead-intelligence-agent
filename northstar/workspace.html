@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lead workspace · Northstar demo</title>
+  <meta name="description" content="The sales rep's side of the Northstar handoff demo: see conversations that need a person, join them, and reply.">
+  <link rel="stylesheet" href="workspace.css">
+</head>
+<body>
+  <header class="ws-top">
+    <div class="ws-brand">
+      <span class="ws-mark" aria-hidden="true"></span>
+      <div>
+        <h1>Lead workspace</h1>
+        <p>Demo: the sales rep’s side of the handoff</p>
+      </div>
+    </div>
+    <div class="ws-top__actions">
+      <label class="ws-name">Your name <input id="ws-name" value="Maya" maxlength="24" autocomplete="off"></label>
+      <button type="button" class="ws-btn ws-btn--quiet" id="ws-clear">Clear demo data</button>
+    </div>
+  </header>
+
+  <div class="ws-banner" id="ws-banner" role="status" aria-live="polite" hidden></div>
+
+  <main class="ws-main">
+    <nav class="ws-list" id="ws-list" aria-label="Conversations"></nav>
+    <section class="ws-detail" id="ws-detail" aria-label="Conversation"></section>
+  </main>
+
+  <footer class="ws-foot">
+    <p>Provisional workspace for the demo. Open <a href="index.html" target="_blank" rel="noopener">the widget</a> in another window, ask for a person, and the conversation appears here. Everything stays in this browser.</p>
+  </footer>
+
+  <script type="module" src="./workspace.js"></script>
+</body>
+</html>

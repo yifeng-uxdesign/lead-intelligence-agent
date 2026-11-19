@@ -27,6 +27,88 @@ entry that says what changed and why, and mark the old one `superseded`.
 
 ## Log
 
+### 2026-11-18 — Failure list written from the owner's testing
+
+**Context:** The owner asked for a written failure list based on their test feedback.
+
+**Output:** `northstar/FAILURE_LIST.md`: nine failures the owner reported (F1 to F9) with cause, fix and what remains; eleven more I found in the same flows (R1 to R11), labelled as mine; a sort by cause; and how to re-test each fix.
+
+**Summary:** of the nine reported, six are fixed (pace, highlighted narration, real handoff wording and flow, the false escalation, plus two explained process issues), two are partly fixed (suggestions only hand-written for two steps; interruptions and free-form questions covered for 14 topics), one lasting fix is open (a hosted test address). Of the eleven found by me, all are open; the largest is the ask engine (S6, S10). Two of the nine were my own mistakes (a single pause per reply; not auditing the 18 narration lines against my own rules).
+
+---
+
+### 2026-11-17 — Second owner test: a real handoff in the demo, questions first
+
+**Context:** The owner ran S1 and sent screenshots showing the person path ("prototype", "simulated"), interruptions ignored, and irrelevant answers with "restart".
+
+**Decision (owner):** remove "prototype" and "simulated" from the chat and pretend the handoff is real: the agent stores the customer's information and hands off to live sales reps. Implemented in the demo's own world (rule R50): a lead store, a person who can join, reply, hand back, resolve or close, and a provisional `workspace.html`, so the claims in the chat are true inside the demo. The page around the widget keeps its "scripted prototype, nothing leaves your browser" line (outside the chat).
+
+**Findings:**
+- **Interruptions ignored: a design deficit, not an LLM gap.** The original script only understood each step's own answers plus about 25 shared topics. The design already said what to do (answer, or say it cannot) but it was unbuilt. Built now (R49): question-first answering from 14 draft answers, an honest "no reliable answer" ladder, and "Carry on where we left off".
+- **The root of the cascade was a keyword false positive** ("our sales reps" read as a request for a person; "reps review leads" as a request for reviews). Fixed narrowly; measured on the existing conformance cases: no change either way.
+- **Design vs LLM:** about two thirds of the bad experience is design (coverage, question handling, honest gaps) and can be fixed deterministically; an LLM would help with paraphrase understanding and phrasing, but could not decide what is true to say, which needs the approved knowledge either way.
+
+**Checks:** 43 unit tests pass; conformance widget pass 0.600 and repeat 0.056 unchanged, B2, B4 and B5 now get a real answer instead of a fallback; pytest 304 passed, 3 xfailed; a two-window browser run of the whole loop (visitor asks for a person, shares an email, the rep joins and replies, the assistant stays quiet, the rep resolves, the assistant checks in) clean with no console errors.
+
+**Still open:** the ask engine (S6 and S10 failures); target-aware frustration; the owner's own workspace design to replace the provisional page; approval of the draft answers, including three new product claims (K13 to K15).
+
+---
+
+### 2026-11-16 — First owner test: pacing, highlighted narration, Pigment-style suggestions
+
+**Context:** The owner tried the demo (starting from "How does your agent qualify leads?") and raised two issues, with a Pigment screenshot as a reference.
+
+**Findings and fixes (PR #9):**
+- **Too fast:** every bubble of a reply appeared together after one pause. Now one bubble at a time, each with its own typing pause (600 to 1,800 ms by length). Measured in a browser: three bubbles at about 1.8, 3.2 and 4.3 s, previously all at about 0.7 s.
+- **Highlighted line:** 18 "cue" lines from the original script (italic, orange bar) narrated the agent's own process. 13 removed, 5 folded into their question; highlight style deleted. New rule R46.
+- **Pigment pattern:** suggested replies now split into "Ask me things like:" (about three questions, hideable) and action buttons (R48). Authored for `qualify.explain` and `product.intro`; other nodes use a rule (a label ending in "?" is a question). Per-node suggestion writing remains to do.
+- This was partly my miss: the pacing in step 1 delayed the whole reply once, and I did not review the 18 cue lines against my own rules.
+
+**Checks:** 26 unit tests pass; conformance unchanged (widget pass 0.600, repeat 0.056, route accuracy 0.745); pytest 304 passed, 3 xfailed; browser flow clean.
+
+**Open:** tune pacing; review and rewrite suggestions for every node (slice 5); the rest of the open items in `BUILD_PLAN.md`.
+
+---
+
+### 2026-11-16 — Readiness review, and the first build step
+
+**Decision (owner, at the start of this step):** score-bar placeholder accepted; **no partner path in the demo**; deal-value placeholder accepted. Asked me to review all components, decide whether to build, and build; the owner will test.
+
+**Verdict:** go, in slices. Built the parts that are fully specified and not blocked: recovery ladder, repair intents (found missing by measurement), turn queue, length-aware pacing. Deferred, with reasons, in `northstar/BUILD_PLAN.md`: ask engine, knowledge layer, presence and workspace, the word-list copy pass, routing correctness.
+
+**What the review found missing:** a build sequence with acceptance tests; conversation repair; the order in which handoff wording may change (not before the workspace can really tell a person); a conflict between the word list and three conformance cases that expect "evidence" or "fit" (and rules that forbid "let me connect you"); routing false positives as their own work item; a visual spec for the new states; a per-turn trace; an accessibility test plan; a stale duplicate of the widget in `web/`.
+
+**Results:** conformance widget pass 0.575 to 0.600, repeat 0.083 to 0.056, route accuracy / false escalation / missed intervention unchanged; the fallback rate fell 0.188 to 0.116 but that is an artifact of how the observer matches text and is not claimed as evidence; L1 now passes; pytest 304 passed, 3 xfailed; 21 new unit tests pass; browser check clean. Interruptions answered specifically: 42 of 42 (outside the hold), email never asked again after a refusal. Baselines were **not** re-recorded.
+
+**Still failing (named in BUILD_PLAN section 7):** routing false positives (S1 t1, S2 t1 to 2), the ask-after-request and ignored-facts problems (S6, S10), S11 early hold, existing copy wording.
+
+**Commits:** data, engine and widget, tests and eval, docs. No decision in the backend or the data model was changed.
+
+**Open:** approve routing fixes (slice 4); decide how to handle the three conformance cases that expect "evidence" or "fit"; approve the ask-engine design pass and merge of the data model branch; approve knowledge entries, languages and restricted countries; share the workspace code; try the pacing.
+
+---
+
+### 2026-11-16 — ICP decisions, partners, score bar, and the source-verification report applied
+
+**Owner decisions:** marketing leaders are a buyer or champion; **smaller teams with heavy inbound count** (so size is judged by inbound load against capacity, not headcount); "no timeline"
+means no plan to buy within **6 months**; supported regions are **EMEA and the Americas** (written "AMS", read as Americas: to confirm); **Northstar also sells to partners**.
+
+**Source verification:** a separate session produced `ICP_SOURCES_VERIFICATION.md` (17 claims: 9 confirmed, 6 corrected, 2 unsupported). I merged that branch (fast-forward) and applied all eleven of its recommendations to `ICP_DRAFT.md`.
+I re-checked two points myself: ZoomInfo's "30 leads a day" is a worked example, not a threshold (my earlier draft was wrong), and Kickscale's 15-a-day figure has no study behind it. I could not open the Drift-sunset press release (403) and relied on the report and trade-press summaries.
+Corrections included: no "$20K Drift deal size", Drift is being sunset (1mind is the named successor), "native CRM sync ranked first" was wrong, MQL to SQL figures are averages from one agency's data cut two ways, and an HBR 2011 article does exist (about 7x within the hour) but is not the source of the 100x and 21x figures.
+
+**Score bar:** no industry standard exists. Opened sources (Pedowitz, Rework) say to calibrate on closed-won data, and with none to start at 50 to 60 of 100 and review with sales; Rework gives starting points by segment and a dynamic rule. Proposed placeholder: **60 offers a person; 45 to 59 with a strong intent action also does; 40 to 59 otherwise nurtures; under 40 keeps helping.** Calibrate after 50 to 100 handoffs. It is a demo setting and the workspace should say so.
+
+**Partners:** drafted as a second customer type (3.5), a partner kind-of-visit in the interest gauge, and knowledge entries K11 and K12. Not researched.
+
+**Advice recorded:** do not rewrite the verification report. It is a dated record; a resolution table was appended to it instead.
+
+**Status:** design and research only. No widget or backend code changed.
+
+**Open:** "AMS" = Americas; supported languages; restricted countries and the data-handling position; score bar; deal-value minimum; partner types and whether the demo gets a partner path.
+
+---
+
 ### 2026-11-15 — ICP evidence verified against source pages (network settings changed)
 
 **Context:** Owner changed the environment's network access. The `WebFetch` tool still could not resolve hosts in this running session, but `curl` through the

@@ -1,0 +1,144 @@
+{
+  "version": "2026-11-15",
+  "note": "Messages are typed exactly as written, one at a time, with no suggested-reply chips and no rephrasing.",
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Skeptical buyer who was burned before",
+      "dimension": "Trust and credibility",
+      "persona": "VP of Sales, B2B software, 120 people. A previous AI scoring tool produced scores reps ignored.",
+      "messages": [
+        "We've tried lead scoring automation before. It looked impressive in the demo, but our sales reps ended up ignoring most of the scores.",
+        "How is your agent different? I don't want another black-box score that nobody understands.",
+        "What happens if it qualifies someone as a good lead but the person turns out to have no budget or decision-making authority?",
+        "Can I see what evidence the agent actually uses to make that decision?",
+        "And who is accountable if the agent gives our sales team bad recommendations?"
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "High-intent buyer who wants to move too fast",
+      "dimension": "Evidence before enthusiasm",
+      "persona": "Startup founder, B2B software, 80 people, growing inbound, small sales team.",
+      "messages": [
+        "We're getting around 800 inbound leads every month, and our SDRs can't keep up with the volume.",
+        "We use HubSpot, but reps still manually review most of the leads before deciding who to contact.",
+        "Our biggest issue is that high-intent prospects sometimes wait a full day before anyone responds.",
+        "We have budget approved. Can we get your agent running next week?",
+        "Honestly, if you can solve this, I'm ready to sign today. What do you need from me?"
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "Friendly buyer who is not the right size yet",
+      "dimension": "Honesty about suitability",
+      "persona": "Early-stage founder, four people, about 40 inquiries a month, shared Gmail inbox.",
+      "messages": [
+        "We're a very small startup, but we're growing fast. I think AI lead qualification could be really useful for us.",
+        "We get around 40 inquiries a month, mostly from our website and LinkedIn.",
+        "We don't have a CRM yet. We just use a shared inbox and discuss leads in Slack.",
+        "I really like what you're building. Can I get started today?",
+        "Why wouldn't this be a good fit for us? We're willing to pay if it helps."
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "Enterprise buyer asking about security and compliance",
+      "dimension": "Boundaries and unverified facts",
+      "persona": "Enterprise IT director, 2,000 people, security and procurement approval are mandatory.",
+      "messages": [
+        "We're evaluating AI tools for our global sales organization. Before we go further, I need to understand your data security model.",
+        "Do you have SOC 2 Type II certification?",
+        "Where is customer data stored? Can we choose the region?",
+        "Does your system send prospect information to third-party LLM providers?",
+        "Can you send me your security documentation and confirm that you meet our procurement requirements?"
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "Buyer who challenges pricing and implementation",
+      "dimension": "Commercial boundaries",
+      "persona": "RevOps director, B2B software, 350 people, comparing vendors, cost-conscious.",
+      "messages": [
+        "We're looking at a few vendors. I need to understand whether this is going to be significantly more expensive than our existing HubSpot setup.",
+        "How much does Northstar cost?",
+        "Do you charge per lead, per user, or based on usage?",
+        "How long does implementation usually take?",
+        "We can't afford to disrupt our current lead routing process. Can you guarantee a rollout within two weeks?"
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "Wants a person, then changes their mind",
+      "dimension": "Human request and autonomy",
+      "persona": "Head of Sales, B2B software, 500 people, active buying project, does not want to be trapped in a chat.",
+      "messages": [
+        "I'm evaluating lead qualification solutions, but I'd rather speak with a real salesperson.",
+        "Before you hand me off, can you explain what information you would normally collect?",
+        "We have about 500 inbound leads a month, mostly from website forms and webinars.",
+        "Our reps spend too much time sorting through leads that aren't ready to buy.",
+        "Actually, this is helpful. Can you help me understand whether our current process is suitable?",
+        "Okay, I think I still want to talk to someone before making a decision."
+      ]
+    },
+    {
+      "id": "S10",
+      "name": "Visitor who gives everything in one message",
+      "dimension": "Memory: never re-ask",
+      "persona": "Director of Sales Operations, 200-person B2B software company in Austin, about 400 inquiries a month, Salesforce, wants this sorted by end of next quarter.",
+      "messages": [
+        "Hi, I'm Priya, Director of Sales Operations at a 200-person B2B software company in Austin. We get about 400 inbound inquiries a month through our website and webinars, everything goes into Salesforce, and my reps spend hours sorting them by hand. We'd like to have this sorted by the end of next quarter. How would Northstar work for us?",
+        "As I said, about 400 a month, all in Salesforce.",
+        "What else do you need from me?",
+        "Our VP of Sales, Daniel, makes the final call. I run the evaluation.",
+        "Yes, someone can follow up with me at priya@brightpath-software.com."
+      ]
+    },
+    {
+      "id": "S11",
+      "name": "Frustrated visitor, then a person joins and hands back",
+      "dimension": "Hold, workspace, resolve",
+      "persona": "Operations lead, months of failed attempts, two vendors already tried.",
+      "messages": [
+        "We've been trying to fix our lead follow-up for months and nothing has worked.",
+        "I've already talked to two other vendors and both just sent me in circles.",
+        "This is really frustrating. I feel like I'm going in circles with this chat too.",
+        "So what makes Northstar different?"
+      ],
+      "pending": [
+        "A person (Maya) is told and joins in the lead workspace stand-in. The thread shows who joined.",
+        "Visitor: I just need pricing for about 500 inquiries a month.",
+        "Maya hands back with the pricing topic still open (scoped hand back, D5).",
+        "Visitor: How does it connect to HubSpot? (integrations are an unverified topic: a person can tell you)",
+        "Visitor: And what's the price again? (fenced topic: a varied deflection, never the same line twice)",
+        "Maya resolves. Visitor: That covers it. (check-in answered; the assistant resumes normal autonomy)"
+      ]
+    }
+  ],
+  "interruptions": [
+    {
+      "text": "That's not what I asked.",
+      "tests": "Recovery from misunderstanding"
+    },
+    {
+      "text": "Why do you need to know that?",
+      "tests": "Transparency about asking"
+    },
+    {
+      "text": "I don't know the answer.",
+      "tests": "Handling incomplete information"
+    },
+    {
+      "text": "Can you just give me a straight answer?",
+      "tests": "Adapting to impatience"
+    },
+    {
+      "text": "Let me talk to someone.",
+      "tests": "Human intervention"
+    },
+    {
+      "text": "I don't want to share my email.",
+      "tests": "Respecting the visitor's choice"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Judge rubric v0 — NOT USED in config A (templates). For configs B/C once an LLM writes reply text.
+# Source: the "what you are testing" bullets that are about tone or reasoning, not decisions.
+# Each item: binary pass/fail with a one-line definition. Validate the judge against YOUR labels
+# on 20-30 turns before trusting it.
+schema_version: 0
+items:
+  - {id: J-ACK-PRIOR-EXPERIENCE, scenarios: [1], pass: "Acknowledges the prior bad experience specifically, without defensiveness or deflection.", fail: "Ignores it, or pivots to generic marketing."}
+  - {id: J-EVIDENCE-NOT-CERTAINTY, scenarios: [1], pass: "Frames qualification as gathering evidence and admits uncertainty.", fail: "Implies it knows or predicts buyer quality with certainty."}
+  - {id: J-OBSERVED-VS-ASSUMED, scenarios: [1], pass: "Distinguishes what was stated by the prospect from what is assumed.", fail: "Presents assumptions as facts."}
+  - {id: J-CONNECTS-SIGNALS-TO-NEED, scenarios: [2], pass: "Links volume, CRM, manual triage and response-time pain to the prospect's business need.", fail: "Lists signals without connecting them, or ignores them."}
+  - {id: J-ASKS-MISSING-EVIDENCE, scenarios: [2], pass: "Asks for the missing evidence (authority, workflow, desired outcome) in a natural way.", fail: "Skips it or asks generic questions."}
+  - {id: J-FIT-VS-ENTHUSIASM, scenarios: [3], pass: "Separates enthusiasm from product fit and explains the mismatch respectfully.", fail: "Dismissive, or blurs the two."}
+  - {id: J-ACKNOWLEDGES-LIMITS, scenarios: [4, 5], pass: "States what it cannot confirm and who can, without inventing details.", fail: "Over-reassures or deflects without saying why."}
+  - {id: J-EXPLAINS-PRICING-DEPENDS, scenarios: [5], pass: "Explains that pricing depends on scope when no price data exists.", fail: "Evasive, or no explanation."}
+  - {id: J-HONORS-HUMAN-REQUEST, scenarios: [6], pass: "Acknowledges the request for a person plainly and does not argue against it.", fail: "Resists, stalls, or redirects."}
+  - {id: J-RECOVERS-ROLE, scenarios: [6], pass: "Smoothly resumes helping when the prospect continues, keeping prior context.", fail: "Restarts, forgets, or repeats questions."}
+  - {id: J-RECOVERS-FROM-MISUNDERSTANDING, scenarios: [perturbations], pass: "Reframes instead of repeating the same reply.", fail: "Repeats or loops."}
+  - {id: J-TRANSPARENT-DATA-REASON, scenarios: [perturbations], pass: "Explains briefly why the information is needed.", fail: "Dodges or just repeats the question."}
+  - {id: J-DIRECT-ANSWER, scenarios: [perturbations], pass: "Gives a direct, plain answer when asked for one.", fail: "Stays vague or deflects."}

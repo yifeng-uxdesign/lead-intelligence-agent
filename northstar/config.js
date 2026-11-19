@@ -24,6 +24,7 @@ export const WIDGET_CONFIG = {
       scenarioId: "hesitant",
     },
   ],
-  typingDelayMs: 720,
+  // Typing pause in ms before each bubble: minMs..maxMs, growing with the bubble's length. Reduced motion uses 80.
+  pacing: { minMs: 600, baseMs: 400, perCharMs: 6, maxMs: 1800 },
   placeholder: "Write a message…",
 };

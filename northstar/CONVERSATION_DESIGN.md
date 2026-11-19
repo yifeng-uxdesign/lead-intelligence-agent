@@ -1,6 +1,6 @@
 # Northstar conversation design plan
 
-Status: **design draft, not implemented.** Nothing in `scenarios.js`, `engine.js` or `widget.js` has changed.
+Status: **design draft, partly built.** Built and tested: the recovery ladder and repair intents (Part 5), the turn queue and bubble-by-bubble pacing (6.1, 6.2), question-first answering with an honest "no reliable answer" (R49), and the handoff with a provisional lead workspace (3.4, 6.4; R50). Everything else is still design. See `BUILD_PLAN.md`.
 Written 2026-11-12. Companion to the proposal in `PLANNING_LOG.md`.
 
 How to read this: Part 0 is the vision and the language rules (what the visitor should feel, and the words we
@@ -97,7 +97,7 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   purpose and are natural to answer in one sentence (for example, a name and how to reach you). A cluster has at
   most three items, every item is optional, and it never mixes topics. If the visitor answers only part of it,
   ask only for what is missing (R4). See 4.2.
-- R3. **Say why you are asking**, in one short clause, the first time the question type appears. (Existing `tone: "cue"` messages do this.)
+- R3. **Say why you are asking**, in one short clause, the first time the question type appears, **inside the question itself** ("Volume tells me whether this is likely to be worth your time. Roughly how many…?"). Never as a separate highlighted aside about the agent's own process (see R46).
 - R4. **Never re-ask what you already know.** A fact the visitor stated, or a question they declined, is marked answered. (`state.answered`; step 5 formalises it.)
 - R5. **Make the cheapest answer easy.** Offer suggested replies for every question. Free text always works too.
 - R6. **A refusal is an answer.** "I'd rather not say" closes that question, with no penalty and no second attempt.
@@ -179,6 +179,14 @@ Each rule has a reason and a place it is enforced. Numbers are stable so they ca
   bring the person back (R17).
 - R35. **Hand back is not resolution.** After a hand back with an open topic, the assistant is fenced off that topic
   and can never make a commitment, until a person resolves.
+
+**Presentation**
+- R46. **Do not narrate your own process.** No highlighted or separate lines such as "I'm explaining this before asking you anything". The message does the thing; the reason for a question sits inside the question (R3). *(Added after the owner's first test, 2026-11-16; it removed 13 such lines and folded 5 into their questions.)*
+- R47. **Replies arrive one bubble at a time**, each after a pause that fits its length, with the typing indicator between them. Suggested replies appear only after the last bubble.
+- R48. **Offer two kinds of next step** (the Pigment pattern): **"Ask me things like:"**, a short list of questions the visitor might put next (about three, hideable), and **action buttons** for things to do (talk to a person, share an email, restart). Suggestions are written per step, and are never used to steer.
+
+- R49. **A visitor's question outranks the agent's own pending question.** Answer it from approved knowledge; if nothing covers it, say plainly that there is no reliable answer and offer what can be answered or a person. Never reply to a question with a different question, never send the visitor to start over, and let them carry on where they left off. *(Added after the owner's second test: the script ignored interruptions.)*
+- R50. **In the demo the handoff is real in the demo's world.** The conversation and anything the visitor chooses to share are saved to the lead workspace; a person can join, reply, hand back, resolve or close; the chat never says "prototype" or "simulated". The page around the widget says it is a scripted demo and that nothing leaves the browser, so that disclosure stays out of the chat. Time promises stay out (R32).
 
 **Determinism**
 - R23. **Same inputs, same reply.** Every selection is a pure function of state. Variety comes from tiers and rotation by count, never from random choice.
@@ -595,6 +603,7 @@ deterministic and uses only what the visitor said and asked.
 | **Curious or researching** | General questions about what Northstar is or how it works; no mention of their own team | Answers well, asks nothing about their process, never asks for contact, keeps the door open |
 | **Existing customer** | Says they already use Northstar, or have an account or an open conversation | Does not run the lead flow. Offers to connect them with their account contact (R38: never reveal what the system knows) |
 | **Not a buyer** | Job seeker, press, student, vendor | Answers what it can, politely, no asks |
+| **Partner or reseller** *(owner: Northstar sells to partners; **the demo has no partner path**, decided 2026-11-16)* | Consultancy, agency or software platform that wants to deploy or embed Northstar for clients | In the demo a partner is handled like any other visitor: answered honestly, and a person can be brought in. A real deployment would add a partner path (different light questions, no score, a partner contact). Draft in `ICP_DRAFT.md` 3.5 |
 | **Unknown** | Not enough yet | Answers, and may use one light question: "Are you looking at this for your own team, or just curious how it works? Either is fine." |
 
 "Worth nurturing" means an evaluator who meets some but not all of the criteria below. Only then does the agent offer to
@@ -612,7 +621,7 @@ brings in a person.
 | Criterion | What it needs | Who gathers it | In the demo |
 |---|---|---|---|
 | **1. Data validity and reachability** | A real person, a working business email or phone, a deduplicated record | Agent asks (L3, cluster "Reaching you"). The system validates and dedupes | The demo can only check that an email is not a personal domain. It cannot verify that it works or dedupe, so the workspace stand-in shows these as fields the team checks |
-| **2. ICP fit** | Industry, size, region and role match the target profile | Agent asks kind of business (L1), company size, region and role (L2) | **Needs the owner's ICP definition** (target industries, sizes, regions). None exists yet |
+| **2. ICP fit** | Industry, size, region and role match the target profile | Agent asks kind of business (L1), company size, region and role (L2) | Draft ICP in `ICP_DRAFT.md` 3.1: B2B with heavy inbound, **smaller teams count if inbound outstrips capacity**, EMEA and the Americas. Still a proposal for industry and size bands |
 | **3. Lead score threshold** | Behavioral and firmographic scores cross the agreed handoff bar | System only. The agent never asks about it or mentions a score | The demo has illustrative fit heuristics only. **Needs the owner's bar** |
 | **4. Intent and timing** | Clear signs they are actively evaluating | Mostly derived (pricing, pilot, comparison questions); the agent asks for a timeline only if they raise it | Derived signals work today |
 | **5. Reachable decision-maker** | The contact can decide or has a path to a conversation with someone who can | Agent asks role (L2) and who else weighs in (L3) | Role and a path question; no verification |
@@ -623,11 +632,11 @@ None of these is ever said as a label (V2, V3, R45).
 
 | Disqualifier | Where it is found | What the agent does | Disposition to confirm |
 |---|---|---|---|
-| **Unsupported geography** | Region, asked at L2 **before** any contact ask | Says honestly and kindly that it cannot serve that region yet, before taking contact details | Polite decline, door open. **Needs the owner's supported-region list** |
+| **Unsupported geography** | Region, asked at L2 **before** any contact ask | Says honestly and kindly that it cannot serve that region yet, before taking contact details | Polite decline, door open. **Owner decision 2026-11-16: EMEA and the Americas are supported; Asia-Pacific and elsewhere are not, for now** (confirm "AMS" = Americas). Language and compliance claims are separate and still open |
 | **Invalid contact details** | Contact cluster at L3 | Re-ask once, gently ("That doesn't look like a work address. Would a different one work, or a phone number?"), then carry on without it. Never loops (R7, R39) | Cannot be accepted until reachable; the conversation continues |
 | **No buying authority** | Role and who else weighs in | Neutral reach, never a challenge ("who else usually weighs in?") | The criterion accepts someone with a **path** to a decision-maker, so define this one as "no authority **and** no path". Otherwise nurture |
 | **Active customer or open deal** | CRM lookup on the team's side, or the visitor says so | Never revealed to the visitor (R38). If the visitor says it, route to the existing account contact | Route to the account owner, not reject |
-| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Disqualifies **only on an explicit statement** ("we have no budget", "no plans to buy"). "Unknown", "not yet decided" and a skip are recorded as unknown, never "no" (R39), and keep the conversation going | **Owner decision 2026-11-15: disqualify.** This supersedes the data model's nurture route (§5 of `lead-data-model.md`), which still needs updating in that session. The horizon for "no timeline" needs defining |
+| **No budget or timeline** | Timeline if raised; budget at L4 by a person | Disqualifies **only on an explicit statement** ("we have no budget", "no plans to buy within **6 months**"). "Unknown", "not yet decided" and a skip are recorded as unknown, never "no" (R39), and keep the conversation going | **Owner decision 2026-11-15: disqualify.** The horizon is **6 months** (owner, 2026-11-16). This supersedes the data model's nurture route (§5 of `lead-data-model.md`), which still needs updating in that session |
 
 #### Dispositions the agent can lead to
 
@@ -862,6 +871,8 @@ while decisions stay deterministic.
 
 ### 6.4 Demo mechanics: the lead workspace stand-in
 
+**Built on 2026-11-17 (provisional):** `store.js` (leads and the rep's actions, saved in the browser and shared between two windows), the engine's handoff and presence states, the widget's person and join/leave lines, and `workspace.html`. The text below is the original plan; the owner's own workspace design will replace the page.
+
 The real lead workspace is not in this repository (the backend only exposes the rep-side data endpoints). For the
 demo we build a small **in-page stand-in**: no network, no login, deterministic, local state.
 **Provisional:** the owner has workspace code and screenshots and will share them in a new session, which may change
@@ -904,7 +915,7 @@ The voice: **calm, plain, transparent, never pushy.** Written for a busy sales o
 | Vary wording by tier | The same stock phrase everywhere | "Sounds scripted" is a trust problem |
 
 **Scripted-sounding audit** (use when reviewing any reply): Would a person say it this way? Does it repeat a
-phrase used in the last three turns? Does it say the same thing as the node's cue line? Does it apologise more
+phrase used in the last three turns? Does it narrate the agent's own process ("I'm explaining this before…")? Does it apologise more
 than once? Does it end on a clear next step?
 
 ---
@@ -963,7 +974,7 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 ## 10. Open questions for the owner
 
 - [ ] Review the drafted copy in 5.4. Mark lines that sound off. Those edits are the practice.
-- [ ] Approve pacing starting values (6.2), or ask for a "slower / faster" variant to compare.
+- [ ] Pacing (6.2) is built: each bubble appears after its own pause of 600 to 1,800 ms (`config.pacing`). The owner's first test found the earlier single pause too fast. Try it and say "slower" or "faster".
 - [ ] Should tier 3 ever *close* the chat itself, or always leave the visitor a choice (current draft: always a choice)?
 - [x] Verified facts: owner confirmed that integrations, pricing, security and data handling, and setup timelines stay "a person can tell you" (4.3). Verified facts to add later come from the owner.
 - [x] Prototype wording: owner decision is to *show* a person joining (3.4, 6.4) rather than disclaim in the chat.
@@ -978,8 +989,9 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Approve the visitor-side proposals in 3.5: a limit on the typing indicator then a holding line, a failure line, and tier 3 raising the rep's "Uncertain" card.
 - [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
 - [x] Five readiness fields confirmed by the owner (2026-11-15): budget, timeline, who decides, decision process, and security and compliance.
-- [ ] Review the **ICP research and draft** in `northstar/ICP_DRAFT.md`, then decide the ICP bands, the **supported-region list** and the **lead score bar** (the draft proposes a placeholder for each; the agent cannot enforce any without your decision).
-- [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only. Still to do: define the horizon for "no timeline" and confirm **no buying authority** means "no authority and no path".
+- [x] Owner decisions 2026-11-16: marketing leaders are buyers or champions; smaller teams with heavy inbound count; "no timeline" = no plan within 6 months; regions = EMEA and the Americas; Northstar sells to partners.
+- [ ] Open from `ICP_DRAFT.md` Part 7: confirm "AMS" = Americas; supported languages; restricted countries and the data-handling position; accept or change the score bar (placeholder 60, or 45 with a strong intent action); deal-value minimum; the partner types and whether the demo gets a partner path.
+- [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only; horizon **6 months** (2026-11-16). Still to confirm: **no buying authority** means "no authority and no path".
 - [ ] The demo's small-volume rule (150 and 250 inquiries a month) is explained in `ICP_DRAFT.md` Part 6. Approve it as a fact the agent may explain from, or keep it internal and have the agent only describe what the visitor said (recommended).
 - [x] Scenarios: S10 and S11 approved, S7 to S9 parked (owner, 2026-11-15). The eight approved scenarios are the standing baseline (`northstar/eval/`).
 - [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
