@@ -170,3 +170,25 @@ Not re-checked in this pass (opened by the earlier session, not on this list): t
 9. **2.1: add the HBR 2011 article** as a source and change "treat as errors" to: HBR did publish related findings (2,241-company audit, 42-hour average, about 7x within the hour), but not the 100x/21x or 400% figures.
 10. **Add to 2.3 or Part 6:** Visionary's response-time-by-company-size table (agency clients) and RevenueHero's meeting and disqualification rates by size (vendor), both labelled. They are the closest size-segmented data, though neither gives volume.
 11. **Part 8:** move every source above from "search summaries only" to "opened", with its publisher type. Add Crunchbase, Kickscale (b), the Business Wire release, BYU ScholarsArchive and the G2 AI SDRs category.
+
+---
+
+## 6. Resolution (added 2026-11-16 on branch `claude/bold-heisenberg-lvt224`; the report above is unchanged)
+
+All eleven recommendations in section 5 were applied to `ICP_DRAFT.md`. Where I could, I re-checked the point myself first; "not re-checked" means I relied on this report.
+
+| # | Recommendation | Applied | My own check |
+|---|---|---|---|
+| 1 | Remove Drift "$20,000"; note the sunset | Yes (2.5) | Sunset not re-checked at the primary release (403); trade-press search results agree |
+| 2 | Fix the "30 a day" wording | Yes (2.2) | **Re-checked and confirmed** on the ZoomInfo page: a worked example, not a threshold |
+| 3 | Source and stage for 5 to 10% and 75 to 80% | Yes (2.2) | Not re-checked |
+| 4 | Cite both Kickscale pages; 240 to 300 a month | Yes (2.2, Part 6) | First page re-checked: "about 15 new MQLs per day", no study |
+| 5 | Rewrite the MQL to SQL paragraph | Yes (2.3) | Not re-checked |
+| 6 | Native two-way sync is not "ranked first" | Yes (2.4) | Not re-checked |
+| 7 | Mark "API connectors add latency" as a hypothesis | Yes (Part 1) | n/a |
+| 8 | Soften "qualify and sync to any CRM" | Yes (2.5, sources) | Not re-checked |
+| 9 | Add HBR 2011; correct the attribution note | Yes (2.1) | Not re-checked (HBR page unreachable) |
+| 10 | Add the size-segmented response-time table | Yes (2.1) | Not re-checked |
+| 11 | Move sources to "opened" with publisher types | Yes (Part 8, tagged opened, report or summary) | n/a |
+
+**Advice on updating this file:** keep sections 1 to 5 as a dated record of what was checked. Put corrections in `ICP_DRAFT.md`, and add a dated resolution note here, as above, instead of rewriting the findings.

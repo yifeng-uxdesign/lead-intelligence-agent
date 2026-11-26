@@ -1,5 +1,6 @@
 import { WIDGET_CONFIG } from "./config.js";
 import { createConversation } from "./engine.js";
+import { createBrowserStore } from "./store.js";
 
 const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -16,7 +17,10 @@ function el(html) {
 export function mountWidget(root) {
   const conversation = createConversation({
     config: WIDGET_CONFIG,
-    onTypingDelay: () => (REDUCE_MOTION ? 80 : WIDGET_CONFIG.typingDelayMs),
+    // A conversation that reaches a person is saved here; the lead workspace (workspace.html) reads it and writes back.
+    store: createBrowserStore(),
+    // The engine works out how long a reply of this length should take; reduced motion shortens it.
+    onTypingDelay: ({ ms }) => (REDUCE_MOTION ? 80 : ms),
   });
 
   const launcher = el(`
@@ -38,7 +42,7 @@ export function mountWidget(root) {
           <span class="ns-panel__mark" aria-hidden="true"></span>
           <div>
             <h2 id="ns-widget-title" class="ns-panel__name">${WIDGET_CONFIG.assistantName}</h2>
-            <p class="ns-panel__status"><span class="ns-panel__dot"></span>${WIDGET_CONFIG.statusLabel}</p>
+            <p class="ns-panel__status"><span class="ns-panel__dot"></span><span data-status-label>${WIDGET_CONFIG.statusLabel}</span></p>
           </div>
         </div>
         <div class="ns-panel__actions">
@@ -65,8 +69,15 @@ export function mountWidget(root) {
   let announcedCount = 0;
   const form = panel.querySelector("[data-form]");
   const input = panel.querySelector("#ns-widget-input");
+  const sendButton = panel.querySelector(".ns-send");
+  const statusLabel = panel.querySelector("[data-status-label]");
   let open = false;
   let lastFocus = null;
+  let asksHiddenAt = -1; // the message count at which the visitor hid "Ask me things like:"
+
+  // A suggested reply is a question to ask ("ask") or a button to press ("action"). Unless the
+  // scenario data says which, a label that ends in a question mark is a question.
+  const kindOf = (choice) => choice.kind || (/\?\s*$/.test(choice.label) ? "ask" : "action");
 
   function setOpen(next) {
     if (next === open) return; // re-opening must not overwrite the focus-return target
@@ -96,7 +107,7 @@ export function mountWidget(root) {
       announcedCount = messages.length; // restart or no change
       return;
     }
-    const fresh = messages.slice(announcedCount).filter((m) => m.role === "assistant");
+    const fresh = messages.slice(announcedCount).filter((m) => m.role !== "user"); // assistant, a person, and join/leave lines
     announcedCount = messages.length;
     if (open && fresh.length) {
       announcer.textContent = "";
@@ -108,12 +119,22 @@ export function mountWidget(root) {
     thread.replaceChildren();
 
     for (const msg of snapshot.messages) {
+      if (msg.role === "event") {
+        // "Maya has joined the conversation": a quiet line, not a bubble.
+        const line = document.createElement("p");
+        line.className = "ns-event";
+        line.textContent = msg.text;
+        thread.append(line);
+        continue;
+      }
       const row = document.createElement("article");
-      row.className = `ns-msg ns-msg--${msg.role}${msg.tone === "cue" ? " ns-msg--cue" : ""}`;
+      row.className = `ns-msg ns-msg--${msg.role}${msg.queued ? " ns-msg--queued" : ""}`;
       row.innerHTML = `
-        <p class="ns-msg__meta">${msg.role === "assistant" ? WIDGET_CONFIG.assistantName : "You"} · ${formatTime(msg.at)}</p>
+        <p class="ns-msg__meta"><span data-who></span> · ${msg.queued ? "waiting" : formatTime(msg.at)}</p>
         <p class="ns-msg__text"></p>
       `;
+      row.querySelector("[data-who]").textContent =
+        msg.role === "assistant" ? WIDGET_CONFIG.assistantName : msg.role === "rep" ? `${msg.name} · Northstar team` : "You";
       row.querySelector(".ns-msg__text").textContent = msg.text;
       thread.append(row);
     }
@@ -140,15 +161,52 @@ export function mountWidget(root) {
         wrap.append(btn);
       }
       thread.append(wrap);
-    } else if (!snapshot.typing) {
+    } else if (!snapshot.typing && !snapshot.rep) {
+      // (no suggestions while a person is in the conversation: they are talking, not the script)
       const nodeChoices = snapshot.choices.filter((c) => c.next !== "__restart__");
       const restartChoice = snapshot.choices.find((c) => c.next === "__restart__");
-      if (nodeChoices.length) {
+      const asks = nodeChoices.filter((c) => kindOf(c) === "ask");
+      const actions = nodeChoices.filter((c) => kindOf(c) !== "ask");
+
+      // "Ask me things like:" is a short list of questions the visitor might want to put next.
+      if (asks.length && asksHiddenAt !== snapshot.messages.length) {
+        const box = document.createElement("div");
+        box.className = "ns-asks";
+        box.setAttribute("role", "group");
+        box.setAttribute("aria-label", "Suggested questions");
+        const head = document.createElement("div");
+        head.className = "ns-asks__head";
+        const label = document.createElement("span");
+        label.textContent = "Ask me things like:";
+        const close = document.createElement("button");
+        close.type = "button";
+        close.className = "ns-asks__close";
+        close.setAttribute("aria-label", "Hide suggested questions");
+        close.textContent = "×";
+        close.addEventListener("click", () => {
+          asksHiddenAt = snapshot.messages.length;
+          render(conversation.getState());
+        });
+        head.append(label, close);
+        box.append(head);
+        for (const choice of asks) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ns-ask";
+          btn.textContent = choice.label;
+          btn.addEventListener("click", () => conversation.choose(choice.id));
+          box.append(btn);
+        }
+        thread.append(box);
+      }
+
+      // Actions are next steps the visitor can take with one tap.
+      if (actions.length || restartChoice) {
         const wrap = document.createElement("div");
         wrap.className = "ns-starters";
         wrap.setAttribute("role", "group");
-        wrap.setAttribute("aria-label", "Suggested replies");
-        for (const choice of nodeChoices) {
+        wrap.setAttribute("aria-label", "Suggested actions");
+        for (const choice of actions) {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "ns-chip";
@@ -168,23 +226,23 @@ export function mountWidget(root) {
       }
     }
 
-    input.disabled = snapshot.typing;
+    // The visitor can keep typing while a reply is on its way; messages wait in order. Only a full queue holds the button.
+    sendButton.disabled = !snapshot.canSend;
+    input.placeholder = snapshot.rep ? `Message ${snapshot.rep.name}…` : WIDGET_CONFIG.placeholder;
+    statusLabel.textContent = snapshot.rep
+      ? `${snapshot.rep.name} from the team is with you`
+      : snapshot.mode === "waiting"
+        ? "The team has been told"
+        : WIDGET_CONFIG.statusLabel;
     scrollThread();
     announce(snapshot.messages);
 
-    // The nodes that held focus (a chip, or the input while disabled) are gone or inert.
-    // Keep focus inside the dialog instead of dropping to <body>.
+    // The chip that held focus is gone after a re-render. Keep focus inside the dialog instead of dropping to <body>.
+    // The input is never disabled now, so focus can always return to it.
     if (open) {
       const active = document.activeElement;
-      const lost =
-        active === document.body ||
-        !panel.contains(active) ||
-        active === thread ||
-        (active === input && input.disabled);
-      if (lost) {
-        if (!input.disabled) input.focus();
-        else thread.focus({ preventScroll: true });
-      }
+      const lost = active === document.body || !panel.contains(active) || active === thread;
+      if (lost) input.focus();
     }
   }
 
@@ -201,7 +259,7 @@ export function mountWidget(root) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const value = input.value.trim();
-    if (!value) return;
+    if (!value || !conversation.canSend()) return;
     input.value = "";
     resizeInput();
     conversation.send(value);
