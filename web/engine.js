@@ -1,5 +1,5 @@
 /**
- * Deterministic conversation engine for the Northstar widget demo.
+ * Deterministic conversation engine for the Leadwise widget demo.
  * Not the Python orchestrator. Later this module can be swapped for API calls.
  *
  * Behavior is data-driven (see scenarios.js). The engine adds light, local session memory:

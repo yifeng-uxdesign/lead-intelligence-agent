@@ -1,5 +1,5 @@
 /**
- * Scripted demo scenarios for the Northstar Lead Intelligence Agent widget.
+ * Scripted demo scenarios for the Leadwise Lead Intelligence Agent widget.
  * Presentation code imports this data; it never hardcodes replies.
  *
  * Node shape:
@@ -152,7 +152,7 @@ export const GLOBAL_ROUTES = [
   { id: "pilot", next: "eval.pilot", patterns: [/(pilot|next quarter|next month|next year|start(ed)? (with )?(one|a single|a small|small)|phase it|phased)/i] },
   { id: "pause", next: "pause.normalize", patterns: [/(think (about )?it|think it over|need to think|bring (this|it) back|(talk|talking|chat|chatting|speak) (to|with) my (team|boss|manager)|discuss (it |this )?with|run (it|this) by|not a good time|lot going on|bandwidth|\bbusy\b)/i] },
   { id: "stakeholder", next: "stakeholder.open", patterns: [/(my (boss|manager|cto|ceo|cfo|vp|director|leadership|team lead)|leadership|decision[- ]maker|sign[- ]off|approve (this|it)|buy[- ]in)/i] },
-  { id: "product", next: "product.intro", patterns: [/(what (exactly |actually |even )?(is|does) (northstar|this|the agent|it)\b)|(what'?s northstar)|(tell me (more )?about (northstar|the agent|how))|(how (exactly |actually )?(does|do) (northstar|the agent|it|this) work)|(what do you (do|offer|sell))/i] },
+  { id: "product", next: "product.intro", patterns: [/(what (exactly |actually |even )?(is|does) (leadwise|this|the agent|it)\b)|(what'?s leadwise)|(tell me (more )?about (leadwise|the agent|how))|(how (exactly |actually )?(does|do) (leadwise|the agent|it|this) work)|(what do you (do|offer|sell))/i] },
   { id: "empathy", next: "empathy.ack", patterns: [/(six months|for months|nothing (has |'s )?(worked|helped|changed)|struggling|can'?t keep up|overwhelmed|drowning)/i] },
 ];
 
@@ -170,7 +170,7 @@ export const NODES = {
   // ============ A. Curious visitor ============
   "curious.business": {
     replies: [
-      { text: "Good place to start. In one line: Northstar’s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in." },
+      { text: "Good place to start. In one line: Leadwise’s agent holds the first conversation with people interested in your product, learns what they need, and tells your sales team where a person should step in." },
       { tone: "cue", text: "I’ll ask about you first so what I say is relevant, not generic." },
       { text: "What kind of company are you evaluating this for?" },
     ],
@@ -221,14 +221,14 @@ export const NODES = {
     replies: [{ text: "Happy to stay in the conversation. If you want to go deeper, I can ask about your sales process next — that’s how the agent gathers evidence, one question at a time." }],
     choices: [
       { id: "deeper", label: "Ask about our sales process", next: "__fit_next__" },
-      { id: "what", label: "What does Northstar do?", next: "product.intro" },
+      { id: "what", label: "What does Leadwise do?", next: "product.intro" },
       { id: "pause", label: "That’s enough for now", next: "curious.close" },
     ],
     routes: [{ keywords: ["process", "qualify", "deeper", "more"], next: "__fit_next__" }],
     fallback: { text: "Whenever you’re ready, say what you’d like to look at next.", next: null },
   },
   "curious.close": {
-    replies: [{ text: "Thank you for sharing that context. A sensible next step is a short conversation with someone on the Northstar team who can map this to your inbound flow — this prototype does not book that meeting automatically. You can restart this chat anytime, or keep asking questions here." }],
+    replies: [{ text: "Thank you for sharing that context. A sensible next step is a short conversation with someone on the Leadwise team who can map this to your inbound flow — this prototype does not book that meeting automatically. You can restart this chat anytime, or keep asking questions here." }],
     choices: [RESTART, { id: "more", label: "I have another question", next: "curious.keep" }],
     routes: [{ keywords: ["question", "more", "how"], next: "curious.keep" }],
     fallback: { text: "I’m here if you have another question, or you can restart the chat from the header.", next: null },
@@ -237,7 +237,7 @@ export const NODES = {
   // ============ B. Hesitant buyer (Skeptic) ============
   "hesitant.ack": {
     replies: [
-      { text: "That’s a fair concern, and you don’t have to share anything you’re not comfortable with. I’m an AI assistant for this Northstar demo — not a person, and not a hidden script pretending to be your sales team." },
+      { text: "That’s a fair concern, and you don’t have to share anything you’re not comfortable with. I’m an AI assistant for this Leadwise demo — not a person, and not a hidden script pretending to be your sales team." },
       { tone: "cue", text: "I’m naming that clearly because trust starts with knowing who you’re talking to." },
       { text: "What about AI speaking with prospects worries you most?" },
     ],
@@ -295,13 +295,13 @@ export const NODES = {
   // ---- Skeptic nodes: validate first, answer plainly, never defend ----
   "trust.identity": {
     replies: [
-      { text: "I’m an AI. There is no person typing these replies. I’m the Northstar AI assistant, and in this prototype I follow a scripted flow." },
+      { text: "I’m an AI. There is no person typing these replies. I’m the Leadwise AI assistant, and in this prototype I follow a scripted flow." },
       { tone: "cue", text: "I’m telling you directly because you should always know who you’re talking to." },
       { text: "If you’d rather deal with a person, I can set that up. Otherwise I’m glad to keep going." },
     ],
     choices: [
       { id: "person", label: "I’d like to talk to a person", next: "intervention.explain" },
-      { id: "what", label: "Tell me what Northstar does", next: "product.intro" },
+      { id: "what", label: "Tell me what Leadwise does", next: "product.intro" },
       { id: "later", label: "I’ll come back later", next: "quiet.later" },
     ],
     routes: [],
@@ -379,7 +379,7 @@ export const NODES = {
   },
   "trust.incentive": {
     replies: [
-      { text: "Fair question. Northstar sells this software, so the company benefits if you become a customer, and I’m on its website. Weigh my answers with that in mind." },
+      { text: "Fair question. Leadwise sells this software, so the company benefits if you become a customer, and I’m on its website. Weigh my answers with that in mind." },
       { text: "I don’t have pricing or business-model details, and I won’t guess. What I’m designed not to do is push, mirror urgency, or promise results I can’t back up. If an answer ever feels like steering, say so." },
     ],
     choices: [
@@ -394,7 +394,7 @@ export const NODES = {
     replies: [{ text: "Understood. No pitch from me — you asked for information and I’ll keep to that. I won’t steer you toward a next step or ask for contact details. Ask whatever you like." }],
     choices: [
       { id: "how", label: "How does it work?", next: "product.intro" },
-      { id: "money", label: "How does Northstar make money?", next: "trust.incentive" },
+      { id: "money", label: "How does Leadwise make money?", next: "trust.incentive" },
       { id: "data", label: "What happens to my data?", next: "hesitant.privacy" },
     ],
     routes: [],
@@ -446,7 +446,7 @@ export const NODES = {
   },
   "product.intro": {
     replies: [
-      { text: "Short version: Northstar’s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it’s an AI, and brings in a person when a decision, commitment, or sensitive question comes up." },
+      { text: "Short version: Leadwise’s Lead Intelligence Agent is an AI that has the first conversation with people who show interest in your product. It asks one question at a time to understand what they need, keeps track of the evidence for and against fit, says plainly that it’s an AI, and brings in a person when a decision, commitment, or sensitive question comes up." },
       { text: "It isn’t built to pressure anyone or to promise results it can’t back up. What would you most like to understand?" },
     ],
     choices: [
@@ -540,7 +540,7 @@ export const NODES = {
   "buyer.fitcheck": {
     replies: [
       { tone: "cue", text: "I’m not slowing you down for its own sake. I only suggest a next step once there’s evidence it fits." },
-      { text: "I don’t have enough yet to say Northstar fits your situation, so I’d rather ask than assume." },
+      { text: "I don’t have enough yet to say Leadwise fits your situation, so I’d rather ask than assume." },
     ],
     choices: [],
     routes: [],
@@ -553,7 +553,7 @@ export const NODES = {
   "buyer.handoff": {
     replies: [
       { tone: "cue", text: "I’m suggesting a person now because the evidence supports it, not because I’m trying to close." },
-      { text: "Here’s what I’ve heard: {fit_positive}. That’s enough for me to say a conversation with the Northstar team makes sense." },
+      { text: "Here’s what I’ve heard: {fit_positive}. That’s enough for me to say a conversation with the Leadwise team makes sense." },
       { text: "Pricing, contract terms, and timelines are theirs to answer, and I won’t quote any. I can pass this along — in this prototype that’s simulated, so no one will actually be contacted." },
     ],
     captureEmail: { company: "contact.saved", personal: "contact.personal" },
@@ -571,13 +571,13 @@ export const NODES = {
   "buyer.mismatch": {
     replies: [
       { tone: "cue", text: "I’d rather say this now than after you’ve put time into it." },
-      { text: "From what you’ve told me — {fit_negative} — Northstar probably isn’t the right fit yet. At that scale a person answering each inquiry is likely better than software, and I don’t want you paying for something you wouldn’t use. That isn’t a judgment of your company; it’s about timing." },
+      { text: "From what you’ve told me — {fit_negative} — Leadwise probably isn’t the right fit yet. At that scale a person answering each inquiry is likely better than software, and I don’t want you paying for something you wouldn’t use. That isn’t a judgment of your company; it’s about timing." },
       { text: "I can’t give you a verified volume where it starts to make sense. A person on the team could. If your inbound grows, it’s worth revisiting." },
     ],
     choices: [
       { id: "grow", label: "I expect volume to grow soon", next: "buyer.growth" },
       { id: "fair", label: "That’s fair, thanks", next: "buyer.later" },
-      { id: "what", label: "What does Northstar do?", next: "product.intro" },
+      { id: "what", label: "What does Leadwise do?", next: "product.intro" },
     ],
     routes: [{ keywords: ["grow", "scaling", "soon"], next: "buyer.growth" }],
     fallback: { text: "I’d still rather be straight with you than say yes. If you’d like a person to weigh in, I can note that.", next: null },
@@ -616,7 +616,7 @@ export const NODES = {
   },
   "buyer.later": {
     replies: [{ text: "Understood. Nothing is lost by waiting, and there’s no deadline from my side." }],
-    choices: [RESTART, { id: "what", label: "What does Northstar do?", next: "product.intro" }],
+    choices: [RESTART, { id: "what", label: "What does Leadwise do?", next: "product.intro" }],
     routes: [],
     fallback: { text: "I’m here if you want to pick this up later.", next: null },
   },
@@ -782,7 +782,7 @@ export const NODES = {
     fallback: { text: "I can’t quote anything. A person can.", next: "intervention.explain" },
   },
   "eval.compare": {
-    replies: [{ text: "Comparing options is the right way to decide. I can only speak to what Northstar is designed to do, not how other products behave — I haven’t verified their claims and I won’t guess. What would you compare on?" }],
+    replies: [{ text: "Comparing options is the right way to decide. I can only speak to what Leadwise is designed to do, not how other products behave — I haven’t verified their claims and I won’t guess. What would you compare on?" }],
     choices: [
       { id: "honesty", label: "How it handles honesty and handoffs", next: "hesitant.boundaries" },
       { id: "fit", label: "Fit with our sales process", next: "__fit_next__" },
@@ -829,7 +829,7 @@ export const NODES = {
   "quiet.patient": {
     replies: [{ text: "No rush at all. I’m here whenever you want to pick this up, and it’s completely fine not to." }],
     choices: [
-      { id: "what", label: "What does Northstar do?", next: "product.intro" },
+      { id: "what", label: "What does Leadwise do?", next: "product.intro" },
       { id: "later", label: "I’ll come back later", next: "quiet.later" },
     ],
     routes: [],
@@ -838,7 +838,7 @@ export const NODES = {
   "quiet.return": {
     replies: [{ text: "No problem at all. Things come up. We can pick this up wherever suits you, or leave it as it is." }],
     choices: [
-      { id: "remind", label: "Remind me what Northstar does", next: "product.intro" },
+      { id: "remind", label: "Remind me what Leadwise does", next: "product.intro" },
       { id: "later", label: "Leave it for now", next: "quiet.later" },
     ],
     routes: [],
@@ -866,7 +866,7 @@ export const NODES = {
   "share.summary": {
     replies: [
       { text: "Here’s a version you can pass along:" },
-      { text: "Northstar’s Lead Intelligence Agent is an AI that holds the first conversation with people interested in your product. It asks one question at a time to understand their need, gathers qualification evidence, and is clear that it’s an AI. It doesn’t invent guarantees or pressure people, and it hands conversations to a person when a decision, commitment, or sensitive question comes up. Pricing, contract terms, and timelines come from the Northstar team, not the AI." },
+      { text: "Leadwise’s Lead Intelligence Agent is an AI that holds the first conversation with people interested in your product. It asks one question at a time to understand their need, gathers qualification evidence, and is clear that it’s an AI. It doesn’t invent guarantees or pressure people, and it hands conversations to a person when a decision, commitment, or sensitive question comes up. Pricing, contract terms, and timelines come from the Leadwise team, not the AI." },
       { text: "This chat itself is a scripted prototype." },
     ],
     choices: [{ id: "thanks", label: "Thanks", next: "quiet.later" }, RESTART],

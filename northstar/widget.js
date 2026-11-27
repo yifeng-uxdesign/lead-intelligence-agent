@@ -27,7 +27,7 @@ export function mountWidget(root) {
           <circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.2" opacity=".45"/>
         </svg>
       </span>
-      <span class="ns-launcher__label">Chat with Northstar</span>
+      <span class="ns-launcher__label">Chat with Leadwise</span>
     </button>
   `);
 
