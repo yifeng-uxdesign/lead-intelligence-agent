@@ -216,7 +216,7 @@ h4 { font-size: 17px; font-weight: 600; }
 .ns-panel__identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .ns-panel__mark {
   flex: none; width: 36px; height: 36px; border-radius: 10px;
-  background: #2a2d33 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4.5l1.8 5.7L19.5 12l-5.7 1.8L12 19.5l-1.8-5.7L4.5 12l5.7-1.8z' fill='%23e0703f'/%3E%3C/svg%3E") center / 22px no-repeat;
+  background: #2a2d33 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8.5 5.5v12h8' fill='none' stroke='%23e0703f' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='16.5' cy='8' r='2' fill='%23e0703f'/%3E%3C/svg%3E") center / 22px no-repeat;
 }
 .ns-panel__name { font-family: var(--sans); font-size: 16px; font-weight: 600; line-height: 1.2; }
 .ns-panel__status { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #c9ccd2; }
