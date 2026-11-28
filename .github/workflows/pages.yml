@@ -48,7 +48,7 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           touch _site/.nojekyll
-          cp -r northstar _site/northstar
+          cp -r leadwise _site/leadwise
           cp -r rep-workspace/dist _site/rep-workspace
 
       - uses: actions/configure-pages@v5

@@ -440,7 +440,7 @@ Starting topics. "Unverified" means the answer is "a person can tell you", not a
 | How a person gets involved | approved | A person joins for pricing, contracts, timing |
 | Integrations, pricing, security and data handling, setup timelines | **unverified** | Say so plainly; offer a person |
 
-The drafted knowledge base is in `northstar/KNOWLEDGE_BASE.md`: nine entries taken only from the repository's design
+The drafted knowledge base is in `leadwise/KNOWLEDGE_BASE.md`: nine entries taken only from the repository's design
 documents (status `draft`, awaiting owner approval) plus the confirmed list of topics where the assistant says "a person
 can tell you" (R28).
 
@@ -914,7 +914,7 @@ than once? Does it end on a clear next step?
 Run after every change touching widget behavior, from the repo root:
 
 ```bash
-./intent-agent-v2/conformance/run_all.sh "$PWD/northstar"
+./intent-agent-v2/conformance/run_all.sh "$PWD/leadwise"
 cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 ```
 
@@ -927,7 +927,7 @@ cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 | `fallback_rate` | **Caution.** The observer detects a fallback by matching the node's own fallback text, so replacing that text makes the number fall without proving anything. We report it but do not use it as proof, and we do not edit the observer. |
 
 **Scenario evaluation.** The owner's six scenarios and six interruptions, with a rubric, a measured baseline of the current
-widget and proposed extra scenarios, are in `northstar/EVALUATION_PLAN.md`. The baseline shows the same canned fallback answering
+widget and proposed extra scenarios, are in `leadwise/EVALUATION_PLAN.md`. The baseline shows the same canned fallback answering
 four different interruptions (32 of 32 across eight scenarios) and the email being asked again after a refusal (3 of 8), which supports building recovery first.
 
 **Word-list lint (proposed).** A tiny check that scans visitor-facing strings in `scenarios.js` and `config.js` for
@@ -973,15 +973,15 @@ Measured result · What surprised me.* Never weaken `cases.json` to make a numbe
 - [ ] Proposed decision **D5** (3.4): only a person resolves; the visitor is asked but cannot block it; a hand back with an
   open topic keeps the assistant restricted and fenced. Confirm, or tell me to keep it simpler (resolve-only, no scoped hand back).
 - [ ] The topic list for the fence (pricing and terms, contract or legal, dates and commitments, security and data, other): right set?
-- [ ] Review the nine draft entries and the checklist in `northstar/KNOWLEDGE_BASE.md`.
+- [ ] Review the nine draft entries and the checklist in `leadwise/KNOWLEDGE_BASE.md`.
 - [ ] Shared state model (3.5): confirm RELAY (approve a draft) and SHADOW (rep driving) stay separate, merge the "Rep driving" and "Advisory" rows, and adopt the table as the single source for both sides.
 - [ ] Approve the visitor-side proposals in 3.5: a limit on the typing indicator then a holding line, a failure line, and tier 3 raising the rep's "Uncertain" card.
 - [x] Owner answered the four lead-data-model decisions (4.5). They still need to be recorded in the lead-workspace session's `lead-data-model.md`.
 - [x] Five readiness fields confirmed by the owner (2026-11-15): budget, timeline, who decides, decision process, and security and compliance.
-- [ ] Review the **ICP research and draft** in `northstar/ICP_DRAFT.md`, then decide the ICP bands, the **supported-region list** and the **lead score bar** (the draft proposes a placeholder for each; the agent cannot enforce any without your decision).
+- [ ] Review the **ICP research and draft** in `leadwise/ICP_DRAFT.md`, then decide the ICP bands, the **supported-region list** and the **lead score bar** (the draft proposes a placeholder for each; the agent cannot enforce any without your decision).
 - [x] **No budget or timeline** = disqualify (owner, 2026-11-15), on an explicit statement only. Still to do: define the horizon for "no timeline" and confirm **no buying authority** means "no authority and no path".
 - [ ] The demo's small-volume rule (150 and 250 inquiries a month) is explained in `ICP_DRAFT.md` Part 6. Approve it as a fact the agent may explain from, or keep it internal and have the agent only describe what the visitor said (recommended).
-- [x] Scenarios: S10 and S11 approved, S7 to S9 parked (owner, 2026-11-15). The eight approved scenarios are the standing baseline (`northstar/eval/`).
+- [x] Scenarios: S10 and S11 approved, S7 to S9 parked (owner, 2026-11-15). The eight approved scenarios are the standing baseline (`leadwise/eval/`).
 - [ ] Confirm the timing recommendation in 4.4 (identity earned in three steps, contact and consent only at the connect moment),
   or tell me if the business needs name or company earlier.
 - [ ] Should the data model branch be merged before we build the field registry, so both use the same field ids?

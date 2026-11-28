@@ -32,7 +32,7 @@ entry that says what changed and why, and mark the old one `superseded`.
 **Context:** Owner changed the environment's network access. The `WebFetch` tool still could not resolve hosts in this running session, but `curl` through the
 session proxy worked, so I opened six sources directly and re-checked the ICP draft.
 
-**What changed in `northstar/ICP_DRAFT.md`:**
+**What changed in `leadwise/ICP_DRAFT.md`:**
 - The 100x / 21x response-time figures are **confirmed in the primary document** (InsideSales.com / MIT, six companies, over 15,000 leads) but they measure **phone callbacks only**, were
   vendor-run, and say nothing about chat or AI. Two claims in circulation are **wrong**: the "Harvard Business Review" attribution and a "400% from 5 to 10 minutes" figure (neither is in the study).
 - The Workato test of 114 B2B companies (March 2026) finds more than 99% do not respond within 5 minutes, so slow response is near-universal and is not a distinguishing ICP signal on its own.
@@ -57,13 +57,13 @@ session proxy worked, so I opened six sources directly and re-checked the ICP dr
 - **Five readiness fields confirmed:** budget, timeline, who decides, decision process, security and compliance.
 - **Scenarios:** S10 and S11 approved; S7 to S9 parked.
 
-**Research (`northstar/ICP_DRAFT.md`):** a draft ICP (accounts, buying group, triggers, disqualifiers), a score sketch for the "lead score bar", what the widget can and
+**Research (`leadwise/ICP_DRAFT.md`):** a draft ICP (accounts, buying group, triggers, disqualifiers), a score sketch for the "lead score bar", what the widget can and
 cannot learn, and an explanation of the demo's small-volume rule (150 and 250 a month vs a rule of thumb of about 300 a month per inbound rep).
 **Limits:** no independent (A-grade) evidence; everything is vendor-authored or secondhand from search summaries; four primary pages could not be opened because the
 session's network allowlist blocks them (workato.com, www.mortech.com, www.qualified.com, revopscoop.com). The ICP bands, regions and weights are
 **proposals, not findings**.
 
-**Evaluation:** S10 and S11 added to the replay set. New baseline `northstar/eval/baseline-2026-11-15.md` (the 2026-11-14 file is replaced; S1 to S6 unchanged).
+**Evaluation:** S10 and S11 added to the replay set. New baseline `leadwise/eval/baseline-2026-11-15.md` (the 2026-11-14 file is replaced; S1 to S6 unchanged).
 S10 fails (the visitor gave everything in one message and was asked about it again; the email was not recognised). S11 holds one turn early on frustration about other vendors.
 Across eight scenarios, 32 of 32 replies to four interruptions are the same canned fallback and 3 of 8 re-ask the email after a refusal.
 
@@ -111,7 +111,7 @@ to use for the widget's design test and evaluation.
   intent and timing, reachable decision-maker); **five hard disqualifiers** (unsupported geography, invalid contact, no buying
   authority, active customer or open deal, no budget or timeline). Written up in `CONVERSATION_DESIGN.md` 4.5 with the
   conversation behavior for each.
-- Owner will use the six scenarios as the test and evaluation set: adopted. See `northstar/EVALUATION_PLAN.md`.
+- Owner will use the six scenarios as the test and evaluation set: adopted. See `leadwise/EVALUATION_PLAN.md`.
 
 **What I changed and why:**
 - Moved "who else weighs in" to L3 and asked region before any contact (accept criteria 2 and 5; do not take contact from
@@ -120,7 +120,7 @@ to use for the widget's design test and evaluation.
 - Flagged what the agent cannot do without owner input: the ICP definition, the supported-region list and the score bar do not exist.
 - Added knowledge entry K10 (what it asks about), needed by scenario S6.
 
-**Measured baseline (current widget, before any change; `northstar/eval/`):**
+**Measured baseline (current widget, before any change; `leadwise/eval/`):**
 - S1 fail, S2 fail, S3 partial, S4 partial, S5 pass, S6 fail. 24 of 24 replies to four of the six interruptions are the same canned fallback.
   The email is asked again after a refusal in 3 of 6 runs. Identical consecutive replies in S1 and S2.
 - Two keyword false positives found ("sales reps" read as a request for a person, "review" as a request for reviews). Recorded, not patched,
@@ -168,7 +168,7 @@ continue on other needs).
 **Findings and decisions:**
 - **Copy audit:** the earlier rewrite only fixed the lines I had flagged. A full audit found "leads", "prospects",
   "reps" and "handoff" still in visitor copy. All fixed in `CONVERSATION_DESIGN.md` 5.4. Proposed a word-list lint (8).
-- **Knowledge base:** none existed (facts live inside nodes). Drafted `northstar/KNOWLEDGE_BASE.md` from the repo's own
+- **Knowledge base:** none existed (facts live inside nodes). Drafted `leadwise/KNOWLEDGE_BASE.md` from the repo's own
   design documents only (nine entries, status `draft`, owner approval needed) plus the confirmed list of unverified
   topics ("a person can tell you"). No product fact was invented.
 - **Resolve (proposed D5):** a person resolves (backend `/rep/action` `resolve` already exists); the visitor is asked a
@@ -206,7 +206,7 @@ hand back (backend decision D2 assumes restricted until a rep resolves).
 
 ### 2026-11-12 — Owner review of the conversation design plan (three changes)
 
-**Context / trigger:** Owner reviewed `northstar/CONVERSATION_DESIGN.md`.
+**Context / trigger:** Owner reviewed `leadwise/CONVERSATION_DESIGN.md`.
 
 **Decisions:**
 - **R2 changed** from "one question per turn" to "one topic per turn", allowing a small cluster of closely related
@@ -241,9 +241,9 @@ for the whole plan first and for the agent to draft the copy.
 - Turn-taking: queue first, cancel later and only with a guard for committed routes (frustration, human request).
 - **Supersedes the earlier "owner drafts copy" choice:** the agent drafts recovery copy per stage and scenario, the
   owner reviews and marks lines that sound off.
-- Home for principles: `northstar/CONVERSATION_DESIGN.md`. Case-study write-up wanted at the end.
+- Home for principles: `leadwise/CONVERSATION_DESIGN.md`. Case-study write-up wanted at the end.
 
-**Output:** `northstar/CONVERSATION_DESIGN.md`: components, 24 rules, stage map, decision table, evidence plan,
+**Output:** `leadwise/CONVERSATION_DESIGN.md`: components, 24 rules, stage map, decision table, evidence plan,
 recovery ladder with drafted copy for every stage, turn-taking and pacing spec, tone guide, measurement plan, glossary.
 
 **Status:** design only. No widget code changed. Pacing values and recovery copy are untested drafts.
@@ -300,7 +300,7 @@ sounds scripted, routing between answer / clarify / escalate / decline, contract
    Cost: `respond` currently computes the delay before `resolve()`, and `resolve`/`applyNode` mutate state (`seen`,
    `fitChecks`). I would split into compute (pure) then commit, so length is known before waiting. Later, for an LLM:
    `wait = max(pacing floor, real latency)` so the indicator absorbs latency while decisions stay deterministic.
-4. **Tone for evidence gathering** (a checklist for copy review, written to `northstar/CONVERSATION_DESIGN.md`):
+4. **Tone for evidence gathering** (a checklist for copy review, written to `leadwise/CONVERSATION_DESIGN.md`):
    acknowledge before asking; one question at a time; say why it is asked; make the cheapest answer easy (chips); allow
    declining with no penalty; ask only what changes the routing decision; no urgency, no mirrored excitement, no
    defending (already the stated "never" list in `DEMO_SCRIPTS.md`); keep the AI disclosure; vary wording across tiers.
@@ -337,10 +337,10 @@ effort drops and keyword/label work moves up the list.
 - [ ] Approve the order (recovery, turn-taking B, pacing, tone doc)?
 - [ ] Turn-taking: queue (B) first, or go straight to supersede (C) with the committed-route guard?
 - [ ] Learning mode: should I draft recovery copy and you critique it, or should you draft the copy and I critique, wire it in and measure?
-- [ ] Is `northstar/CONVERSATION_DESIGN.md` the right home for the principles, and is the case-study write-up wanted?
+- [ ] Is `leadwise/CONVERSATION_DESIGN.md` the right home for the principles, and is the case-study write-up wanted?
 
 **Follow-ups:**
-- [ ] After approval: implement in small commits, run `./intent-agent-v2/conformance/run_all.sh "$PWD/northstar"` and
+- [ ] After approval: implement in small commits, run `./intent-agent-v2/conformance/run_all.sh "$PWD/leadwise"` and
   `cd intent-agent-v2 && python3 -m pytest -q` after each, and report any regression plainly. Record baselines only if
   nothing regressed.
 
@@ -378,7 +378,7 @@ The five stages:
 **Context:** Setting up a Claude Cloud dev environment, with the current priority on the Northstar frontend.
 
 **Findings (from inspecting the repo):**
-- `northstar/` is plain static HTML, CSS and ES modules. It has no package manager, no build step and no network calls.
+- `leadwise/` is plain static HTML, CSS and ES modules. It has no package manager, no build step and no network calls.
 - `intent-agent-v2/` core uses only the Python standard library. Its only declared dependencies were `pytest` and `pytest-cov`.
 - `tests/test_phase0_api.py` also needs `fastapi` and `httpx`, which were not declared.
 - With those installed: 304 passed, 3 xfailed. The 3 xfails are the known roadmap step-3 autonomy-profile gaps.
