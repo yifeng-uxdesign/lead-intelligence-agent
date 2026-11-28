@@ -1,6 +1,6 @@
 # ICP sources: verification report
 
-Status: **research only.** This file checks the sources behind `northstar/ICP_DRAFT.md` (branch `claude/bold-heisenberg-lvt224`), mainly Part 2 (Evidence) and Part 8 (Sources). It does not change the draft. Checked 2026-11-15.
+Status: **research only.** This file checks the sources behind `leadwise/ICP_DRAFT.md` (branch `claude/bold-heisenberg-lvt224`), mainly Part 2 (Evidence) and Part 8 (Sources). It does not change the draft. Checked 2026-11-15.
 
 **Method.** Every listed source was opened with WebFetch, reached through a search-result link. Direct fetches of the listed URLs were refused by the session's allowlist. A curl fallback through the session proxy was tried for the HBR article and its Internet Archive copy, and the proxy refused both (HTTP 403). Quotes are kept short. Where a page's own numbers have no stated source, that is said. "Vendor" means the publisher sells a product in or next to this category.
 

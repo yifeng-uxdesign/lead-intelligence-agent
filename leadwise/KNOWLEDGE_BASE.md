@@ -7,7 +7,7 @@ In the demo these become a small deterministic `KNOWLEDGE` table. Later, retriev
 
 **Where these facts come from.** Only from what is already written in this repository: `intent-agent-v2/src/core/soul.md`
 (the value constitution), `intent-agent-v2/CLAUDE.md` (trigger rules and modes), `intent-agent-v2/README.md`, and the
-existing demo copy in `northstar/scenarios.js`. I have not invented any product fact. Because these describe the product's
+existing demo copy in `leadwise/scenarios.js`. I have not invented any product fact. Because these describe the product's
 design intent, **every entry below needs the owner's approval before the assistant may say it** (status `draft`).
 
 Rules for entries: plain words anyone can follow (V1); no lead, fit, capture or demo language (V2, V3, R15); no price,

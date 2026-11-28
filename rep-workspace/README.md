@@ -5,7 +5,7 @@ lead detail, agent activity stream, and the conversation panel.
 
 - Origin: Figma Make export (`Build History Modal`), imported as the baseline for redesign.
 - Design spec: the "Lead Workspace — SLDS Design Prompt Pack (v2)" (not yet checked into the repo).
-- Counterpart: the customer-facing conversation widget in `../northstar`.
+- Counterpart: the customer-facing conversation widget in `../leadwise`.
 
 ## Run
 

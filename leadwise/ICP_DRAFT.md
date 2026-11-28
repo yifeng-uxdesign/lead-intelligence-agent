@@ -144,7 +144,7 @@ Proposed bands: **60 or more** (with a valid contact, a reachable decision-maker
 
 ## 6. The demo's small-volume rule
 
-`FIT.volume` in `northstar/scenarios.js` sets two numbers, **150** and **250** inquiries a month. Below 150 the engine tags the visitor `low_volume` (a negative
+`FIT.volume` in `leadwise/scenarios.js` sets two numbers, **150** and **250** inquiries a month. Below 150 the engine tags the visitor `low_volume` (a negative
 signal), at 250 or above `high_volume` (positive), and 150 to 249 is `mid_volume` (neutral). When negatives outweigh positives, the agent explains that
 "at that scale a person answering each inquiry is likely better than software". The file says these are "illustrative, not the product's real scoring".
 

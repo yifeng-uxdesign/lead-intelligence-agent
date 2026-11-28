@@ -7,8 +7,8 @@ The scenario set comes from the owner (six role-play scenarios plus six interrup
 adjusts a few expectations to match the design decisions made since, records what the current widget actually does, and
 proposes extra scenarios.
 
-Files: `northstar/eval/scenarios.json` (the messages, verbatim), `northstar/eval/run.sh` (replays them against the engine),
-`northstar/eval/baseline-2026-11-15.md` (full transcripts of the baseline run).
+Files: `leadwise/eval/scenarios.json` (the messages, verbatim), `leadwise/eval/run.sh` (replays them against the engine),
+`leadwise/eval/baseline-2026-11-15.md` (full transcripts of the baseline run).
 
 ---
 
@@ -157,20 +157,20 @@ out of any tuning, as with the held-out set.
 
 ## 6. Running it
 
-**Manual (for the portfolio, with screenshots).** Serve `northstar/` with `python3 -m http.server`, restart the widget before each scenario,
+**Manual (for the portfolio, with screenshots).** Serve `leadwise/` with `python3 -m http.server`, restart the widget before each scenario,
 type the messages by hand, and record each reply with the verdict and the dimension missed. Template per turn:
 *visitor message · node or reply · heard / honest / boundary / evidence / pace / language / respect · note*.
 
 **Replay (reproducible baseline).**
 
 ```bash
-./northstar/eval/run.sh > northstar/eval/baseline-YYYY-MM-DD.md
+./leadwise/eval/run.sh > leadwise/eval/baseline-YYYY-MM-DD.md
 ```
 
 **After each implementation step**, run the replay and the two standard checks, and diff against the baseline:
 
 ```bash
-./intent-agent-v2/conformance/run_all.sh "$PWD/northstar"
+./intent-agent-v2/conformance/run_all.sh "$PWD/leadwise"
 cd intent-agent-v2 && python3 -m pytest -q   # expect 304 passed, 3 xfailed
 ```
 

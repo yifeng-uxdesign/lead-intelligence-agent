@@ -1,6 +1,6 @@
 # Lead Intelligence Agent (intent-agent-v2) — working notes for Claude Code
 
-Demo for enterpiece B2B sales-qualification agent. Python backend (this repo) + a static JS "Northstar" widget demo (separate repo/folder). Goal: make the deterministic behavior layer correct and *measurable* before adding an LLM, so the demo highlights the behavior-layer design.
+Demo for enterpiece B2B sales-qualification agent. Python backend (this repo) + a static JS "Leadwise" widget demo (separate repo/folder). Goal: make the deterministic behavior layer correct and *measurable* before adding an LLM, so the demo highlights the behavior-layer design.
 
 ## Architecture rule (do not violate)
 - **Deterministic Python owns decisions**: trust state, autonomy, handoff, authorization, delivery.
@@ -21,7 +21,7 @@ Demo for enterpiece B2B sales-qualification agent. Python backend (this repo) + 
 ## Workflow for every roadmap step
 1. Make the change.
 2. Delete the fixed cases from `conformance/known_gaps.json` (strict xfail turns red when a gap starts passing).
-3. `./conformance/run_all.sh <path-to-widget-dir> --record` (needs Node; widget dir is `northstar/`), commit the new baselines only if metrics did not regress.
+3. `./conformance/run_all.sh <path-to-widget-dir> --record` (needs Node; widget dir is `leadwise/`), commit the new baselines only if metrics did not regress.
 4. Never weaken `cases.json` to make a number pass; changing it changes `cases_hash` and requires re-recording baselines.
 
 ## Roadmap (in order)

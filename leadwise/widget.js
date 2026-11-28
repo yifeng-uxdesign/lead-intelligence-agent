@@ -23,11 +23,11 @@ export function mountWidget(root) {
     <button class="ns-launcher" type="button" aria-expanded="false" aria-controls="ns-widget-panel">
       <span class="ns-launcher__icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3.2 13.6 8.8 19.2 10.4 13.6 12 12 17.6 10.4 12 4.8 10.4 10.4 8.8 12 3.2Z" fill="currentColor"/>
-          <circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.2" opacity=".45"/>
+          <path d="M8.5 5.5v12h8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="16.5" cy="8" r="1.9" fill="currentColor"/>
         </svg>
       </span>
-      <span class="ns-launcher__label">Chat with Northstar</span>
+      <span class="ns-launcher__label">Chat with Leadwise</span>
     </button>
   `);
 
